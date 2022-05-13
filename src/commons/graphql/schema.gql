@@ -2,60 +2,38 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Recipes {
-  id: String!
-  title: String!
-  summary: String!
-  categories: CATEGORY_STATUS!
-  desc: String!
-  cooktime: String!
-  level: COOKING_LEVEL!
+type User {
+  user_id: String!
+  email: String!
+  name: String!
+  phone: Int!
+  type: VEGAN_TYPE_ENUM!
+  nickname: String!
+  isPro: CLASS_TYPE_ENUM!
+  isSubs: Boolean!
+  SubsHistory: String!
+  point: Int!
+  url: String
 }
 
-enum CATEGORY_STATUS {
-  all
-  vegan
-  lacto
-  ovo
-  lacto_ovo
-  pesco
-  pollo
+enum VEGAN_TYPE_ENUM {
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
 }
 
-enum COOKING_LEVEL {
-  simple
-  general
-  difficult
+enum CLASS_TYPE_ENUM {
+  PRO
+  COMMON
 }
 
 type Query {
-  fetchRecipes: [Recipes!]!
-  fetchRecipe(recipe_id: String!): Recipes!
+  fetchUsers: String!
 }
 
 type Mutation {
-  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(
-    recipe_id: String!
-    updateRecipesInput: UpdateRecipesInput!
-  ): Recipes!
-  deleteRecipe(recipe_id: String!): Boolean!
-}
-
-input CreateRecipesInput {
-  title: String!
-  summary: String!
-  status: CATEGORY_STATUS!
-  desc: String!
-  cooktime: String!
-  level: COOKING_LEVEL!
-}
-
-input UpdateRecipesInput {
-  title: String
-  summary: String
-  status: CATEGORY_STATUS
-  desc: String
-  cooktime: String
-  level: COOKING_LEVEL
+  createUser: User!
 }
