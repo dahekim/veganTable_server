@@ -1,0 +1,39 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  user_id: String!
+  email: String!
+  name: String!
+  phone: Int!
+  type: VEGAN_TYPE_ENUM!
+  nickname: String!
+  isPro: CLASS_TYPE_ENUM!
+  isSubs: Boolean!
+  SubsHistory: String!
+  point: Int!
+  url: String
+}
+
+enum VEGAN_TYPE_ENUM {
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum CLASS_TYPE_ENUM {
+  PRO
+  COMMON
+}
+
+type Query {
+  fetchUsers: String!
+}
+
+type Mutation {
+  createUser: User!
+}
