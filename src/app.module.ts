@@ -2,6 +2,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 import { RecipesModule } from './apis/recipes/recipes.module';
 // import { AppController } from './app.controller';
 // import { AppService } from './app.service';
@@ -9,6 +10,7 @@ import { RecipesModule } from './apis/recipes/recipes.module';
 @Module({
   imports: [
     RecipesModule,
+    PointTransactionModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
@@ -25,7 +27,7 @@ import { RecipesModule } from './apis/recipes/recipes.module';
       synchronize: true,
       logging: true,
       retryAttempts: 30
-    })
+    }),
   ],
   // controllers: [AppController],
   // providers: [AppService],
