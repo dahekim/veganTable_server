@@ -27,6 +27,7 @@
     "@nestjs/graphql": "^10.0.11",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "apollo-server-express": "^3.7.0",
     "axios": "^0.27.2",
     "graphql": "^16.5.0",
     "mysql2": "^2.3.3",
@@ -75,6 +76,5 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "main": "index.js",
   "repository": "https://github.com/code-bootcamp/f6b2-team2-server.git"
 }
