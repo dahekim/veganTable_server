@@ -11,7 +11,7 @@ export class RecipesReply {
 
     @Column()
     @Field(() => String)
-    replyContents: string;
+    contents: string;
 
     @DeleteDateColumn()
     deletedAt: Date;

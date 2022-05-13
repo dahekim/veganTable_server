@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-export enum CATEGORY_STATUS {
+export enum CATEGORY_TYPES {
     ALL = 'ALL',
     VEGAN = 'VEGAN',
     LACTO = 'LACTO',
@@ -10,8 +10,8 @@ export enum CATEGORY_STATUS {
     PESCO = 'PESCO',
     POLLO = 'POLLO',
 };
-registerEnumType(CATEGORY_STATUS, {
-    name: 'CATEGORY_STATUS',
+registerEnumType(CATEGORY_TYPES, {
+    name: 'CATEGORY_TYPES',
 });
 
 export enum COOKING_LEVEL {
@@ -39,9 +39,9 @@ export class Recipes {
     @Field(() => String)
     summary: string;
 
-    @Column({ type: 'enum', enum: CATEGORY_STATUS })
-    @Field(() => CATEGORY_STATUS)
-    status: CATEGORY_STATUS;
+    @Column({ type: 'enum', enum: CATEGORY_TYPES })
+    @Field(() => CATEGORY_TYPES)
+    types: CATEGORY_TYPES;
 
     @Column()
     @Field(() => String)

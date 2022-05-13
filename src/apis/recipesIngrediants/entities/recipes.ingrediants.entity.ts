@@ -6,19 +6,19 @@ import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 export class RecipesIngrediants {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    id: string;
-
-    @Column()
-    @Field(() => String)
     name: string;
 
-    @Column()
-    @Field(() => Int)
-    amount: number;
+    // @Column()
+    // @Field(() => String)
 
-    @Column()
-    @Field(() => String)
-    unit: string;
+
+    // @Column()
+    // @Field(() => Int)
+    // amount: number;
+
+    // @Column()
+    // @Field(() => String)
+    // unit: string;
 
     @DeleteDateColumn()
     deletedAt: Date;

@@ -2,6 +2,32 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: String!
+  level: COOKING_LEVEL!
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
 type User {
   user_id: String!
   email: String!
@@ -32,8 +58,31 @@ enum CLASS_TYPE_ENUM {
 
 type Query {
   fetchUsers: String!
+  fetchRecipes: [Recipes!]!
+  fetchRecipe(recipe_id: String!): Recipes!
 }
 
 type Mutation {
   createUser: User!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  deleteRecipe(recipe_id: String!): Boolean!
+}
+
+input CreateRecipesInput {
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: String!
+  level: COOKING_LEVEL!
+}
+
+input UpdateRecipesInput {
+  title: String
+  summary: String
+  types: CATEGORY_TYPES
+  desc: String
+  cooktime: String
+  level: COOKING_LEVEL
 }
