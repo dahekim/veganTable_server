@@ -3,14 +3,17 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecipesModule } from './apis/recipes/recipes.module';
+import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
 import { UserModule } from './apis/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 
 @Module({
   imports: [
     UserModule,
     RecipesModule,
+    PaymentTransactionModule,
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -32,4 +35,6 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
+
+
 export class AppModule { }

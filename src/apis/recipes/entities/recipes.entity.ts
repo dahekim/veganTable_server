@@ -1,5 +1,5 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum CATEGORY_TYPES {
     ALL = 'ALL',
@@ -26,7 +26,7 @@ registerEnumType(COOKING_LEVEL, {
 
 @Entity()
 @ObjectType()
-export class Recipes {
+export class Recipes extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
     id: string;
@@ -60,4 +60,5 @@ export class Recipes {
 
     @UpdateDateColumn()
     updatedAt: Date;
+    static title: any;
 }
