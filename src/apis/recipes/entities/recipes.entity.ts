@@ -26,7 +26,7 @@ registerEnumType(COOKING_LEVEL, {
 
 @Entity()
 @ObjectType()
-export class Recipes extends BaseEntity {
+export class Recipes {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
     id: string;
