@@ -18,7 +18,7 @@ import { PaymentTransaction } from "./entities/paymentTransaction.entity";
     providers: [
         PaymentTransactionResolver,
         PaymentTransactionService,
-        IamportService,
+        // IamportService,
     ],
 })
 export class PaymentTransactionModule { }
