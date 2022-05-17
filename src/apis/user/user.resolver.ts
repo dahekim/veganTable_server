@@ -39,7 +39,6 @@ export class UserResolver{
         @Args('phone') phone: string,
     ){
         const hashedPassword = await bcrypt.hash(password, 10)
-        console.log("💙💙💙 회원가입 완료!")
         return this.userService.create({email, hashedPassword, name, phone})
     }
 

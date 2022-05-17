@@ -23,7 +23,6 @@ import { AppService } from './app.service';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'vegan-database',
-      // host: '10.114.130.181',
       port: 3306,
       username: 'root',
       password: 'root',

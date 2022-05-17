@@ -18,6 +18,7 @@ export class UserService{
         const user = await this.userRepository.findOne({email})
         if(user) throw new ConflictException("이미 등록된 이메일입니다.")
         
+        console.log("💙💙💙 회원가입 완료!")
         return await this.userRepository.save({email, password, name, phone})
     }
 
