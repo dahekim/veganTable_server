@@ -24,7 +24,7 @@ export class IamportService {
                 { headers: { Authorization: token } },
             );
             if (result.data.response.status !== 'paid')
-                throw new ConflictException('결제 내역이 없습니다.');
+                throw new ConflictException('결제하신 내역이 없습니다.');
             if (result.data.response.status !== amount)
                 throw new UnprocessableEntityException('결제 금액을 잘못 입력하셨습니다.')
         } catch (error) {
@@ -39,13 +39,15 @@ export class IamportService {
         }
     }
 
-    async cancel({ impUid, token }) {
+    async cancel({ impUid: imp_uid, amount, token }) {
         try {
             const result = await axios.post(
                 'https://api.iamport.kr/payments/cancel',
-                { imp_uid: impUid },
+                { imp_uid, amount },
                 { headers: { Authorization: token } },
             );
+            if (result.data.response.cancel_amount !== amount)
+                throw new UnprocessableEntityException('입력하신 내용이 결제 취소를 요청하신 금액과 일치하지 않습니다.')
             return result.data.response.cancel_amount;
         } catch (error) {
             throw new HttpException(

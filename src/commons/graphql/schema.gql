@@ -2,6 +2,32 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: String!
+  level: COOKING_LEVEL!
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
 type User {
   user_id: String!
   email: String!
@@ -30,10 +56,53 @@ enum CLASS_TYPE_ENUM {
   COMMON
 }
 
+type PaymentTransaction {
+  id: String!
+  impUid: String
+  amount: Int!
+  status: TRANSACTION_STATUS_ENUM!
+  user: User!
+  createdAt: DateTime!
+}
+
+enum TRANSACTION_STATUS_ENUM {
+  PAYMENT
+  CANCLE
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   fetchUsers: String!
+  fetchRecipes: [Recipes!]!
+  fetchRecipe(recipe_id: String!): Recipes!
 }
 
 type Mutation {
   createUser: User!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  deleteRecipe(recipe_id: String!): Boolean!
+  createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
+}
+
+input CreateRecipesInput {
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: String!
+  level: COOKING_LEVEL!
+}
+
+input UpdateRecipesInput {
+  title: String
+  summary: String
+  types: CATEGORY_TYPES
+  desc: String
+  cooktime: String
+  level: COOKING_LEVEL
 }
