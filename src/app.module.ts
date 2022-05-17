@@ -2,17 +2,23 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RecipesModule } from './apis/recipes/recipes.module';
+import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
 import { UserModule } from './apis/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+
 @Module({
   imports: [
-    UserModule, 
+    UserModule,
+    RecipesModule,
+    PaymentTransactionModule,
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver : ApolloDriver,
+      driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
-      context: ({req,res})=> ({req,res}),
+      context: ({ req, res }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -22,12 +28,14 @@ import { AppService } from './app.service';
       username: 'root',
       password: 'root',
       database: 'vegan-docker02',
-      entities: [__dirname+ '/apis/**/*.entity.*'],
+      entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
-  }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+
+
+export class AppModule { }
