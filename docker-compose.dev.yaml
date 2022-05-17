@@ -2,14 +2,14 @@ version: '3.3'
 
 services:
     vegan-backend: 
-        # image: asia.gcr.io/vegan-project-350105/vegan-backen:0.0.1
+        image: asia.gcr.io/vegan-project-350105/vegan-backen:0.0.1
         build:
             context: .
             dockerfile: Dockerfile
         volumes:
             - ./src:/vegan_backend/src
         env_file:
-            - ./.env
+            - ./.env.dev
         ports:
             - 3000:3000
 
@@ -27,10 +27,10 @@ services:
         ports:
             - 3306:3306
     
-    # vegan-redis:
-    #     image: redis:latest
-    #     ports:
-    #         - 6379:6379
+    vegan-redis:
+        image: redis:latest
+        ports:
+            - 6379:6379
     
     # elasticsearch:
     #     image: elasticsearch:7.17.0

@@ -7,16 +7,14 @@ type User {
   email: String!
   name: String!
   phone: Int!
-  type: VEGAN_TYPE_ENUM!
-  nickname: String!
-  isPro: CLASS_TYPE_ENUM!
-  isSubs: Boolean!
-  SubsHistory: String!
-  point: Int!
-  url: String
+  type: VEGAN_TYPE!
+  nickname: String
+  isPro: CLASS_TYPE
+  isSubs: Boolean
+  profilePic: String
 }
 
-enum VEGAN_TYPE_ENUM {
+enum VEGAN_TYPE {
   VEGAN
   LACTO
   OVO
@@ -25,15 +23,32 @@ enum VEGAN_TYPE_ENUM {
   POLLO
 }
 
-enum CLASS_TYPE_ENUM {
+enum CLASS_TYPE {
   PRO
   COMMON
 }
 
 type Query {
-  fetchUsers: String!
+  fetchUser: String!
+  fetchUsers: [User!]!
 }
 
 type Mutation {
-  createUser: User!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
+  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+}
+
+input UpdateUserInput {
+  password: String
+  name: String
+  phone: String
+}
+
+input UpdateUserDetailInput {
+  type: String
+  nickname: String
+  isPro: String
+  isSubs: Boolean
+  profilePic: String
 }
