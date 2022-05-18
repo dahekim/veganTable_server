@@ -10,8 +10,8 @@ import { AuthController } from "./auth.controller"
 
 import { JwtRefreshStrategy } from "src/commons/auth/jwt-refresh.strategy"
 import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy'
-// import { JwtNaverStrategy } from 'src/commons/auth/jwt-social-naver.strategy'
-// import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy'
+import { JwtNaverStrategy } from 'src/commons/auth/jwt-social-naver.strategy'
+import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy'
 
 
 @Module({
@@ -20,8 +20,8 @@ import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy'
         TypeOrmModule.forFeature([User])
     ],
     providers:[
-        // JwtKakaoStrategy,
-        // JwtNaverStrategy,
+        JwtKakaoStrategy,
+        JwtNaverStrategy,
         JwtGoogleStrategy,
         JwtRefreshStrategy,
         AuthResolver,

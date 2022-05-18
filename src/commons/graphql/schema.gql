@@ -6,7 +6,7 @@ type User {
   user_id: String!
   email: String!
   name: String!
-  phone: Int!
+  phone: String!
   type: VEGAN_TYPE!
   nickname: String
   isPro: CLASS_TYPE

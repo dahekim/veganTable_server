@@ -21,7 +21,7 @@ async validate(
     // req, 
     payload) {
     // console.log("📍📍📍"+req)
-    console.log("🔐🔐🔐"+payload)
+    // console.log("🔐🔐🔐"+payload)
     return {
         user_id: payload.sub,
         email: payload.email,

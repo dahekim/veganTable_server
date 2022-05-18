@@ -34,5 +34,6 @@ export class UserService{
             ...updateUserInput,
         }
         return await this.userRepository.save(updateUser)
+        
     }
 }

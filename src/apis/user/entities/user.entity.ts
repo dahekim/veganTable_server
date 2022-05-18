@@ -50,8 +50,8 @@ export class User{
     name!: string
 
     @Column({ unique: true })
-    @Field(()=> Int!)
-    phone!: number
+    @Field(()=> String!)
+    phone: string
 
     @Column({type: "enum", enum: VEGAN_TYPE, default: null })
     @Field(()=>VEGAN_TYPE)

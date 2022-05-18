@@ -39,12 +39,13 @@ async socialLogin({req, res}) {
             name: req.user.name,
             phone: req.user.phone,
         })
-        console.log("😈😈😈😈😈회원으로 만들어요"+user)
+        
     }
     this.setRefreshToken({ user, res })
+    console.log("😈😈😈😈😈회원으로 만들어요"+user)
     res.redirect(
         302,
-        "http://localhost:5500/frontend/login/index.html",
+        "http://localhost:5501/frontend/login/index.html",
         )
     }
 }
