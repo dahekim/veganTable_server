@@ -16,12 +16,13 @@ export class UserResolver{
     ){}
 
     @UseGuards(GqlAuthAccessGuard)
-    @Query(()=>String)
-    fetchUser(
+    @Query(()=>User)
+    async fetchUser(
         @CurrentUser() currentUser: ICurrentUser,
     ){
         console.log("💖 💖 💖 회원정보 조회합니다" + currentUser)
-        return currentUser.email
+        const email = currentUser.email
+        return await this.userService.findOne({email})
     }
     
     @UseGuards(GqlAuthAccessGuard)
