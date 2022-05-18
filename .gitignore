@@ -1,6 +1,8 @@
 # compiled output
 /dist
-/.env.*
+gcp-vegan-project.json
+.env
+.env.dev
 /gcp-*.json
 
 # Logs
@@ -37,6 +39,8 @@ lerna-debug.log*
 
 node_modules
 gcp-vegan-project.json
+.env
+.env.dev
 
 
 
