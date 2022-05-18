@@ -1,6 +1,8 @@
 # compiled output
 /dist
-/.env.*
+gcp-vegan-project.json
+.env
+.env.dev
 /gcp-*.json
 
 # Logs
@@ -36,10 +38,10 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 node_modules
-*.zip
-.env*
-vegan-project-350105-b36c74192b25.json
-gcp-biqquery.json
+gcp-vegan-project.json
+.env
+.env.dev
+
 
 
 
