@@ -4,7 +4,7 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param'
 import { GqlAuthRefreshGuard, GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard'
 import * as bcrypt from 'bcrypt'
-// import * as jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 
 import { AuthService } from './auth.service'
 import { UserService } from '../user/user.service'
@@ -31,7 +31,7 @@ export class AuthResolver {
 
     const isAuth = await bcrypt.compare(password, user.password)
     if (!isAuth) throw new UnprocessableEntityException("비밀번호가 일치하지 않습니다.")
-    context.res.setHeader('Set-Cookie','refreshToken=asdfsdfadsf')
+
     this.authService.setRefreshToken({ user, res: context.res })
     return this.authService.getAccessToken({ user })
     }
@@ -45,49 +45,45 @@ export class AuthResolver {
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> String)
-    async logout(){
-        
+    async logout(@Context() context:any){
+        const accessToken = await context.req.headers.authorization.split(" ")[1]
+        const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
+        const now = Date.parse(getToday()) / 1000
+
+        try {
+            jwt.verify(
+                accessToken,
+                process.env.ACCESS_TOKEN,
+                async (payload) => {
+                const pay = payload.exp - now;
+                await this.cacheManager.set(`accessToken:${accessToken}`, accessToken, {
+                    ttl: pay,
+                })
+            },
+            )
+        } catch(error) {
+            if (error?.response?.data?.message){
+                throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
+            } else {
+                throw error
+            }
+        }
+        try {
+            jwt.verify(
+                refreshToken,
+                process.env.REFRESH_TOKEN_KEY,
+                async (payload) => {
+                const pay = payload.exp - now
+                await this.cacheManager.set(`refreshToken:${refreshToken}`, refreshToken, {
+                    ttl: pay,
+                })
+            },
+            )
+        } catch (error) {
+            throw new UnauthorizedException(error);
+        }
+        console.log("⭕️ 로그아웃 성공!")
+        return "⭕️ 로그아웃 성공!"
     }
-//     @UseGuards(GqlAuthAccessGuard)
-//     @Mutation(() => String )
-//     async logout(@Context() context : any): Promise<string> {
-//         const accessToken = await context.req.headers.authorization.split(" ")[1]
-//         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
-
-//         const now = Date.parse(getToday()) / 1000
-        
-//         try {
-//             jwt.verify(
-//                 accessToken,process.env.ACCESS_TOKEN,async (payload) => {
-//                 const pay = payload.exp - now;
-//                 await this.cacheManager.set(`accessToken:${accessToken}`, accessToken, {
-//                     ttl: pay,
-//                 })
-//             },
-//             )
-//         } catch(error) {
-//             if (error?.response?.data?.message){
-//                 throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
-//             } else {
-//                 throw error
-//             }
-//         }
-//         try {
-//             jwt.verify(
-//                 refreshToken,
-//                 process.env.REFRESH_TOKEN_KEY,
-//                 async (payload) => {
-//                 const pay = payload.exp - now
-//                 await this.cacheManager.set(`refreshToken:${refreshToken}`, refreshToken, {
-//                     ttl: pay,
-//                 })
-//             },
-//             )
-//         } catch (error) {
-//             throw new UnauthorizedException(error);
-//         }
-//     return "⭕️ 로그아웃 성공!"
-// }
-
     
 }
