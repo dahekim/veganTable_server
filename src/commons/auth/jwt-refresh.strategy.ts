@@ -3,16 +3,21 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
     constructor() {
     super({
-        jwtFromRequest: (req) => req.headers.cookie.replace('refreshToken=', ''),
-        secretOrKey: 'myRefreshToken',
+        jwtFromRequest: (req) => {
+            console.log(req)
+            const refreshToken = req.headers.cookie.replace("refreshToken=", "")
+            console.log(refreshToken)
+            return refreshToken
+        },
+        secretOrKey: process.env.REFRESH_TOKEN,
         passReqToCallback: true,
-    });
+    }) 
 }
 
-    validate(req,payload) {
+    validate(req, payload: any) {
         console.log("🖍🖍🖍"+req)
         console.log("📗📗📗"+payload)
         return {

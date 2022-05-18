@@ -36,22 +36,22 @@ registerEnumType( VEGAN_TYPE, {
 export class User{
     @PrimaryGeneratedColumn("uuid")
     @Field(()=>String)
-    user_id: string
+    user_id!: string
     
     @Column({ unique: true, nullable: false })
     @Field(()=> String!)
-    email: string
+    email!: string
 
-    @Column()
+    @Column({nullable: true})
     password: string
 
     @Column()
     @Field(()=>String!)
-    name: string
+    name!: string
 
-    @Column({ unique: true, nullable: false })
+    @Column({ unique: true })
     @Field(()=> Int!)
-    phone: number
+    phone!: number
 
     @Column({type: "enum", enum: VEGAN_TYPE, default: null })
     @Field(()=>VEGAN_TYPE)

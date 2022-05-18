@@ -1,22 +1,26 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { 
+    // CACHE_MANAGER, Inject, 
+    Injectable, 
+    // UnauthorizedException 
+} 
+    from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
-    constructor(
-        // @Inject(CACHE_MANAGER)
-        // private readonly cacheManager: Cache,
-    ) {
+export class JwtAccessStrategy extends PassportStrategy(Strategy, "access") {
+    constructor() {
     super({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: 'myAccessToken', // 수정해야함 ㅎㅎ
-        passReqTocCallback: true,
+        secretOrKey: process.env.ACCESS_TOKEN,
+        // passReqTocCallback: true,
     })
 }
 
-async validate(req, payload) {
-    console.log("📍📍📍"+req)
+async validate(
+    // req, 
+    payload) {
+    // console.log("📍📍📍"+req)
     console.log("🔐🔐🔐"+payload)
     return {
         user_id: payload.sub,
