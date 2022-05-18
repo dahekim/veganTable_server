@@ -1,20 +1,29 @@
+import * as redisStore from 'cache-manager-redis-store';
+
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RecipesModule } from './apis/recipes/recipes.module';
+import { RedisClientOptions } from 'redis';
+import { ConfigModule } from '@nestjs/config';
+
+import { AuthModule } from './apis/auth/auth.module';
 import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
+import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
+// import { JwtGoogleStrategy } from './commons/auth/jwt-social-google.strategy';
 
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     RecipesModule,
+    JwtRefreshStrategy,
+    // JwtGoogleStrategy,
     PaymentTransactionModule,
-
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
@@ -31,9 +40,15 @@ import { AppService } from './app.service';
       synchronize: true,
       logging: true,
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://vegan-redis:6379',
+      isGlobal: true,
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 
 
