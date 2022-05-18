@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Transaction } from "typeorm";
 import { IamportService } from "../iamport/iamport.service";
 import { User } from "../user/entities/user.entity";
 import { PaymentTransactionResolver } from "./paymentTransactions.resolver";
