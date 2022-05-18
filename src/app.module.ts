@@ -43,11 +43,11 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // CacheModule.register<RedisClientOptions>({
-    //   store: redisStore,
-    //   url: 'redis://vegan-redis:6379',
-    //   isGlobal: true,
-    // }),
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://vegan-redis:6379',
+      isGlobal: true,
+    }),
   ],
 })
 

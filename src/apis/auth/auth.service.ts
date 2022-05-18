@@ -12,7 +12,7 @@ export class AuthService {
     getAccessToken({ user }) {
         return this.jwtService.sign(
             { email: user.email, sub: user.user_id },
-            { secret: process.env.ACCESS_TOKEN, expiresIn: '10s' })
+            { secret: process.env.ACCESS_TOKEN, expiresIn: '1h' })
     }
 
     setRefreshToken({ user, res }) {
@@ -20,7 +20,7 @@ export class AuthService {
             { email: user.email, sub: user.user_id },
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' }, )
             res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
-            
+
         // 배포환경
         // res.setHeader('Access-Control-Allow-Origin', 'url')
         // res.setHeader(

@@ -1,12 +1,5 @@
-// import { Cache } from 'cache-manager'
-import 
-{ 
-    // CACHE_MANAGER,
-    // Inject, 
-    UnauthorizedException, 
-    UnprocessableEntityException, 
-    UseGuards 
-} from '@nestjs/common'
+import { Cache } from 'cache-manager'
+import { UnprocessableEntityException, CACHE_MANAGER, Inject, UnauthorizedException, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param'
 import { GqlAuthRefreshGuard, GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard'
@@ -23,9 +16,8 @@ export class AuthResolver {
     constructor(
         private readonly userService: UserService,
         private readonly authService: AuthService,
-
-        // @Inject(CACHE_MANAGER)
-        // private readonly cacheManager: Cache,
+        @Inject(CACHE_MANAGER)
+        private readonly cacheManager: Cache,
     ) {}
 
     @Mutation(() => String)
@@ -51,6 +43,11 @@ export class AuthResolver {
         return this.authService.getAccessToken({ user: currentUser })
         }
 
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(()=> String)
+    async logout(){
+        
+    }
 //     @UseGuards(GqlAuthAccessGuard)
 //     @Mutation(() => String )
 //     async logout(@Context() context : any): Promise<string> {
