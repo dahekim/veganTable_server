@@ -20,6 +20,7 @@ export class AuthService {
             { email: user.email, sub: user.user_id },
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' }, )
             res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
+            
         // 배포환경
         // res.setHeader('Access-Control-Allow-Origin', 'url')
         // res.setHeader(
@@ -42,7 +43,6 @@ async socialLogin({req, res}) {
         
     }
     this.setRefreshToken({ user, res })
-    console.log("😈😈😈😈😈회원으로 만들어요"+user)
     res.redirect(
         302,
         "http://localhost:5501/frontend/login/index.html",
