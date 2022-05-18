@@ -3,6 +3,7 @@ import { UnprocessableEntityException, CACHE_MANAGER, Inject, UnauthorizedExcept
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user.param'
 import { GqlAuthRefreshGuard, GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard'
+
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
@@ -16,6 +17,7 @@ export class AuthResolver {
     constructor(
         private readonly userService: UserService,
         private readonly authService: AuthService,
+
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
     ) {}
