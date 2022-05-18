@@ -1,8 +1,8 @@
 # compiled output
 /dist
-/.env*
-*env*
-/.env.*
+gcp-vegan-project.json
+.env
+.env.dev
 /gcp-*.json
 
 # Logs
