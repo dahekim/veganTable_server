@@ -40,7 +40,7 @@ type PaymentTransaction {
 
 enum TRANSACTION_STATUS_ENUM {
   PAYMENT
-  CANCLE
+  CANCEL
 }
 
 """
@@ -79,6 +79,8 @@ type Query {
   fetchUsers: [User!]!
   fetchRecipes: [Recipes!]!
   fetchRecipe(recipe_id: String!): Recipes!
+  fetchTransactionAll: [PaymentTransaction!]!
+  fetchimpUidwithUserid(userid: String!): PaymentTransaction!
 }
 
 type Mutation {
@@ -91,7 +93,8 @@ type Mutation {
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
-  createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
+  createPaymentTransaction(imp_Uid: String!, amount: Float!): PaymentTransaction!
+  cancelTransaction(imp_Uid: String!): PaymentTransaction!
 }
 
 input UpdateUserInput {

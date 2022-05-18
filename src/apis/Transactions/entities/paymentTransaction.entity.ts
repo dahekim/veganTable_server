@@ -5,7 +5,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 
 export enum TRANSACTION_STATUS_ENUM {
     PAYMENT = 'PAYMENT',
-    CANCLE = 'CANCLE',
+    CANCEL = 'CANCEL',
 }
 registerEnumType(TRANSACTION_STATUS_ENUM, {
     name: 'TRANSACTION_STATUS_ENUM',

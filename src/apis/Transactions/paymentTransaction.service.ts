@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Connection, Repository } from "typeorm";
+import { Connection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
 
 import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "./entities/paymentTransaction.entity";
@@ -17,17 +17,43 @@ export class PaymentTransactionService {
 
         private readonly connection: Connection,
     ) { }
-    async create({ impUid, amount, currentUser }) {
+
+    async fetchTransactionAll() {
+        return await getRepository(PaymentTransaction)
+            .createQueryBuilder('transaction')
+            .leftJoinAndSelect('transaction.user', 'user')
+            .leftJoinAndSelect('transaction.amount', 'amount')
+            .orderBy('transaction.createdAt', 'DESC')
+            .getMany();
+    }
+
+    async fetchimpUidwithUserid({ user_id }) {
+        return await getRepository(PaymentTransaction)
+            .createQueryBuilder('transaction')
+            .leftJoinAndSelect('transaction.status', 'status')
+            .where('user.user_id =:user_id', { user_id, })
+            .orderBy('transaction.createdAt', 'DESC')
+            .getOne();
+    }
+
+    async createTransaction({ impUid, amount, currentUser }) {
         //queryRunner 등록
         const queryRunner = await this.connection.createQueryRunner();
+        const queryBuilder = await this.connection.createQueryBuilder();
         await queryRunner.connect();
-
         // 트랜잭션 시작
-        await queryRunner.startTransaction();
+        await queryRunner.startTransaction('SERIALIZABLE');
 
         try {
-            // 1. Trasaction 테이블에 거래 기록 1줄 생성
-            const transaction = await this.paymentTransactionRepository.save({
+            // 1. 사용자 정보 확인
+            const user = await queryRunner.manager.findOne(
+                User,
+                { user_id: currentUser.id },
+                { lock: { mode: 'pessimistic_write' } },
+            );
+
+            // 2. Trasaction 테이블에 거래 기록 1줄 생성
+            const transaction = await this.paymentTransactionRepository.create({
                 impUid,
                 amount,
                 user: currentUser,
@@ -35,12 +61,7 @@ export class PaymentTransactionService {
             });
             await queryRunner.manager.save(transaction);
 
-            // throw new Error('Find new Error');
-
-            // 2. 사용자의 소지금 확인
-            const user = await this.userRepository.findOne({ user_id: currentUser.id });
-
-            // // 3. 사용자의 소지금 업데이트
+            // // 3. 사용자 정보 업데이트
             // await this.userRepository.update(
             //     { id: user.id },
             //     { point: user.point + amount },

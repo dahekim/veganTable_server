@@ -1,14 +1,37 @@
 import { ConflictException, HttpException, Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
+import { Repository } from "typeorm";
+import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "../Transactions/entities/paymentTransaction.entity";
+import { User } from "../user/entities/user.entity";
 @Injectable()
 export class IamportService {
-    async getToken() {
+    constructor(
+        @InjectRepository(PaymentTransaction)
+        private readonly paymentTransactionRepository: Repository<PaymentTransaction>,
+    ) { }
+    async getToken({ impUid }) {
         try {
-            const result = await axios.post('https://api.iamport.kr/users/getToken', {
+            // 아임포트 계정의 API Key 값과 Secret Key 값으로 토큰 정보 얻기
+            const token = await axios.post('https://api.iamport.kr/users/getToken', {
                 imp_key: process.env.IAMPORT_API_KEY,
                 imp_secret: process.env.IAMPORT_SECRET,
             });
-            return result.data.response.access_token;
+            const { access_token } = token.data.response;
+            const useToken = await axios.get(
+                `https://api.iamport.kr/payments/${impUid}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                },
+            );
+            const { imp_Uid } = useToken.data.response;
+            if (imp_Uid !== impUid)
+                throw new UnprocessableEntityException('데이터가 존재하지 않습니다.')
+
+            return token.data.response.access_token;
+
         } catch (error) {
             throw new HttpException(
                 error.response.data.message,
@@ -23,6 +46,11 @@ export class IamportService {
                 `https://api.iamport.kr/payments/${impUid}`,
                 { headers: { Authorization: token } },
             );
+            const doubleCheckImpUid = await this.paymentTransactionRepository.findOne({
+                impUid,
+            });
+            if (doubleCheckImpUid)
+                throw new ConflictException('이미 결제한 내역입니다.');
             if (result.data.response.status !== 'paid')
                 throw new ConflictException('결제하신 내역이 없습니다.');
             if (result.data.response.status !== amount)
@@ -39,16 +67,39 @@ export class IamportService {
         }
     }
 
-    async cancel({ impUid: imp_uid, amount, token }) {
+    async cancel({ impUid }) {
+        const impUsedinfo = await this.paymentTransactionRepository.findOne({ impUid })
+        const { id, amount, status, createdAt, ...rest } = impUsedinfo;
         try {
-            const result = await axios.post(
+            const token = await axios.post('https://api.iamport.kr/users/getToken', {
+                imp_key: process.env.IAMPORT_API_KEY,
+                imp_secret: process.env.IAMPORT_SECRET,
+            });
+            const { access_token } = token.data.response;
+
+            const getCancelPaid = await axios.post(
                 'https://api.iamport.kr/payments/cancel',
-                { imp_uid, amount },
-                { headers: { Authorization: token } },
+                { imp_uid: impUid },
+                { headers: { Authorization: access_token } },
             );
-            if (result.data.response.cancel_amount !== amount)
-                throw new UnprocessableEntityException('입력하신 내용이 결제 취소를 요청하신 금액과 일치하지 않습니다.')
-            return result.data.response.cancel_amount;
+            const { canceledRes } = getCancelPaid.data;
+
+            if (status === 'CANCEL') {
+                const cancelSubsUpdate = await this.paymentTransactionRepository.create({
+                    impUid,
+                    createdAt,
+                    amount: -amount,
+                    status: TRANSACTION_STATUS_ENUM.CANCEL,
+                    ...rest,
+                });
+                const cancelPayment = await this.paymentTransactionRepository.findOne({
+                    impUid,
+                });
+                if (cancelPayment)
+                    throw new UnprocessableEntityException('이미 취소된 결제 내역입니다.');
+                await this.paymentTransactionRepository.save(cancelSubsUpdate);
+            }
+            return canceledRes.data.response.cancel_amount;
         } catch (error) {
             throw new HttpException(
                 error.response.data.message,
