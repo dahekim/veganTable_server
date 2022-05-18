@@ -19,7 +19,7 @@
     ></script>
     <script>
       function requestPay() {
-        const myAmount = document.getElementById('qqq').value;
+        const myAmount = Number(document.getElementById('amount').value);
 
         const IMP = window.IMP; // 생략 가능
         IMP.init('imp80205067');
@@ -51,7 +51,7 @@
                 {
                   query: `
                     mutation {
-                      createPointTransaction(
+                      createPaymentTransaction(
                         impUid: "${rsp.imp_uid}",
                         amount: ${rsp.paid_amount}) {
                           id
@@ -61,8 +61,8 @@
                 },
                 {
                   headers: {
-                    Authorization:
-                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNoaWNAY28uaW8iLCJzdWIiOiI4ODAzYWNkNS03YzEwLTRkYWItOWNjZS1mZWMzZTgxNWZjMWYiLCJpYXQiOjE2NDk5MzA5MjYsImV4cCI6MTY0OTkzNDUyNn0.HXe1vX76Tmpaz-jELnfdLP-b0wCStAD7hME0UNHvSNA',
+                    authorization:
+                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImIxMDJAcXdlci5jb20iLCJzdWIiOiIwYThjNzcxYi1hZjc4LTQyMWYtOGFiMy1hY2JkMjAxYjEyMDMiLCJpYXQiOjE2NTI4NzM2MTgsImV4cCI6MTY1Mjg3NzIxOH0.Oi-8CVC52Ce1As0E7bKMzEBMmdd33fAOQMQ392tSZZI',
                   },
                 },
               );
@@ -79,7 +79,7 @@
     </script>
   </head>
   <body>
-    결제금액: <input type="text" id="qqq" />
+    결제금액: <input type="text" id="amount" />
     <button onclick="requestPay()">결제하기</button>
   </body>
 </html>

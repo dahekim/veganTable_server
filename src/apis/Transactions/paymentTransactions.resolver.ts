@@ -30,25 +30,20 @@ export class PaymentTransactionResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
     async createPaymentTransaction(
-        @Args('imp_Uid') impUid: string,
+        @Args('impUid') impUid: string,
         @Args('amount') amount: number,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        try {
-            const getToken = await this.iamportService.getToken({ impUid: impUid })
-        } catch {
-            throw new console.error();
-        }
         return await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
     async cancelTransaction(
-        @Args('imp_Uid') impUid: string,
+        @Args('impUid') impUid: string,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return this.iamportService.cancel({ impUid })
+        return this.iamportService.cancel({ impUid, currentUser })
     }
 
 

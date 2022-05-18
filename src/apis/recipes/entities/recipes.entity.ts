@@ -1,5 +1,5 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { BaseEntity, Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum CATEGORY_TYPES {
     ALL = 'ALL',

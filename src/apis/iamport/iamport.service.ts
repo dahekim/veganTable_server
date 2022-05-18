@@ -22,7 +22,7 @@ export class IamportService {
                 `https://api.iamport.kr/payments/${impUid}`,
                 {
                     headers: {
-                        Authorization: `Bearer ${access_token}`,
+                        authorization: `Bearer ${access_token}`,
                     },
                 },
             );
@@ -67,7 +67,7 @@ export class IamportService {
         }
     }
 
-    async cancel({ impUid }) {
+    async cancel({ impUid, currentUser }) {
         const impUsedinfo = await this.paymentTransactionRepository.findOne({ impUid })
         const { id, amount, status, createdAt, ...rest } = impUsedinfo;
         try {
@@ -94,6 +94,7 @@ export class IamportService {
                 });
                 const cancelPayment = await this.paymentTransactionRepository.findOne({
                     impUid,
+                    id: currentUser.user_id,
                 });
                 if (cancelPayment)
                     throw new UnprocessableEntityException('이미 취소된 결제 내역입니다.');
