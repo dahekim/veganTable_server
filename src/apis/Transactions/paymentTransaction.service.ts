@@ -42,15 +42,13 @@ export class PaymentTransactionService {
 
         try {
             // 1. Trasaction 테이블에 거래 기록 1줄 생성
-            const paymentTransaction = this.paymentTransactionRepository.create({
+            const paymentTransaction = this.paymentTransactionRepository.save({
                 impUid,
                 amount,
                 user: currentUser,
                 status: TRANSACTION_STATUS_ENUM.PAYMENT,
             });
             await queryRunner.manager.save(paymentTransaction);
-
-
 
             // 2. 사용자 정보 확인
             const user = await queryRunner.manager.findOne(

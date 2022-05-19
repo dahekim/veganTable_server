@@ -9,6 +9,9 @@ export class IamportService {
     constructor(
         @InjectRepository(PaymentTransaction)
         private readonly paymentTransactionRepository: Repository<PaymentTransaction>,
+
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
     ) { }
     async getToken({ impUid }) {
         try {
