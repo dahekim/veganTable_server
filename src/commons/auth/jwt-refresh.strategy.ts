@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager'
+import {  CACHE_MANAGER, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
-    constructor() {
+    constructor(
+        @Inject(CACHE_MANAGER)
+        private readonly cacheManager: Cache,
+    ) {
         super({
             jwtFromRequest: (req) => {
-                console.log(req)
                 const refreshToken = req.headers.cookie.replace("refreshToken=", "")
                 console.log(refreshToken)
                 return refreshToken
@@ -16,6 +19,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
             passReqToCallback: true,
         })
     }
+
 
     validate(req, payload: any) {
         return {

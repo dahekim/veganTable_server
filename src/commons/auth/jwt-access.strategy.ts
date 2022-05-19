@@ -12,7 +12,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, "access") {
     super({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.ACCESS_TOKEN,
-        passReqTocCallback: true,
+        passReqToCallback: true,
     })
 }
 
