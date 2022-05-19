@@ -20,11 +20,8 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
         })
     }
 
-    async validate(req, payload) {
-        const refreshToken = req.headers.cookie.replace("refreshToken=", "")
-        if (await this.cacheManager.get(`refreshToken:${refreshToken}`)) {
-            throw new UnauthorizedException('이미 로그아웃된 사용자입니다');
-    }
+
+    validate(req, payload: any) {
         return {
             user_id: payload.sub,
             email: payload.email,

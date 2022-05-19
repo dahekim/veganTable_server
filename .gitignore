@@ -38,9 +38,9 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 node_modules
+*.zip
+.env*
 gcp-vegan-project.json
-.env
-.env.dev
 
 
 

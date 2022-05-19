@@ -2,8 +2,9 @@ import { ConflictException, HttpException, Injectable, UnprocessableEntityExcept
 import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { Repository } from "typeorm";
-import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "../Transactions/entities/paymentTransaction.entity";
+import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "../transactions/entities/paymentTransaction.entity";
 import { User } from "../user/entities/user.entity";
+
 @Injectable()
 export class IamportService {
     constructor(

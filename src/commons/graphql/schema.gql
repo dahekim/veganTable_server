@@ -7,12 +7,13 @@ type User {
   email: String!
   name: String!
   phone: String!
+  address: String!
   type: VEGAN_TYPE!
   nickname: String
   isPro: CLASS_TYPE
   isSubs: Boolean
+  SubsHistory: String!
   profilePic: String
-  point: Int!
 }
 
 enum VEGAN_TYPE {
@@ -77,6 +78,7 @@ enum COOKING_LEVEL {
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
+  fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
   fetchRecipe(recipe_id: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
@@ -88,8 +90,11 @@ type Mutation {
   restoreAccessToken: String!
   logout: String!
   createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  getToken(phone: String!): String!
+  checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+  deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
@@ -104,6 +109,7 @@ input UpdateUserInput {
 }
 
 input UpdateUserDetailInput {
+  address: String
   type: String
   nickname: String
   isPro: String
