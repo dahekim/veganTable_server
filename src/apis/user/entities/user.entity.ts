@@ -53,17 +53,12 @@ export class User {
     @Field(() => String!)
     phone: string
 
-<<<<<<< HEAD
-    @Column({ type: "enum", enum: VEGAN_TYPE, default: null })
-    @Field(() => VEGAN_TYPE)
-=======
-    @Column({default: null})
-    @Field(()=>String)
+    @Column({ default: null })
+    @Field(() => String)
     address?: string
 
-    @Column({type: "enum", enum: VEGAN_TYPE, default: null })
-    @Field(()=>VEGAN_TYPE)
->>>>>>> 2eedc02e8deb9c472ff6f5d6cee28c73b82179b3
+    @Column({ type: "enum", enum: VEGAN_TYPE, default: null })
+    @Field(() => VEGAN_TYPE)
     type?: string
 
     @Column({ nullable: true })
@@ -78,8 +73,8 @@ export class User {
     @Field(() => Boolean, { nullable: true })
     isSubs?: boolean
 
-    @Column({default: null})
-    @Field(()=>String)
+    @Column({ default: null })
+    @Field(() => String)
     SubsHistory?: string
 
     @Column({ default: null, nullable: true })
@@ -94,15 +89,4 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date
-<<<<<<< HEAD
-
-    // @Column({default: null})
-    // @Field(()=>String)
-    // SubsHistory?: string
-
-    @Column({ default: 0 })
-    @Field(() => Int)
-    point?: number
-=======
->>>>>>> 2eedc02e8deb9c472ff6f5d6cee28c73b82179b3
 }

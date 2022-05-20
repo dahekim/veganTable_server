@@ -6,6 +6,7 @@ import { IamportService } from "../iamport/iamport.service";
 import { PaymentTransaction } from "./entities/paymentTransaction.entity";
 import { PaymentTransactionService } from "./paymentTransaction.service";
 
+
 @Resolver()
 export class PaymentTransactionResolver {
     constructor(
@@ -34,7 +35,7 @@ export class PaymentTransactionResolver {
         @Args('amount') amount: number,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        const token = await this.iamportService.getToken();
+        const token = await this.iamportService.getToken({ impUid });
         this.iamportService.checkPaid({ impUid, amount, token });
 
         await this.paymentTransactionService.checkDuplicate({ impUid });
@@ -52,7 +53,7 @@ export class PaymentTransactionResolver {
             impUid,
             currentUser,
         })
-        const token = await this.iamportService.getToken();
+        const token = await this.iamportService.getToken({ impUid });
         const canceledAmount = await this.iamportService.cancel({
             impUid,
             token,
