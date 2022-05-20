@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
     vegan-backend: 
-        # image: asia.gcr.io/vegan-project-350105/vegan-backen:0.0.01
+        # image: asia.gcr.io/vegan-project-350105/vegan-backen:0.0.1
         build:
             context: .
             dockerfile: Dockerfile

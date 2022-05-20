@@ -20,7 +20,6 @@ export class UserResolver{
     async fetchUser(
         @CurrentUser() currentUser: ICurrentUser,
     ){
-        console.log("💖 💖 💖 회원정보 조회합니다" + currentUser)
         const email = currentUser.email
         return await this.userService.findOne({email})
     }
@@ -28,9 +27,14 @@ export class UserResolver{
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [User])
     async fetchUsers(){
-        console.log("🧡 🧡 🧡 회원정보 죄다 불러와요!")
         return await this.userService.findAll()
-}
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Query(() => [User])
+    fetchUsersWithDel() {
+        return this.userService.findWithDelete()
+    }
 
     @Mutation(()=> User)
     async createUser(
@@ -43,21 +47,43 @@ export class UserResolver{
         return this.userService.create({email, hashedPassword, name, phone})
     }
 
+    @Mutation(() => String)
+    async getToken(@Args('phone') phone: string,){
+        return await this.userService.sendTokenToSMS({phone})
+    }
+
+    @Mutation(()=>String)
+    async checkValidToken(
+        @Args('phone') phone: string,
+        @Args('token') token: string, 
+    ){
+        return await this.userService.isMatch({phone, token})
+    }
+
+
+    @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> User)
     async updateUser(
         @Args('user_id') user_id: string,
         @Args('updateUserInput') updateUserInput: UpdateUserInput,
     ){
-        console.log("❤️‍🔥❤️‍🔥❤️‍🔥 회원정보 수정 완료!")
         return this.userService.update({user_id, updateUserInput})
     }
 
+    @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)
     async updateUserDetail(
         @Args('user_id') user_id: string,
         @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
     ){
-        console.log("💘 💘 💘 회원정보 추가 기입 완료!")
         return this.userService.update({user_id, updateUserInput})
+    }
+    
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(()=>User)
+    async deleteUser(
+        @Args('user_id') user_id: string,
+    ){
+        return this.userService.delete({user_id})
     }
 }

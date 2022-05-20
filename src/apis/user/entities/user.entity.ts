@@ -53,8 +53,17 @@ export class User {
     @Field(() => String!)
     phone: string
 
+<<<<<<< HEAD
     @Column({ type: "enum", enum: VEGAN_TYPE, default: null })
     @Field(() => VEGAN_TYPE)
+=======
+    @Column({default: null})
+    @Field(()=>String)
+    address?: string
+
+    @Column({type: "enum", enum: VEGAN_TYPE, default: null })
+    @Field(()=>VEGAN_TYPE)
+>>>>>>> 2eedc02e8deb9c472ff6f5d6cee28c73b82179b3
     type?: string
 
     @Column({ nullable: true })
@@ -69,8 +78,11 @@ export class User {
     @Field(() => Boolean, { nullable: true })
     isSubs?: boolean
 
-    // 프로필 이미지 추가 예정
-    @Column({ nullable: true })
+    @Column({default: null})
+    @Field(()=>String)
+    SubsHistory?: string
+
+    @Column({ default: null, nullable: true })
     @Field(() => String, { nullable: true })
     profilePic: string;
 
@@ -82,6 +94,7 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date
+<<<<<<< HEAD
 
     // @Column({default: null})
     // @Field(()=>String)
@@ -90,4 +103,6 @@ export class User {
     @Column({ default: 0 })
     @Field(() => Int)
     point?: number
+=======
+>>>>>>> 2eedc02e8deb9c472ff6f5d6cee28c73b82179b3
 }

@@ -76,7 +76,7 @@ export class PaymentTransactionService {
             // );
             const updatedUser = await this.userRepository.create({
                 ...user,
-                point: user.point + amount
+                // point: user.point + amount
             });
             // this.userRepository.save(updatedUser);
             await queryRunner.manager.save(updatedUser);

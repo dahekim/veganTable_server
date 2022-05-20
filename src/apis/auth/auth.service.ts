@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../user/user.service'
 
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -27,6 +28,7 @@ export class AuthService {
         // 'Set-Cookie',
         // `refreshToken=${refreshToken}
         // )
+
     }
 
     async socialLogin({ req, res }) {
@@ -34,18 +36,18 @@ export class AuthService {
             email: req.user.email,
         })
         if (!user) {
-            user = await this.userService.create({
+            user = await this.userService.createSocial({
                 email: req.user.email,
                 hashedPassword: req.user.password,
                 name: req.user.name,
                 phone: req.user.phone,
             })
-
         }
         this.setRefreshToken({ user, res })
         res.redirect(
             302,
             "http://localhost:5501/frontend/login/index.html",
         )
-    }
+    };
 }
+
