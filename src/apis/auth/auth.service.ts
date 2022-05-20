@@ -22,14 +22,14 @@ export class AuthService {
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' }, )
         
         // 개발환경
-        // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
+        res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
 
         // 배포환경
-        res.setHeader('Access-Control-Allow-Origin', 'http://itoutsider.shop')
-        res.setHeader(
-            'Set-Cookie',
-            `refreshToken=${refreshToken}`
-            )
+        // res.setHeader('Access-Control-Allow-Origin', 'http://itoutsider.shop')
+        // res.setHeader(
+        //     'Set-Cookie',
+        //     `refreshToken=${refreshToken}`
+        //     )
         }
 
 async socialLogin({req, res}) {
