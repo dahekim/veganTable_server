@@ -7,12 +7,12 @@ type User {
   email: String!
   name: String!
   phone: String!
-  address: String!
+  address: String
   type: VEGAN_TYPE!
   nickname: String
   isPro: CLASS_TYPE
   isSubs: Boolean
-  SubsHistory: String!
+  SubsHistory: String
   profilePic: String
 }
 

@@ -54,7 +54,7 @@ export class User{
     phone: string
 
     @Column({default: null})
-    @Field(()=>String)
+    @Field(()=>String, { nullable: true })
     address?: string
 
     @Column({type: "enum", enum: VEGAN_TYPE, default: null })
@@ -74,7 +74,7 @@ export class User{
     isSubs?: boolean
 
     @Column({default: null})
-    @Field(()=>String)
+    @Field(()=>String, { nullable: true })
     SubsHistory?: string
 
     @Column({ default: null, nullable: true })
