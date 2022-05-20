@@ -36,7 +36,6 @@ type PaymentTransaction {
   status: TRANSACTION_STATUS_ENUM!
   user: User!
   createdAt: DateTime!
-  deletedAt: DateTime!
 }
 
 enum TRANSACTION_STATUS_ENUM {

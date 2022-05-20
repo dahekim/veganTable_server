@@ -15,11 +15,11 @@ import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy'
 
 
 @Module({
-    imports:[ 
-        JwtModule.register({}), 
+    imports: [
+        JwtModule.register({}),
         TypeOrmModule.forFeature([User])
     ],
-    providers:[
+    providers: [
         JwtKakaoStrategy,
         JwtNaverStrategy,
         JwtGoogleStrategy,
@@ -28,8 +28,8 @@ import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy'
         AuthService,
         UserService,
     ],
-    controllers:[
+    controllers: [
         AuthController
     ],
 })
-export class AuthModule{}
+export class AuthModule { }

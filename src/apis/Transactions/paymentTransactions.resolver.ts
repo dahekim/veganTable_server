@@ -34,6 +34,10 @@ export class PaymentTransactionResolver {
         @Args('amount') amount: number,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
+        const token = await this.iamportService.getToken();
+        this.iamportService.checkPaid({ impUid, amount, token });
+
+        await this.paymentTransactionService.checkDuplicate({ impUid });
         return await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
     }
 
@@ -43,7 +47,22 @@ export class PaymentTransactionResolver {
         @Args('impUid') impUid: string,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return this.iamportService.cancel({ impUid, currentUser })
+        await this.paymentTransactionService.checkAlreadyCanceled({ impUid });
+        await this.paymentTransactionService.checkHasCancelableAmount({
+            impUid,
+            currentUser,
+        })
+        const token = await this.iamportService.getToken();
+        const canceledAmount = await this.iamportService.cancel({
+            impUid,
+            token,
+        });
+        return await this.paymentTransactionService.cancelTransaction({
+            impUid,
+            amount: canceledAmount,
+            currentUser,
+        });
+        // return this.paymentTransactionService.cancelTransaction({ impUid, amount, currentUser })
     }
 
 
