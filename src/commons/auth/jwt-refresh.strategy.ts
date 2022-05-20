@@ -1,5 +1,5 @@
 import { Cache } from 'cache-manager'
-import {  CACHE_MANAGER, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 
@@ -17,7 +17,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
             },
             secretOrKey: process.env.REFRESH_TOKEN,
             passReqToCallback: true,
-        })
+        });
     }
 
 
@@ -25,6 +25,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
         return {
             user_id: payload.sub,
             email: payload.email,
-        }
+        };
     }
 }

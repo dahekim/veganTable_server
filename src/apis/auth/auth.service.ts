@@ -19,16 +19,17 @@ export class AuthService {
     setRefreshToken({ user, res }) {
         const refreshToken = this.jwtService.sign(
             { email: user.email, sub: user.user_id },
-            { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' });
-        res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/;`);
+            { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' })
+
+        // 개발환경
+        res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/;`)
 
         // 배포환경
-        // res.setHeader('Access-Control-Allow-Origin', 'url')
+        // res.setHeader('Access-Control-Allow-Origin', 'http://itoutsider.shop')
         // res.setHeader(
-        // 'Set-Cookie',
-        // `refreshToken=${refreshToken}
+        //     'Set-Cookie',
+        //     `refreshToken=${refreshToken}`
         // )
-
     }
 
     async socialLogin({ req, res }) {

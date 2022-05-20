@@ -23,10 +23,15 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        origin: 'http://itoutsider.shop',
+        credentials: true,
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'vegan-database',
+      // host: 'vegan-database',
+      host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',
