@@ -14,22 +14,21 @@ import { UserModule } from './apis/user/user.module';
 
 import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
 
-
 @Module({
   imports: [
     AuthModule,
     UserModule,
     RecipesModule,
-    JwtRefreshStrategy,
+    // JwtRefreshStrategy,
     PaymentTransactionModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
-      cors: {
-        origin: 'http://itoutsider.shop',
-        credentials: true,
-      },
+      // cors: {
+      //   origin: 'http://itoutsider.shop',
+      //   credentials: true,
+      // },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

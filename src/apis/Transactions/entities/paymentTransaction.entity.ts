@@ -1,7 +1,7 @@
-import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql"
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/apis/user/entities/user.entity";
 
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
 export enum TRANSACTION_STATUS_ENUM {
     PAYMENT = 'PAYMENT',
@@ -19,7 +19,7 @@ export class PaymentTransaction { // Payment is Insert ONLY, not for Update and 
     id: string;
 
     @Column()
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     impUid: string;
 
     @Column()

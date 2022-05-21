@@ -32,7 +32,7 @@ enum CLASS_TYPE {
 
 type PaymentTransaction {
   id: String!
-  impUid: String
+  impUid: String!
   amount: Int!
   status: TRANSACTION_STATUS_ENUM!
   user: User!
@@ -98,8 +98,8 @@ type Mutation {
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
-  createPaymentTransaction(imp_Uid: String!, amount: Float!): PaymentTransaction!
-  cancelTransaction(imp_Uid: String!): PaymentTransaction!
+  createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
+  cancelTransaction(impUid: String!): PaymentTransaction!
 }
 
 input UpdateUserInput {

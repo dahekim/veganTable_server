@@ -6,11 +6,12 @@ import { IamportService } from "../iamport/iamport.service";
 import { PaymentTransaction } from "./entities/paymentTransaction.entity";
 import { PaymentTransactionService } from "./paymentTransaction.service";
 
+
 @Resolver()
 export class PaymentTransactionResolver {
     constructor(
         private readonly paymentTransactionService: PaymentTransactionService,
-        private readonly iamportService: IamportService,
+        private readonly iamportService: IamportService
     ) { }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -30,25 +31,27 @@ export class PaymentTransactionResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
     async createPaymentTransaction(
-        @Args('imp_Uid') impUid: string,
+        @Args('impUid') impUid: string,
         @Args('amount') amount: number,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        try {
-            const getToken = await this.iamportService.getToken({ impUid: impUid })
-        } catch {
-            throw new console.error();
-        }
+        await this.iamportService.getToken({ impUid });
         return await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
     async cancelTransaction(
-        @Args('imp_Uid') impUid: string,
+        @Args('impUid') impUid: string,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return this.iamportService.cancel({ impUid })
+        await this.paymentTransactionService.checkAlreadyCanceled({ impUid });
+        await this.paymentTransactionService.checkHasCancelableAmount({
+            impUid,
+            currentUser,
+        })
+        return this.iamportService.cancel({ impUid });
+        // return this.paymentTransactionService.cancelTransaction({ impUid, amount, currentUser })
     }
 
 

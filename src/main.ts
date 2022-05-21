@@ -7,10 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalFilters(new HttpExceptionFilter())
   app.use(graphqlUploadExpress())
-  app.enableCors({
-    origin: 'http://itoutsider.shop',
-    credentials: true,
-  })
+  // app.enableCors({
+  //   origin: 'http://itoutsider.shop',
+  //   credentials: true,
+  // })
 
   await app.listen(3000)
 }
