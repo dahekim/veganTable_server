@@ -9,21 +9,18 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, "access") {
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
     ) {
-    super({
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: process.env.ACCESS_TOKEN,
-        passReqToCallback: true,
-    })
-}
-
-async validate(req,payload) {
-    const accessToken = req.headers.authorization.split(" ")[1]
-    let isExist = await this.cacheManager.get(`accessToken:${accessToken}`)
-    if (isExist) {
-        throw new UnauthorizedException('로그아웃된 사용자입니다')
+        super({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey: process.env.ACCESS_TOKEN,
+            passReqToCallback: true,
+        })
     }
-    return {
-        user_id: payload.sub,
-        email: payload.email,
-    } }
+
+    async validate(req, payload) {
+        const accessToken = req.headers.authorization.split(" ")[1]
+        let isExist = await this.cacheManager.get(`accessToken:${accessToken}`)
+        if (isExist) {
+            throw new UnauthorizedException('로그아웃된 사용자입니다')
+        }
+    }
 }
