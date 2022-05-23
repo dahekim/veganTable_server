@@ -1,11 +1,7 @@
-import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql"
 import { User } from "src/apis/user/entities/user.entity";
-<<<<<<< HEAD
 
-=======
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
->>>>>>> f8ab6ddaf72cf1441653d9ed00153613435f45de
 
 export enum TRANSACTION_STATUS_ENUM {
     PAYMENT = 'PAYMENT',
@@ -32,14 +28,13 @@ export class PaymentTransaction { // Payment is Insert ONLY, not for Update and 
 
     @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM }) // paid, canceled... 
     @Field(() => TRANSACTION_STATUS_ENUM)
-    status: TRANSACTION_STATUS_ENUM;
+    status: string;
 
     @ManyToOne(() => User)
     @Field(() => User)
     user: User;
 
     @CreateDateColumn()
-    @Field(() => Date)
     createdAt: Date;
 
 }
