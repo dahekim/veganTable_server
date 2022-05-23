@@ -38,7 +38,7 @@ export class User{
     @Field(()=>String)
     user_id!: string
     
-    @Column({ unique: true, nullable: false })
+    @Column({ nullable: false })
     @Field(()=> String!)
     email!: string
 
@@ -49,7 +49,7 @@ export class User{
     @Field(()=>String!)
     name!: string
 
-    @Column({ unique: true })
+    @Column()
     @Field(()=> String!)
     phone: string
 
