@@ -12,14 +12,14 @@ export class RecipesResolver {
 
     @Query(() => [Recipes])
     fetchRecipes() {
-        return this.recipesService.findAll();
+        return this.recipesService.fetchRecipesAlll();
     }
 
     @Query(() => Recipes)
     fetchRecipe(
-        @Args('recipe_id') id: string,
+        @Args('userid') user_id: string,
     ) {
-        return this.recipesService.findOne({ id, });
+        return this.recipesService.fetchRecipesTitlewithUserid({ user_id });
     }
 
     @Mutation(() => Recipes)
