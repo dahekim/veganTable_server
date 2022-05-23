@@ -37,13 +37,13 @@ export class UserService{
 
     async create({ email, hashedPassword: password, name, phone }){
         const user = await this.userRepository.findOne({ email })
-        // if(user) throw new ConflictException("이미 등록된 이메일입니다.")
+        if(user) throw new ConflictException("이미 등록된 이메일입니다.")
         return await this.userRepository.save({ email, password, name, phone })
     }
 
     async createSocial({email, hashedPassword:password, name, phone }){
         const user = await this.userRepository.findOne({ email })
-        // if(user) throw new ConflictException("이미 등록된 소셜 계정입니다.")
+        if(user) throw new ConflictException("이미 등록된 소셜 계정입니다.")
         return await this.userRepository.save({email, password, name, phone })
     }
 
