@@ -8,7 +8,7 @@ type User {
   name: String!
   phone: String!
   address: String
-  type: VEGAN_TYPE!
+  type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
   isSubs: Boolean
@@ -90,6 +90,8 @@ type Mutation {
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+  uploadProfileImage(file: Upload!): User!
+  deleteProfileImage: User!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
@@ -112,6 +114,9 @@ input UpdateUserDetailInput {
   isSubs: Boolean
   profilePic: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input CreateRecipesInput {
   title: String!

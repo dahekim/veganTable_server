@@ -13,21 +13,34 @@ export enum CLASS_TYPE {
     COMMON = 'COMMON',
 }
 
-export enum VEGAN_TYPE {
-    VEGAN = 'VEGAN',
-    LACTO = 'LACTO',
-    OVO = 'OVO',
-    LACTO_OVO = 'LACTO_OVO',
-    PESCO = 'PESCO',
-    POLLO = 'POLLO',
+
+
+export enum VEGAN_TYPE{
+    NON_VEGAN='NON_VEGAN',
+    VEGAN='VEGAN',
+    LACTO='LACTO',
+    OVO='OVO',
+    LACTO_OVO='LACTO_OVO',
+    PESCO='PESCO',
+    POLLO='POLLO',
 }
 
-registerEnumType(CLASS_TYPE, {
+export enum SUB_TYPE{
+    NON_SUB='NON_SUB',
+    BASIC='BASIC',
+    PREMIUM='PREMIUM',
+}
+
+registerEnumType( CLASS_TYPE, {
     name: 'CLASS_TYPE',
 })
 
 registerEnumType(VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
+})
+
+registerEnumType( SUB_TYPE, {
+    name: 'SUB_TYPE',
 })
 
 
@@ -38,8 +51,8 @@ export class User {
     @Field(() => String)
     user_id!: string
 
-    @Column({ unique: true, nullable: false })
-    @Field(() => String!)
+    @Column({ nullable: false })
+    @Field(()=> String!)
     email!: string
 
     @Column({ nullable: true })
@@ -49,16 +62,17 @@ export class User {
     @Field(() => String!)
     name!: string
 
-    @Column({ unique: true })
-    @Field(() => String!)
+
+    @Column()
+    @Field(()=> String!)
     phone: string
 
     @Column({ default: null })
     @Field(() => String, { nullable: true })
     address?: string
 
-    @Column({ type: "enum", enum: VEGAN_TYPE, default: null })
-    @Field(() => VEGAN_TYPE)
+    @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
+    @Field(()=>VEGAN_TYPE, {nullable: true})
     type?: string
 
     @Column({ nullable: true })
@@ -69,13 +83,24 @@ export class User {
     @Field(() => CLASS_TYPE, { nullable: true })
     isPro?: string
 
-    @Column({ default: false })
-    @Field(() => Boolean, { nullable: true })
-    isSubs?: boolean
+    @Column({type: "enum", enum: SUB_TYPE, default: SUB_TYPE.NON_SUB})
+    @Field(()=>SUB_TYPE, { nullable: true })
+    isSubs?: string
 
-    @Column({ default: null })
-    @Field(() => String, { nullable: true })
-    SubsHistory?: string
+    // 구독 개월 수
+    @Column({default: 0 })
+    @Field(()=>Int, { nullable: true })
+    SubsHistory?: number
+
+    // 시작 날짜
+    @Column({default: null})
+    @Field(()=>Date, {nullable: true})
+    startDate?: Date
+
+    // 종료 날짜
+    @Column({default: null})
+    @Field(()=> Date, {nullable: true})
+    endDate?: Date
 
     @Column({ default: null, nullable: true })
     @Field(() => String, { nullable: true })
