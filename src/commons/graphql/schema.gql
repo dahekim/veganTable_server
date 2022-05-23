@@ -1,0 +1,136 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  user_id: String!
+  email: String!
+  name: String!
+  phone: String!
+  address: String
+  type: VEGAN_TYPE!
+  nickname: String
+  isPro: CLASS_TYPE
+  isSubs: Boolean
+  SubsHistory: String
+  profilePic: String
+}
+
+enum VEGAN_TYPE {
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum CLASS_TYPE {
+  PRO
+  COMMON
+}
+
+type PaymentTransaction {
+  id: String!
+  impUid: String!
+  amount: Int!
+  status: TRANSACTION_STATUS_ENUM!
+  user: User!
+}
+
+enum TRANSACTION_STATUS_ENUM {
+  PAYMENT
+  CANCEL
+}
+
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: Int!
+  level: COOKING_LEVEL!
+  ingrediants: String!
+  recipesPic: String
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
+type Query {
+  fetchUser: User!
+  fetchUsers: [User!]!
+  fetchUsersWithDel: [User!]!
+  fetchRecipes: [Recipes!]!
+  fetchRecipe(recipe_id: String!): Recipes!
+  fetchTransactionAll: [PaymentTransaction!]!
+  fetchimpUidwithUserid(userid: String!): PaymentTransaction!
+}
+
+type Mutation {
+  login(email: String!, password: String!): String!
+  restoreAccessToken: String!
+  logout: String!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  getToken(phone: String!): String!
+  checkValidToken(phone: String!, token: String!): String!
+  updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
+  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+  deleteUser(user_id: String!): User!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  deleteRecipe(recipe_id: String!): Boolean!
+  createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
+  cancelPaymentTransaction(impUid: String!): PaymentTransaction!
+}
+
+input UpdateUserInput {
+  password: String
+  name: String
+  phone: String
+}
+
+input UpdateUserDetailInput {
+  address: String
+  type: String
+  nickname: String
+  isPro: String
+  isSubs: Boolean
+  profilePic: String
+}
+
+input CreateRecipesInput {
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cooktime: Int!
+  level: COOKING_LEVEL!
+  ingrediants: String!
+  recipesPic: String
+}
+
+input UpdateRecipesInput {
+  title: String
+  summary: String
+  types: CATEGORY_TYPES
+  desc: String
+  cooktime: Int
+  level: COOKING_LEVEL
+  ingrediants: String
+  recipesPic: String
+}
