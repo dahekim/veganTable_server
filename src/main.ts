@@ -8,8 +8,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter())
   app.use(graphqlUploadExpress())
   app.enableCors({
-    origin: true,
-    // origin: 'http://localhost:3000',
+    // origin: true,
+    origin: 'http://localhost:3000',
     // frontend 배포 되면
     // origin: 'https://domain-url',
     credentials: true,

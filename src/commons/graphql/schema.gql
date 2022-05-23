@@ -97,7 +97,6 @@ type Mutation {
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
   uploadProfileImage(file: Upload!): User!
-  updateProfileImage: User!
   deleteProfileImage: User!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
