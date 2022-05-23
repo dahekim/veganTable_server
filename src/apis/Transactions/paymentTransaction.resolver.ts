@@ -3,14 +3,14 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
 import { IamportService } from "../iamport/iamport.service";
-import { PaymentTransaction } from "./entities/paymentTransaction.entity";
-import { PaymentTransactionService } from "./paymentTransaction.service";
+import { PaymentTransaction } from "../Transactions/entities/paymentTransaction.entity";
+import { PaymentTransactionService } from "../Transactions/paymentTransaction.service";
 
 @Resolver()
 export class PaymentTransactionResolver {
     constructor(
         private readonly paymentTransactionService: PaymentTransactionService,
-        private readonly iamportService: IamportService,
+        private readonly iamportService: IamportService
     ) { }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -30,26 +30,36 @@ export class PaymentTransactionResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
     async createPaymentTransaction(
-        @Args('imp_Uid') impUid: string,
+        @Args('impUid') impUid: string,
         @Args('amount') amount: number,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        try {
-            const getToken = await this.iamportService.getToken({ impUid: impUid })
-        } catch {
-            throw new console.error();
-        }
+        const token = await this.iamportService.getToken();
+        await this.iamportService.checkPaid({ impUid, amount, token });
+        await this.paymentTransactionService.checkDuplicate({ impUid });
         return await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => PaymentTransaction)
-    async cancelTransaction(
-        @Args('imp_Uid') impUid: string,
+    async cancelPaymentTransaction(
+        @Args('impUid') impUid: string,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return this.iamportService.cancel({ impUid })
+        await this.paymentTransactionService.checkAlreadyCanceled({ impUid });
+        await this.paymentTransactionService.checkHasCancelableStatus({
+            impUid,
+            currentUser,
+        });
+        const token = await this.iamportService.getToken();
+        const canceldAmount = await this.iamportService.cancel({
+            impUid,
+            token,
+        });
+        return await this.paymentTransactionService.cancelTransaction({
+            impUid,
+            amount: canceldAmount,
+            currentUser,
+        });
     }
-
-
 }

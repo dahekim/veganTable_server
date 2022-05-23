@@ -19,23 +19,22 @@ export class PaymentTransaction { // Payment is Insert ONLY, not for Update and 
     id: string;
 
     @Column()
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     impUid: string;
 
     @Column()
-    @Field(() => Int)
+    @Field(() => Int, { defaultValue: 0 })
     amount: number;
 
     @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM }) // paid, canceled... 
     @Field(() => TRANSACTION_STATUS_ENUM)
-    status: TRANSACTION_STATUS_ENUM;
+    status: string;
 
     @ManyToOne(() => User)
     @Field(() => User)
     user: User;
 
     @CreateDateColumn()
-    @Field(() => Date)
     createdAt: Date;
 
 }

@@ -11,23 +11,23 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload'
 
 
 @Resolver()
-export class UserResolver{
+export class UserResolver {
     constructor(
         private readonly userService: UserService,
-    ){}
+    ) { }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Query(()=>User)
+    @Query(() => User)
     async fetchUser(
         @CurrentUser() currentUser: ICurrentUser,
-    ){
+    ) {
         const email = currentUser.email
-        return await this.userService.findOne({email})
+        return await this.userService.findOne({ email })
     }
-    
+
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [User])
-    async fetchUsers(){
+    async fetchUsers() {
         return await this.userService.findAll()
     }
 
@@ -37,49 +37,49 @@ export class UserResolver{
         return this.userService.findWithDelete()
     }
 
-    @Mutation(()=> User)
+    @Mutation(() => User)
     async createUser(
-        @Args('email') email: string, 
-        @Args('password') password: string, 
+        @Args('email') email: string,
+        @Args('password') password: string,
         @Args('name') name: string,
         @Args('phone') phone: string,
-    ){
+    ) {
         const hashedPassword = await bcrypt.hash(password, 10)
-        return this.userService.create({email, hashedPassword, name, phone})
+        return this.userService.create({ email, hashedPassword, name, phone })
     }
 
     @Mutation(() => String)
-    async getToken(@Args('phone') phone: string,){
-        return await this.userService.sendTokenToSMS({phone})
+    async getToken(@Args('phone') phone: string,) {
+        return await this.userService.sendTokenToSMS({ phone })
     }
 
-    @Mutation(()=>String)
+    @Mutation(() => String)
     async checkValidToken(
         @Args('phone') phone: string,
-        @Args('token') token: string, 
-    ){
-        return await this.userService.isMatch({phone, token})
+        @Args('token') token: string,
+    ) {
+        return await this.userService.isMatch({ phone, token })
     }
 
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=> User)
+    @Mutation(() => User)
     async updateUser(
         @Args('user_id') user_id: string,
         @Args('updateUserInput') updateUserInput: UpdateUserInput,
-    ){
-        return this.userService.update({user_id, updateUserInput})
+    ) {
+        return this.userService.update({ user_id, updateUserInput })
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=>User)
+    @Mutation(() => User)
     async updateUserDetail(
         @Args('user_id') user_id: string,
         @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
-    ){
-        return this.userService.update({user_id, updateUserInput})
+    ) {
+        return this.userService.update({ user_id, updateUserInput })
     }
-    
+
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)
     async uploadProfileImage(
@@ -88,16 +88,9 @@ export class UserResolver{
         return await this.userService.upload({ file });
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=>User)
-    deleteProfileImage(){
-    }
-
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=>User)
     async deleteUser(
         @Args('user_id') user_id: string,
-    ){
-        return this.userService.delete({user_id})
+    ) {
+        return this.userService.delete({ user_id })
     }
 }

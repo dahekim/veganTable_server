@@ -20,7 +20,7 @@ export class AuthResolver {
 
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
-    ) {}
+    ) { }
 
     @Mutation(() => String)
     async login(
@@ -28,26 +28,25 @@ export class AuthResolver {
         @Args('password') password: string,
         @Context() context: any,
     ) {
-    const user = await this.userService.findOne({ email })
-    if (!user) throw new UnprocessableEntityException("존재하지 않는 이메일입니다.")
+        const user = await this.userService.findOne({ email })
+        if (!user) throw new UnprocessableEntityException("존재하지 않는 이메일입니다.")
 
-    const isAuth = await bcrypt.compare(password, user.password)
-    if (!isAuth) throw new UnprocessableEntityException("비밀번호가 일치하지 않습니다.")
-    this.authService.setRefreshToken({ user, res: context.res })
-    
-    return this.authService.getAccessToken({ user })
+        const isAuth = await bcrypt.compare(password, user.password)
+        if (!isAuth) throw new UnprocessableEntityException("비밀번호가 일치하지 않습니다.")
+        this.authService.setRefreshToken({ user, res: context.res })
+
+        return this.authService.getAccessToken({ user })
     }
 
     @UseGuards(GqlAuthRefreshGuard)
     @Mutation(() => String)
-    restoreAccessToken(@CurrentUser() currentUser: ICurrentUser) 
-        {
+    restoreAccessToken(@CurrentUser() currentUser: ICurrentUser) {
         return this.authService.getAccessToken({ user: currentUser })
-        }
+    }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=> String)
-    async logout(@Context() context:any){
+    @Mutation(() => String)
+    async logout(@Context() context: any) {
         const accessToken = await context.req.headers.authorization.split(" ")[1]
         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
         const now = Date.parse(getToday()) / 1000
@@ -57,14 +56,14 @@ export class AuthResolver {
                 accessToken,
                 process.env.ACCESS_TOKEN,
                 async (payload) => {
-                const pay = payload.exp - now;
-                await this.cacheManager.set(`accessToken:${accessToken}`, accessToken, {
-                    ttl: pay,
-                })
-            },
+                    const pay = payload.exp - now;
+                    await this.cacheManager.set(`accessToken:${accessToken}`, accessToken, {
+                        ttl: pay,
+                    })
+                },
             )
-        } catch(error) {
-            if (error?.response?.data?.message){
+        } catch (error) {
+            if (error?.response?.data?.message) {
                 throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
             } else {
                 throw error
@@ -73,13 +72,13 @@ export class AuthResolver {
         try {
             jwt.verify(
                 refreshToken,
-                process.env.REFRESH_TOKEN_KEY,
+                process.env.REFRESH_TOKEN,
                 async (payload) => {
-                const pay = payload.exp - now
-                await this.cacheManager.set(`refreshToken:${refreshToken}`, refreshToken, {
-                    ttl: pay,
-                })
-            },
+                    const pay = payload.exp - now
+                    await this.cacheManager.set(`refreshToken:${refreshToken}`, refreshToken, {
+                        ttl: pay,
+                    })
+                },
             )
         } catch (error) {
             throw new UnauthorizedException(error);
@@ -87,5 +86,5 @@ export class AuthResolver {
         console.log("⭕️ 로그아웃 성공!")
         return "⭕️ 로그아웃 성공!"
     }
-    
+
 }
