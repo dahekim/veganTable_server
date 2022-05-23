@@ -22,12 +22,22 @@ export enum VEGAN_TYPE{
     POLLO='POLLO',
 }
 
+export enum SUB_TYPE{
+    NON_SUB='NON_SUB',
+    BASIC='BASIC',
+    PREMIUM='PREMIUM',
+}
+
 registerEnumType( CLASS_TYPE, {
     name: 'CLASS_TYPE',
 })
 
 registerEnumType( VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
+})
+
+registerEnumType( SUB_TYPE, {
+    name: 'SUB_TYPE',
 })
 
 
