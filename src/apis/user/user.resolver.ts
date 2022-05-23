@@ -90,17 +90,8 @@ export class UserResolver{
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)
-    updateProfileImage(){
-
-    }
-
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=>User)
     deleteProfileImage(){
-
     }
-    
-    
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)
