@@ -96,13 +96,13 @@ export class UserService{
         
         const appKey = process.env.SMS_APP_KEY
         const XSecretKey = process.env.SMS_X_SECRET_KEY
-        const sender = phone
 
+        await axios.post(
         try { await axios.post(
             `https://api-sms.cloud.toast.com/sms/v3.0/appKeys/${appKey}/sender/sms`,
             { 
                 body : `채식한상 가입 인증번호는 [${token}] 입니다.`,
-                sendNo : sender,
+                sendNo : process.env.SMS_SENDER,
                 recipientList : [ { internationalRecipientNo: phone } ]    
             },
             {
