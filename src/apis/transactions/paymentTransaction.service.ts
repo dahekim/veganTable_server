@@ -19,6 +19,8 @@ export class PaymentTransactionService {
     async fetchTransactionAll() {
         return await getRepository(PaymentTransaction)
             .createQueryBuilder('PaymentTransaction')
+            .leftJoinAndSelect('PaymentTransaction.id', 'id')
+            .leftJoinAndSelect('PaymentTransaction.impUid', 'impUid')
             .leftJoinAndSelect('PaymentTransaction.user', 'user')
             .orderBy('PaymentTransaction.createdAt', 'DESC')
             .getMany();
@@ -33,11 +35,7 @@ export class PaymentTransactionService {
             .getMany();
     }
 
-    async createTransaction({
-        impUid,
-        amount,
-        currentUser,
-        status = TRANSACTION_STATUS_ENUM.PAYMENT, }) {
+    async createTransaction({ impUid, amount, currentUser, }) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         //queryRunner 등록
@@ -49,7 +47,7 @@ export class PaymentTransactionService {
                 impUid,
                 amount,
                 user: currentUser,
-                status,
+                status: TRANSACTION_STATUS_ENUM.PAYMENT,
             });
             await queryRunner.manager.save(paymentTransaction);
 
@@ -77,9 +75,8 @@ export class PaymentTransactionService {
             // 4. 최종 결과 프론트엔드로 전송
             return paymentTransaction;
         } catch (error) {
-            if (error?.response?.data?.message || error?.response?.status) {
+            if (error?.response?.data?.message) {
                 console.log(error.response.data.message);
-                console.log(error.response.status);
             } else {
                 throw error;
             }
@@ -103,52 +100,16 @@ export class PaymentTransactionService {
             status: TRANSACTION_STATUS_ENUM.CANCEL,
         });
         if (checkAlready)
-            throw new UnprocessableEntityException('이미 결제 취소된 내역입니다.');
+            throw new ConflictException('이미 결제 취소된 내역입니다.');
     }
 
-    async checkHasCancelableStatus({ impUid, currentUser }) {
-        const checkHasStatus = await this.paymentTransactionRepository.findOne({
+    async checkHasCancelableAmount({ impUid, currentUser }) {
+        const checkHasAmount = await this.paymentTransactionRepository.findOne({
             impUid,
             user: { user_id: currentUser.user_id },
             status: TRANSACTION_STATUS_ENUM.PAYMENT,
         });
-        if (!checkHasStatus)
+        if (!checkHasAmount)
             throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.');
-    }
-
-    async cancelTransaction({ impUid, amount, currentUser }) {
-        const queryRunner = await this.connection.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction('SERIALIZABLE');
-
-        try {
-            const canceledTransaction = await this.createTransaction({
-                impUid,
-                amount: -amount,
-                currentUser,
-                status: TRANSACTION_STATUS_ENUM.CANCEL,
-            });
-            const updatedUser = this.userRepository.create({
-                ...currentUser,
-                isSubs: false
-            });
-
-            await queryRunner.manager.save(canceledTransaction);
-            await queryRunner.manager.save(updatedUser);
-            // +@ commit(성공 확정)
-            await queryRunner.commitTransaction();
-            return canceledTransaction;
-        } catch (error) {
-            console.log(error)
-            if (error?.response?.data?.message || error?.response?.status) {
-                console.log(error.response.data.message);
-                console.log(error.response.status);
-            } else {
-                throw error;
-            }
-            await queryRunner.rollbackTransaction();
-        } finally {
-            await queryRunner.release();
-        }
     }
 }
