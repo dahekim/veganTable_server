@@ -33,8 +33,8 @@ export class AuthResolver {
 
         const isAuth = await bcrypt.compare(password, user.password)
         if (!isAuth) throw new UnprocessableEntityException("비밀번호가 일치하지 않습니다.")
-
         this.authService.setRefreshToken({ user, res: context.res })
+
         return this.authService.getAccessToken({ user })
     }
 
