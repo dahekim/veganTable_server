@@ -11,7 +11,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
     ) {
         super({
             jwtFromRequest: (req) => {
-                const refreshToken = req.headers.cookie.replace("refreshToken=", "")
+                const refreshToken = req.headers.cookies.replace("refreshToken=", "")
                 console.log(refreshToken)
                 return refreshToken
             },
@@ -19,7 +19,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
             passReqToCallback: true,
         })
     }
-
 
     validate(req, payload: any) {
         return {
