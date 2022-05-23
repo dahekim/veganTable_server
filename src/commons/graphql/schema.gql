@@ -11,7 +11,7 @@ type User {
   type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
-  isSubs: Boolean
+  isSubs: SUB_TYPE
   SubsHistory: String
   profilePic: String
 }
@@ -28,6 +28,12 @@ enum VEGAN_TYPE {
 enum CLASS_TYPE {
   PRO
   COMMON
+}
+
+enum SUB_TYPE {
+  NON_SUB
+  BASIC
+  PREMIUM
 }
 
 type PaymentTransaction {
@@ -53,6 +59,7 @@ type Recipes {
   level: COOKING_LEVEL!
   ingredients: String!
   recipesPic: String
+  user_id: User!
 }
 
 enum CATEGORY_TYPES {
@@ -76,7 +83,7 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
-  fetchRecipe(recipe_id: String!): Recipes!
+  fetchRecipe(userid: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
 }
@@ -120,22 +127,22 @@ scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String!
-  types: CATEGORY_TYPES!
-  desc: String!
-  cookTime: Int!
-  level: COOKING_LEVEL!
-  ingredients: String!
+  summary: String
+  types: String
+  desc: String
+  cookTime: Int
+  level: String
+  ingredients: String
   recipesPic: String
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
-  types: CATEGORY_TYPES
+  types: String
   desc: String
   cookTime: Int
-  level: COOKING_LEVEL
+  level: String
   ingredients: String
   recipesPic: String
 }

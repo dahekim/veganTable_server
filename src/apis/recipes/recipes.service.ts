@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Connection, getRepository, Repository } from "typeorm";
+import { User } from "../user/entities/user.entity";
 import { Recipes } from "./entities/recipes.entity";
 
 
@@ -9,16 +10,31 @@ export class RecipesService {
     constructor(
         @InjectRepository(Recipes)
         private readonly recipesRepository: Repository<Recipes>,
+
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        private readonly connection: Connection
     ) { }
 
-    async findAll() {
-        return await this.recipesRepository.find({})
+    async fetchRecipesAlll() {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .orderBy('recipes.createdAt', 'DESC')
+            .getMany();
     }
-    async findOne({ id }) {
-        return await this.recipesRepository.findOne({
-            where: { id, }
-        });
+
+    async fetchRecipesTitlewithUserid({ user_id }) {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .select('recipes.title', 'title')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .where('user.user_id = :userUserId', { user_id })
+            .orderBy
     }
+
+    async
 
     async create({ createRecipesInput }) {
         const result = await this.recipesRepository.save({
