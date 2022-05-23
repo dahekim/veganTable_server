@@ -97,7 +97,7 @@ export class UserService{
         const appKey = process.env.SMS_APP_KEY
         const XSecretKey = process.env.SMS_X_SECRET_KEY
 
-        await axios.post(
+
         try { await axios.post(
             `https://api-sms.cloud.toast.com/sms/v3.0/appKeys/${appKey}/sender/sms`,
             { 
