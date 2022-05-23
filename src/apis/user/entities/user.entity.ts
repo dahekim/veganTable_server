@@ -1,80 +1,80 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { 
-    Column, 
-    CreateDateColumn, 
-    DeleteDateColumn, 
-    Entity, 
-    PrimaryGeneratedColumn, 
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
 
-export enum CLASS_TYPE{
-    PRO='PRO',
-    COMMON='COMMON',
+export enum CLASS_TYPE {
+    PRO = 'PRO',
+    COMMON = 'COMMON',
 }
 
-export enum VEGAN_TYPE{
-    VEGAN='VEGAN',
-    LACTO='LACTO',
-    OVO='OVO',
-    LACTO_OVO='LACTO_OVO',
-    PESCO='PESCO',
-    POLLO='POLLO',
+export enum VEGAN_TYPE {
+    VEGAN = 'VEGAN',
+    LACTO = 'LACTO',
+    OVO = 'OVO',
+    LACTO_OVO = 'LACTO_OVO',
+    PESCO = 'PESCO',
+    POLLO = 'POLLO',
 }
 
-registerEnumType( CLASS_TYPE, {
+registerEnumType(CLASS_TYPE, {
     name: 'CLASS_TYPE',
 })
 
-registerEnumType( VEGAN_TYPE, {
+registerEnumType(VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
 })
 
 
 @Entity()
 @ObjectType()
-export class User{
+export class User {
     @PrimaryGeneratedColumn("uuid")
-    @Field(()=>String)
+    @Field(() => String)
     user_id!: string
-    
+
     @Column({ unique: true, nullable: false })
-    @Field(()=> String!)
+    @Field(() => String!)
     email!: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     password: string
 
     @Column()
-    @Field(()=>String!)
+    @Field(() => String!)
     name!: string
 
     @Column({ unique: true })
-    @Field(()=> String!)
+    @Field(() => String!)
     phone: string
 
-    @Column({default: null})
-    @Field(()=>String, { nullable: true })
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     address?: string
 
-    @Column({type: "enum", enum: VEGAN_TYPE, default: null })
-    @Field(()=>VEGAN_TYPE)
+    @Column({ type: "enum", enum: VEGAN_TYPE, default: null })
+    @Field(() => VEGAN_TYPE)
     type?: string
 
     @Column({ nullable: true })
-    @Field(()=>String, { nullable: true })
+    @Field(() => String, { nullable: true })
     nickname?: string
 
-    @Column({ type: "enum", enum: CLASS_TYPE, default: CLASS_TYPE.COMMON})
-    @Field(()=> CLASS_TYPE, { nullable: true })
+    @Column({ type: "enum", enum: CLASS_TYPE, default: CLASS_TYPE.COMMON })
+    @Field(() => CLASS_TYPE, { nullable: true })
     isPro?: string
 
-    @Column({default: false})
-    @Field(()=>Boolean, { nullable: true })
+    @Column({ default: false })
+    @Field(() => Boolean, { nullable: true })
     isSubs?: boolean
 
-    @Column({default: null})
-    @Field(()=>String, { nullable: true })
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     SubsHistory?: string
 
     @Column({ default: null, nullable: true })
