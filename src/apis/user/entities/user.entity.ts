@@ -14,6 +14,7 @@ export enum CLASS_TYPE{
 }
 
 export enum VEGAN_TYPE{
+    NON_VEGAN='NON_VEGAN',
     VEGAN='VEGAN',
     LACTO='LACTO',
     OVO='OVO',
@@ -22,12 +23,20 @@ export enum VEGAN_TYPE{
     POLLO='POLLO',
 }
 
+export enum SUB_TYPE{
+    
+}
+
 registerEnumType( CLASS_TYPE, {
     name: 'CLASS_TYPE',
 })
 
 registerEnumType( VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
+})
+
+registerEnumType( SUB_TYPE, {
+    name: 'SUB_TYPE',
 })
 
 
@@ -57,7 +66,7 @@ export class User{
     @Field(()=>String, { nullable: true })
     address?: string
 
-    @Column({type: "enum", enum: VEGAN_TYPE, default: null })
+    @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
     @Field(()=>VEGAN_TYPE)
     type?: string
 
