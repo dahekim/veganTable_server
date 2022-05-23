@@ -68,6 +68,7 @@ export class User{
     @Field(()=>String, { nullable: true })
     address?: string
 
+
     @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
     @Field(()=>VEGAN_TYPE, {nullable: true})
     type?: string

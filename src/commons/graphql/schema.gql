@@ -8,7 +8,7 @@ type User {
   name: String!
   phone: String!
   address: String
-  type: VEGAN_TYPE!
+  type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
   isSubs: Boolean
