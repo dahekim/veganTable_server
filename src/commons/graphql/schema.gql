@@ -49,9 +49,9 @@ type Recipes {
   summary: String!
   types: CATEGORY_TYPES!
   desc: String!
-  cooktime: Int!
+  cookTime: Int!
   level: COOKING_LEVEL!
-  ingrediants: String!
+  ingredients: String!
   recipesPic: String
 }
 
@@ -118,9 +118,9 @@ input CreateRecipesInput {
   summary: String!
   types: CATEGORY_TYPES!
   desc: String!
-  cooktime: Int!
+  cookTime: Int!
   level: COOKING_LEVEL!
-  ingrediants: String!
+  ingredients: String!
   recipesPic: String
 }
 
@@ -129,8 +129,8 @@ input UpdateRecipesInput {
   summary: String
   types: CATEGORY_TYPES
   desc: String
-  cooktime: Int
+  cookTime: Int
   level: COOKING_LEVEL
-  ingrediants: String
+  ingredients: String
   recipesPic: String
 }
