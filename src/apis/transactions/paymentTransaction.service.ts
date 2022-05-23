@@ -18,18 +18,18 @@ export class PaymentTransactionService {
 
     async fetchTransactionAll() {
         return await getRepository(PaymentTransaction)
-            .createQueryBuilder('paymenttransaction')
-            .leftJoinAndSelect('paymenttransaction.user', 'user')
-            .orderBy('paymenttransaction.createdAt', 'DESC')
+            .createQueryBuilder('PaymentTransaction')
+            .leftJoinAndSelect('PaymentTransaction.user', 'user')
+            .orderBy('PaymentTransaction.createdAt', 'DESC')
             .getMany();
     }
 
     async fetchimpUidwithUserid({ user_id }) {
         return await getRepository(PaymentTransaction)
-            .createQueryBuilder('paymenttransaction')
-            .leftJoinAndSelect('paymenttransaction.user', 'user')
-            .where('user.user_id = :userUserId', { user_id })
-            .orderBy('paymenttransaction.createdAt', 'DESC')
+            .createQueryBuilder('PaymentTransaction')
+            .leftJoinAndSelect('PaymentTransaction.user', 'user')
+            .where('user.user_id =:userUserId', { user_id })
+            .orderBy('PaymentTransaction.createdAt', 'DESC')
             .getMany();
     }
 
@@ -37,15 +37,13 @@ export class PaymentTransactionService {
         impUid,
         amount,
         currentUser,
-        status = TRANSACTION_STATUS_ENUM.PAYMENT,
-    }) {
-        //queryRunner 등록
+        status = TRANSACTION_STATUS_ENUM.PAYMENT, }) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
-        // 트랜잭션 시작
+        //queryRunner 등록
         await queryRunner.startTransaction('SERIALIZABLE');
-
         try {
+            // 트랜잭션 시작
             // 1. Trasaction 테이블에 거래 기록 1줄 생성
             const paymentTransaction = await this.paymentTransactionRepository.create({
                 impUid,
@@ -67,7 +65,6 @@ export class PaymentTransactionService {
             //     { id: user.id },
             //     { point: user.point + amount },
             // );
-
             const updatedUser = this.userRepository.create({
                 ...user,
                 isSubs: true
@@ -77,12 +74,9 @@ export class PaymentTransactionService {
 
             // +@ commit(성공 확정)
             await queryRunner.commitTransaction();
-
             // 4. 최종 결과 프론트엔드로 전송
             return paymentTransaction;
-
         } catch (error) {
-            console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
                 console.log(error.response.data.message);
                 console.log(error.response.status);
@@ -102,13 +96,14 @@ export class PaymentTransactionService {
         if (checkPaid) throw new ConflictException('이미 결제되었습니다.');
     }
 
+
     async checkAlreadyCanceled({ impUid }) {
         const checkAlready = await this.paymentTransactionRepository.findOne({
             impUid,
             status: TRANSACTION_STATUS_ENUM.CANCEL,
         });
         if (checkAlready)
-            throw new UnprocessableEntityException('이미 결제 취소된 내역입니다.')
+            throw new UnprocessableEntityException('이미 결제 취소된 내역입니다.');
     }
 
     async checkHasCancelableStatus({ impUid, currentUser }) {
