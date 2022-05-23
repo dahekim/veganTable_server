@@ -55,8 +55,10 @@ type Recipes {
   summary: String!
   types: CATEGORY_TYPES!
   desc: String!
-  cooktime: String!
+  cookTime: Int!
   level: COOKING_LEVEL!
+  ingredients: String!
+  recipesPic: String
 }
 
 enum CATEGORY_TYPES {
@@ -94,6 +96,8 @@ type Mutation {
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+  uploadProfileImage(file: Upload!): User!
+  deleteProfileImage: User!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
@@ -117,13 +121,18 @@ input UpdateUserDetailInput {
   profilePic: String
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 input CreateRecipesInput {
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
   desc: String!
-  cooktime: String!
+  cookTime: Int!
   level: COOKING_LEVEL!
+  ingredients: String!
+  recipesPic: String
 }
 
 input UpdateRecipesInput {
@@ -131,6 +140,8 @@ input UpdateRecipesInput {
   summary: String
   types: CATEGORY_TYPES
   desc: String
-  cooktime: String
+  cookTime: Int
   level: COOKING_LEVEL
+  ingredients: String
+  recipesPic: String
 }
