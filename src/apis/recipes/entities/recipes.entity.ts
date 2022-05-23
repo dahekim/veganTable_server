@@ -49,7 +49,7 @@ export class Recipes {
 
     @Column()
     @Field(() => Int)
-    cooktime: number;
+    cookTime: number;
 
     @Column({ type: 'enum', enum: COOKING_LEVEL })
     @Field(() => COOKING_LEVEL)
@@ -57,7 +57,7 @@ export class Recipes {
 
     @Column()
     @Field(() => String)
-    ingrediants: string;
+    ingredients: string;
 
     @Column({ default: null, nullable: true })
     @Field(() => String, { nullable: true })
