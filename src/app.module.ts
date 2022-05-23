@@ -27,7 +27,9 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
       cors: {
-        origin: 'http://itoutsider.shop',
+        origin: 'http://localhost:3000',
+        // frontend 배포 되면
+        // origin: 'https://domain-url',
         credentials: true,
       },
     }),
@@ -38,7 +40,6 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       port: 3306,
       username: 'root',
       password: 'root',
-      // database: "vegan-table",
       database: 'vegan-docker02',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
@@ -54,6 +55,5 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
     }),
   ],
 })
-
 
 export class AppModule { }

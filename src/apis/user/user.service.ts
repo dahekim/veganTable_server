@@ -3,7 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from 'cache-manager'
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
+import { FileUpload } from 'graphql-upload';
+import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
+
+interface IUpload {
+    file: FileUpload
+}
 
 @Injectable()
 export class UserService{
@@ -61,6 +67,23 @@ export class UserService{
         return result.affected ? true: false
     }
 
+
+    async upload({ file }: IUpload) {
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+
+        const url = await new Promise((resolve, reject) => {
+            file
+            .createReadStream()
+            .pipe(storage.file(file.filename).createWriteStream())
+            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}`))
+            .on('error', (error) => reject(error));
+        })
+        return url
+    }
+
     async sendTokenToSMS({ phone }) {
         const token = String(Math.floor(Math.random() * 10 ** 6)).padStart(6, "0")
         
@@ -89,7 +112,7 @@ export class UserService{
             ttl: 180,
         })
 
-        return `${phone} 으로 토큰번호 '${token}'을 전송했습니다.`
+        return token
     }
 
     async isMatch({ phone, token }) {
