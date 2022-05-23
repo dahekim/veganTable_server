@@ -28,9 +28,9 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         origin: 'http://localhost:3000',
+        credentials: true,
         // frontend 배포 되면
         // origin: 'https://domain-url',
-        credentials: true,
       },
     }),
     TypeOrmModule.forRoot({
