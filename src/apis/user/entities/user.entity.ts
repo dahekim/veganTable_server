@@ -14,6 +14,7 @@ export enum CLASS_TYPE{
 }
 
 export enum VEGAN_TYPE{
+    NON_VEGAN='NON_VEGAN',
     VEGAN='VEGAN',
     LACTO='LACTO',
     OVO='OVO',
@@ -67,8 +68,9 @@ export class User{
     @Field(()=>String, { nullable: true })
     address?: string
 
-    @Column({type: "enum", enum: VEGAN_TYPE, default: null })
-    @Field(()=>VEGAN_TYPE, { nullable: true })
+
+    @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
+    @Field(()=>VEGAN_TYPE, {nullable: true})
     type?: string
 
     @Column({ nullable: true })
@@ -79,13 +81,24 @@ export class User{
     @Field(()=> CLASS_TYPE, { nullable: true })
     isPro?: string
 
-    @Column({default: false})
-    @Field(()=>Boolean, { nullable: true })
-    isSubs?: boolean
+    @Column({type: "enum", enum: SUB_TYPE, default: SUB_TYPE.NON_SUB})
+    @Field(()=>SUB_TYPE, { nullable: true })
+    isSubs?: string
 
+    // 구독 개월 수
+    @Column({default: 0 })
+    @Field(()=>Int, { nullable: true })
+    SubsHistory?: number
+
+    // 시작 날짜
     @Column({default: null})
-    @Field(()=>String, { nullable: true })
-    SubsHistory?: string
+    @Field(()=>Date, {nullable: true})
+    startDate?: Date
+
+    // 종료 날짜
+    @Column({default: null})
+    @Field(()=> Date, {nullable: true})
+    endDate?: Date
 
     @Column({ default: null, nullable: true })
     @Field(() => String, { nullable: true })
