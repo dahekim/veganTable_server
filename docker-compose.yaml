@@ -16,7 +16,7 @@ services:
     vegan-database:
         image: mysql:latest
         environment:
-            MYSQL_DATABASE: 'vegan-docker02'
+            MYSQL_DATABASE: 'vegan-docker02'   
             MYSQL_ROOT_PASSWORD: 'root'
         command:
             - --character-set-server=utf8mb4
