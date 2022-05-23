@@ -4,7 +4,7 @@ import { IamportService } from "../iamport/iamport.service";
 import { User } from "../user/entities/user.entity";
 import { PaymentTransaction } from "./entities/paymentTransaction.entity";
 import { PaymentTransactionService } from "./paymentTransaction.service";
-import { PaymentTransactionResolver } from "./paymentTransactions.resolver";
+import { PaymentTransactionResolver } from "./paymentTransaction.resolver";
 
 
 
