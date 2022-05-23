@@ -9,15 +9,24 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, "refresh") {
         @Inject(CACHE_MANAGER)
         private readonly cacheManager: Cache,
     ) {
+        // super({
+        //     jwtFromRequest: (req) => {
+        //         const refreshToken = req.headers.cookies.replace("refreshToken=", "")
+        //         console.log(refreshToken)
+        //         return refreshToken
+        //     },
+        //     secretOrKey: process.env.REFRESH_TOKEN,
+        //     passReqToCallback: true,
+        // })
+
         super({
-            jwtFromRequest: (req) => {
-                const refreshToken = req.headers.cookies.replace("refreshToken=", "")
-                console.log(refreshToken)
-                return refreshToken
-            },
+            jwtFromRequest: (req) =>
+              req.headers.cookie
+                .split('; ')
+                .filter((el) => el.includes('refreshToken='))[0]
+                .replace('refreshToken=', ''),
             secretOrKey: process.env.REFRESH_TOKEN,
-            passReqToCallback: true,
-        })
+          });
     }
 
     validate(req, payload: any) {
