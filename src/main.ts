@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalFilters(new HttpExceptionFilter())
   app.use(graphqlUploadExpress())
-  // app.use(json({ limit: '100mb' }))
+  app.use(json({ limit: '100mb' }))
   app.enableCors({
     origin: 'http://localhost:3000',
     credentials: true,

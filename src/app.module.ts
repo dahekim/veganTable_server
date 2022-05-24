@@ -28,16 +28,15 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
         credentials: true,
         // frontend 배포 이후
         // origin: 'https://domain-url',
-      },
-      
-      // bodyParserConfig: {
-      //   limit:"100mb"
-      // }
+      },      
+      bodyParserConfig: {
+        limit:"100mb"
+      }
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'vegan-database',
-      // host: "10.31.224.4", 
+      // host: 'vegan-database',
+      host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',
