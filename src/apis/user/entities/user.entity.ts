@@ -98,7 +98,7 @@ export class User {
     @Field(() => Date, { nullable: true })
     endDate?: Date
 
-    @Column({ default: null, nullable: true })
+    @Column({ type: 'varchar', default: null, nullable: true })
     @Field(() => String, { nullable: true })
     profilePic: string;
 
