@@ -24,8 +24,9 @@ export class AuthService {
         // 개발환경
         // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
 
-        // // 배포환경
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/')
+
+        // 배포환경
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
         res.setHeader(
