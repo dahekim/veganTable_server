@@ -1,8 +1,11 @@
 import { ConflictException, Injectable } from "@nestjs/common";
+import { Args } from "@nestjs/graphql";
 import { InjectRepository } from "@nestjs/typeorm";
-import { getRepository, Repository } from "typeorm";
+import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
+import { Connection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+import { CreateRecipesInput } from "./dto/createRecipes.input";
+import { CATEGORY_TYPES, COOKING_LEVEL, Recipes } from "./entities/recipes.entity";
 
 
 @Injectable()
@@ -13,6 +16,8 @@ export class RecipesService {
 
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
+        private readonly connection: Connection
     ) { }
 
     async fetchRecipesAll() {
@@ -46,11 +51,11 @@ export class RecipesService {
         }
     }
 
-    async fetchRecipesWithUserId({ user_id }) {
+    async fetchRecipesWithNickname({ nickname }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
-            .where('user.user_id = :userUserId', { user_id })
+            .where('user.nickname = :userUserNickname', { nickname })
             .orderBy('recipes.createdAt', 'DESC')
             .getManyAndCount();
     }
@@ -64,27 +69,84 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create({ createRecipesInput }) {
-        const result = await this.recipesRepository.save({
-            ...createRecipesInput,
-        });
-        return result;
+    async create({
+        user: currentUser,
+        ...CreateRecipesInput
+    }) {
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('REPEATABLE READ')
+        try {
+            const writeRecipe = await this.recipesRepository.create({
+                ...CreateRecipesInput
+            });
+            await queryRunner.manager.save(writeRecipe);
+
+            const user = await queryRunner.manager.findOne(
+                User,
+                { user_id: currentUser.user_id },
+                { lock: { mode: 'pessimistic_write' } }
+            );
+
+            const registRecipe = await this.recipesRepository.create({
+                ...user
+            });
+            await queryRunner.manager.save(registRecipe);
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
+            await queryRunner.rollbackTransaction();
+        } finally {
+            await queryRunner.release();
+        }
+
     }
 
     async update({ id, updateRecipesInput }) {
-        const recipes = await this.recipesRepository.findOne({
-            where: { id, }
+        const checkRecipe = await this.recipesRepository.findOne({
+            where: { id }
         });
 
-        const newRecipes = {
-            ...recipes,
+        const newRegistRecipe = {
+            ...checkRecipe,
             ...updateRecipesInput,
         }
-        return await this.recipesRepository.save(newRecipes);
+        return await this.recipesRepository.save(newRegistRecipe);
     }
 
-    async delete({ id }) {
-        const result = await this.recipesRepository.softDelete({ id, });
-        return result.affected ? true : false;
+    async delete({ id, currentUser }) {
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('SERIALIZABLE')
+
+        try {
+            const user = await queryRunner.manager.findOne(
+                User,
+                { user_id: currentUser.user_id },
+                { lock: { mode: 'pessimistic_write' } }
+            );
+            const result = await this.recipesRepository.softDelete({
+                id,
+                ...user,
+                user: currentUser.user_id,
+            });
+            return result.affected ? true : false;
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
+            await queryRunner.rollbackTransaction();
+        } finally {
+            await queryRunner.release();
+        }
     }
 }

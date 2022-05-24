@@ -29,43 +29,43 @@ registerEnumType(COOKING_LEVEL, {
 @ObjectType()
 export class Recipes {
     @PrimaryGeneratedColumn('uuid')
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     id: string;
 
-    @Column()
-    @Field(() => String)
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     title: string;
 
-    @Column()
-    @Field(() => String)
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     summary: string;
 
-    @Column({ type: 'enum', enum: CATEGORY_TYPES })
-    @Field(() => CATEGORY_TYPES)
+    @Column({ type: 'enum', enum: CATEGORY_TYPES, default: null })
+    @Field(() => CATEGORY_TYPES, { nullable: true })
     types: CATEGORY_TYPES;
 
-    @Column()
-    @Field(() => String)
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     desc: string;
 
-    @Column()
-    @Field(() => Int)
+    @Column({ default: null })
+    @Field(() => Int, { nullable: true })
     cookTime: number;
 
-    @Column({ type: 'enum', enum: COOKING_LEVEL })
-    @Field(() => COOKING_LEVEL)
+    @Column({ type: 'enum', enum: COOKING_LEVEL, default: null })
+    @Field(() => COOKING_LEVEL, { nullable: true })
     level: COOKING_LEVEL;
 
-    @Column()
-    @Field(() => String)
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     ingredients: string;
 
     @Column({ default: null, nullable: true })
     @Field(() => String, { nullable: true })
     recipesPic: string;
 
-    @ManyToOne(() => User)
-    @Field(() => User)
+    @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
+    @Field(() => User, { nullable: true })
     user: User;
 
     @CreateDateColumn()
