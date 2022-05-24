@@ -11,15 +11,16 @@ export class RecipesResolver {
     ) { }
 
     @Query(() => [Recipes])
-    fetchRecipes() {
-        return this.recipesService.findAll();
+    fetchRecipesAll() {
+        return this.recipesService.fetchRecipesAll();
     }
 
     @Query(() => Recipes)
-    fetchRecipe(
-        @Args('recipe_id') id: string,
+    fetchRecipeTypes(
+        @Args('recipes_id') id: string,
+        @Args('vegan_types') typesCode: string,
     ) {
-        return this.recipesService.findOne({ id, });
+        return this.recipesService.fetchRecipeTypes({ id, typesCode });
     }
 
     @Mutation(() => Recipes)

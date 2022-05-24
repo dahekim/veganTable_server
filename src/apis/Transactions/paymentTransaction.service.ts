@@ -2,7 +2,7 @@ import { ConflictException, Injectable, UnprocessableEntityException } from "@ne
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "./entities/paymentTransaction.entity";
+import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "../Transactions/entities/paymentTransaction.entity";
 
 @Injectable()
 export class PaymentTransactionService {
