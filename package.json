@@ -40,7 +40,7 @@
     "dotenv": "^16.0.1",
     "graphql": "^16.5.0",
     "graphql-schema-builder": "^0.9.2",
-    "graphql-upload": "^14.0.0",
+    "graphql-upload": "^13.0.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
     "nestjs": "^0.0.1",
