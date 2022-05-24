@@ -3,13 +3,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from 'cache-manager'
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
-// import { FileUpload } from 'graphql-upload';
+import { FileUpload } from 'graphql-upload';
 import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
-
-// interface IFile{
-//     file: FileUpload
-// }
+import { v4 as uuidv4 } from 'uuid';
+import { getToday } from 'src/commons/libraries/utils';
 
 @Injectable()
 export class UserService{
@@ -65,37 +63,46 @@ export class UserService{
         return result.affected ? true: false
     }
 
-    // async upload({ file }: IFile) {
-    //     // const storage = new Storage({
-    //     //     keyFilename: process.env.STORAGE_KEY_FILENAME,
-    //     //     projectId: process.env.STORAGE_PROJECT_ID,
-    //     // }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+    async upload({ file }) {
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
 
-    //     // const url = await new Promise((resolve, reject) => {
-    //     //     files
-    //     //     .createReadStream()
-    //     //     .pipe(storage.file(files.filename).createWriteStream())
-    //     //     .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${files.filename}`))
-    //     //     .on('error', (error) => reject(error));
-    //     // })
-    //     // return url
+        const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
+        const url = await new Promise((resolve, reject) => {
+            file
+            .createReadStream()
+            .pipe(storage.file(fileName).createWriteStream())
+            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
+            .on('error', (error) => reject("🔔"+error));
+        })
+        return url
+    }
 
-    //     const storage = new Storage({
-    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
-    //         projectId: process.env.STORAGE_PROJECT_ID,
-    //         }).bucket(process.env.VEGAN_STORAGE_BUCKET)
-    //         .file(file.filename)
-            
-    //         const result = await new Promise((resolve, reject)=> {
-    //             file                  
-    //             .createReadStream()
-    //             .pipe(storage.createWriteStream ())
-    //             .on( "finish" , () => resolve( `${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}` ) )
-    //             .on( "error" , () => reject() )
-    //         })
-    //         // 스토리지에 올린 후 받아온 url값을 프론트에 return 
-    //         return result
-    // }
+    async deleteImage({user_id}){
+        const userId = await this.userRepository.findOne({ user_id: user_id })
+
+        const prevImage = userId.profilePic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+        const prevImageName = prevImage[prevImage.length - 1]
+
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        })
+
+        const result = await storage
+        .bucket(process.env.STORAGE_BUCKET)
+        .file(prevImageName)
+        .delete()
+
+        const { profilePic, ...user } = userId;
+        const deleteUrl = { ...user, profilePic: null };
+        await this.userRepository.save(deleteUrl);
+
+        return result ? true : false
+    }
+
 
     async sendTokenToSMS({ phone }) {
         const phNum = await this.userRepository.findOne({ 
