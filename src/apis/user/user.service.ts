@@ -7,7 +7,7 @@ import { FileUpload } from 'graphql-upload';
 import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
 
-interface IUpload {
+interface IFile{
     file: FileUpload
 }
 
@@ -65,21 +65,36 @@ export class UserService{
         return result.affected ? true: false
     }
 
+    async upload({ file }: IFile) {
+        // const storage = new Storage({
+        //     keyFilename: process.env.STORAGE_KEY_FILENAME,
+        //     projectId: process.env.STORAGE_PROJECT_ID,
+        // }).bucket(process.env.VEGAN_STORAGE_BUCKET)
 
-    async upload({ file }: IUpload) {
+        // const url = await new Promise((resolve, reject) => {
+        //     files
+        //     .createReadStream()
+        //     .pipe(storage.file(files.filename).createWriteStream())
+        //     .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${files.filename}`))
+        //     .on('error', (error) => reject(error));
+        // })
+        // return url
+
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
-        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
-
-        const url = await new Promise((resolve, reject) => {
-            file
-            .createReadStream()
-            .pipe(storage.file(file.filename).createWriteStream())
-            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}`))
-            .on('error', (error) => reject(error));
-        })
-        return url
+            }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+            .file(file.filename)
+            
+            const result = await new Promise((resolve, reject)=> {
+                file                  
+                .createReadStream()
+                .pipe(storage.createWriteStream ())
+                .on( "finish" , () => resolve( `${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}` ) )
+                .on( "error" , () => reject() )
+            })
+            // 스토리지에 올린 후 받아온 url값을 프론트에 return 
+            return result
     }
 
     async sendTokenToSMS({ phone }) {
