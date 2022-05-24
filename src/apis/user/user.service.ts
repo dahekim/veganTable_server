@@ -3,13 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from 'cache-manager'
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
-import { FileUpload } from 'graphql-upload';
+// import { FileUpload } from 'graphql-upload';
 import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
 
-interface IFile{
-    file: FileUpload
-}
+// interface IFile{
+//     file: FileUpload
+// }
 
 @Injectable()
 export class UserService{
@@ -65,37 +65,37 @@ export class UserService{
         return result.affected ? true: false
     }
 
-    async upload({ file }: IFile) {
-        // const storage = new Storage({
-        //     keyFilename: process.env.STORAGE_KEY_FILENAME,
-        //     projectId: process.env.STORAGE_PROJECT_ID,
-        // }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+    // async upload({ file }: IFile) {
+    //     // const storage = new Storage({
+    //     //     keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //     //     projectId: process.env.STORAGE_PROJECT_ID,
+    //     // }).bucket(process.env.VEGAN_STORAGE_BUCKET)
 
-        // const url = await new Promise((resolve, reject) => {
-        //     files
-        //     .createReadStream()
-        //     .pipe(storage.file(files.filename).createWriteStream())
-        //     .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${files.filename}`))
-        //     .on('error', (error) => reject(error));
-        // })
-        // return url
+    //     // const url = await new Promise((resolve, reject) => {
+    //     //     files
+    //     //     .createReadStream()
+    //     //     .pipe(storage.file(files.filename).createWriteStream())
+    //     //     .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${files.filename}`))
+    //     //     .on('error', (error) => reject(error));
+    //     // })
+    //     // return url
 
-        const storage = new Storage({
-            keyFilename: process.env.STORAGE_KEY_FILENAME,
-            projectId: process.env.STORAGE_PROJECT_ID,
-            }).bucket(process.env.VEGAN_STORAGE_BUCKET)
-            .file(file.filename)
+    //     const storage = new Storage({
+    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //         projectId: process.env.STORAGE_PROJECT_ID,
+    //         }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+    //         .file(file.filename)
             
-            const result = await new Promise((resolve, reject)=> {
-                file                  
-                .createReadStream()
-                .pipe(storage.createWriteStream ())
-                .on( "finish" , () => resolve( `${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}` ) )
-                .on( "error" , () => reject() )
-            })
-            // 스토리지에 올린 후 받아온 url값을 프론트에 return 
-            return result
-    }
+    //         const result = await new Promise((resolve, reject)=> {
+    //             file                  
+    //             .createReadStream()
+    //             .pipe(storage.createWriteStream ())
+    //             .on( "finish" , () => resolve( `${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}` ) )
+    //             .on( "error" , () => reject() )
+    //         })
+    //         // 스토리지에 올린 후 받아온 url값을 프론트에 return 
+    //         return result
+    // }
 
     async sendTokenToSMS({ phone }) {
         const phNum = await this.userRepository.findOne({ 
