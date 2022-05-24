@@ -13,8 +13,6 @@ export enum CLASS_TYPE {
     COMMON = 'COMMON',
 }
 
-
-
 export enum VEGAN_TYPE{
     NON_VEGAN='NON_VEGAN',
     VEGAN='VEGAN',
@@ -31,14 +29,6 @@ export enum SUB_TYPE{
     PREMIUM='PREMIUM',
 }
 
-
-export enum SUB_TYPE {
-    NON_SUB = 'NON_SUB',
-    BASIC = 'BASIC',
-    PREMIUM = 'PREMIUM',
-}
-
-
 registerEnumType(CLASS_TYPE, {
     name: 'CLASS_TYPE',
 })
@@ -51,7 +41,6 @@ registerEnumType(VEGAN_TYPE, {
 registerEnumType(SUB_TYPE, {
     name: 'SUB_TYPE',
 })
-
 
 @Entity()
 @ObjectType()
