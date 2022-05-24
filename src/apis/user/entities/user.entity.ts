@@ -13,8 +13,6 @@ export enum CLASS_TYPE {
     COMMON = 'COMMON',
 }
 
-
-
 export enum VEGAN_TYPE {
     NON_VEGAN = 'NON_VEGAN',
     VEGAN = 'VEGAN',
@@ -39,7 +37,6 @@ registerEnumType(VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
 })
 
-
 registerEnumType(SUB_TYPE, {
     name: 'SUB_TYPE',
 })
@@ -63,7 +60,6 @@ export class User {
     @Field(() => String!)
     name!: string
 
-
     @Column()
     @Field(() => String!)
     phone: string
@@ -83,7 +79,6 @@ export class User {
     @Column({ type: "enum", enum: CLASS_TYPE, default: CLASS_TYPE.COMMON })
     @Field(() => CLASS_TYPE, { nullable: true })
     isPro?: string
-
 
     @Column({ type: "enum", enum: SUB_TYPE, default: SUB_TYPE.NON_SUB })
     @Field(() => SUB_TYPE, { nullable: true })
