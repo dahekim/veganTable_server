@@ -57,17 +57,25 @@ enum TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
+type RecipesImage {
+  id: String!
+  url: String!
+}
+
 type Recipes {
-  id: String
-  title: String
-  summary: String
-  types: CATEGORY_TYPES
-  desc: String
-  cookTime: Int
-  level: COOKING_LEVEL
-  ingredients: String
-  recipesPic: String
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cookTime: Int!
+  level: COOKING_LEVEL!
+  ingredients: String!
+  serve: Int!
+  tags: String!
+  thumbnailPic: [String!]
   user: User
+  recipesPic: RecipesImage
 }
 
 enum CATEGORY_TYPES {
@@ -100,25 +108,14 @@ type Mutation {
   login(email: String!, password: String!): String!
   restoreAccessToken: String!
   logout: String!
-  createUser(
-    email: String!
-    password: String!
-    name: String!
-    phone: String!
-  ): User!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
-  updateUserDetail(
-    user_id: String!
-    updateUserDetailInput: UpdateUserDetailInput!
-  ): User!
+  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
   uploadProfileImage(file: Upload!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(
-    recipe_id: String!
-    updateRecipesInput: UpdateRecipesInput!
-  ): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
@@ -139,19 +136,20 @@ input UpdateUserDetailInput {
   profilePic: String
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String!
+  summary: String
   types: String
-  desc: String!
-  cookTime: Int!
+  desc: String
+  cookTime: Int
   level: String
-  ingredients: String!
+  ingredients: String
+  serve: Int
+  tags: [String!]
+  thumbNailPic: String
   recipesPic: String
 }
 
@@ -163,5 +161,8 @@ input UpdateRecipesInput {
   cookTime: Int
   level: String
   ingredients: String
+  serve: Int
+  tags: [String!]
+  thumbNailPic: String
   recipesPic: String
 }

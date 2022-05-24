@@ -1,8 +1,20 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { timingSafeEqual } from "crypto";
 import { Connection, getRepository, Repository } from "typeorm";
-import { User } from "../user/entities/user.entity";
-import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
+import { CLASS_TYPE, SUB_TYPE, User } from "../user/entities/user.entity";
+import { CreateRecipesInput } from "./dto/createRecipes.input";
+import { CATEGORY_TYPES, COOKING_LEVEL, Recipes } from "./entities/recipes.entity";
+
+export interface ICreateRecipes {
+    createRecipesInput: CreateRecipesInput
+}
+
+// interface IUpdateRecipes {
+//     id: string
+//     updateRecipesInput: UpdateRecipesInput
+// }
 
 
 @Injectable()
@@ -11,10 +23,14 @@ export class RecipesService {
         @InjectRepository(Recipes)
         private readonly recipesRepository: Repository<Recipes>,
 
+        @InjectRepository(RecipesImage)
+        private readonly recipesImageRepository: Repository<RecipesImage>,
+
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
-        private readonly connection: Connection
+        private readonly connection: Connection,
+        private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
     async fetchRecipesAll() {
@@ -66,16 +82,18 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create({
-        user: currentUser,
-        ...CreateRecipesInput
-    }) {
+    async create(
+        { createRecipesInput }: ICreateRecipes, currentUser,
+    ) {
+        const recipesInput = new CreateRecipesInput();
+        recipesInput.desc = { image: "url", text: "text" };
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
-        await queryRunner.startTransaction('REPEATABLE READ')
+        await queryRunner.startTransaction('SERIALIZABLE')
         try {
             const writeRecipe = await this.recipesRepository.create({
-                ...CreateRecipesInput
+
+                user: currentUser,
             });
             await queryRunner.manager.save(writeRecipe);
 
@@ -85,10 +103,19 @@ export class RecipesService {
                 { lock: { mode: 'pessimistic_write' } }
             );
 
-            const registRecipe = await this.recipesRepository.create({
-                ...user
+            const registRecipe = await this.userRepository.create({
+                ...user,
+                isPro: currentUser.isPro,
             });
+            if (registRecipe.isPro === 'COMMON') {
+                throw new MessageEvent('작성자: 일반인');
+            } else if (registRecipe.isPro === 'PRO') {
+                throw new MessageEvent('작성자: 전문가');
+            }
             await queryRunner.manager.save(registRecipe);
+            await queryRunner.commitTransaction();
+            return writeRecipe;
+
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {

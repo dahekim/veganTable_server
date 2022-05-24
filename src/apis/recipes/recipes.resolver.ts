@@ -2,6 +2,7 @@ import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
+import { CLASS_TYPE } from "../user/entities/user.entity";
 import { UserService } from "../user/user.service";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
@@ -36,10 +37,10 @@ export class RecipesResolver {
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return await this.recipesService.create({
-            user: currentUser,
-            createRecipesInput
-        });
+        return await this.recipesService.create(
+            { createRecipesInput },
+            currentUser,
+        );
     }
 
     @UseGuards(GqlAuthAccessGuard)

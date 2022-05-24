@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { RecipesImage } from "src/apis/recipesImage/entities/recipes.image.entity";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum CATEGORY_TYPES {
     ALL = 'ALL',
@@ -29,44 +30,56 @@ registerEnumType(COOKING_LEVEL, {
 @ObjectType()
 export class Recipes {
     @PrimaryGeneratedColumn('uuid')
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     id: string;
 
-    @Column({ unique: true, nullable: false })
+    @Column({ nullable: false })
     @Field(() => String)
     title: string;
 
-    @Column({ default: null })
-    @Field(() => String, { nullable: true })
+    @Column()
+    @Field(() => String)
     summary: string;
 
-    @Column({ type: 'enum', enum: CATEGORY_TYPES, default: null })
-    @Field(() => CATEGORY_TYPES, { nullable: true })
+    @Column({ type: 'enum', enum: CATEGORY_TYPES, nullable: false })
+    @Field(() => CATEGORY_TYPES)
     types: CATEGORY_TYPES;
 
-    @Column({ default: null })
-    @Field(() => String, { nullable: true })
-    desc: string;
+    @Column("simple-json")
+    @Field(() => String)
+    desc: { image: string, text: string };
 
-    @Column({ default: null })
-    @Field(() => Int, { nullable: true })
+    @Column()
+    @Field(() => Int)
     cookTime: number;
 
-    @Column({ type: 'enum', enum: COOKING_LEVEL, default: null })
-    @Field(() => COOKING_LEVEL, { nullable: true })
+    @Column({ type: 'enum', enum: COOKING_LEVEL, nullable: false })
+    @Field(() => COOKING_LEVEL)
     level: COOKING_LEVEL;
 
-    @Column({ default: null })
-    @Field(() => String, { nullable: true })
+    @Column()
+    @Field(() => String)
     ingredients: string;
 
-    @Column({ default: null, nullable: true })
-    @Field(() => String, { nullable: true })
-    recipesPic: string;
+    @Column()
+    @Field(() => Int)
+    serve: number;
 
-    @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
+    @Column("simple-array")
+    @Field(() => String)
+    tags: string[];
+
+    @Column("simple-array", { default: null, nullable: true })
+    @Field(() => [String], { nullable: true })
+    thumbnailPic: string;
+
+    @ManyToOne(() => User, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @Field(() => User, { nullable: true })
     user: User;
+
+    @ManyToOne(() => RecipesImage, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @Field(() => RecipesImage, { nullable: true })
+    recipesPic: RecipesImage;
 
     @CreateDateColumn()
     createdAt: Date;
