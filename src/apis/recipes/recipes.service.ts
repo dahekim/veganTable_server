@@ -1,11 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
-import { Args } from "@nestjs/graphql";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
 import { Connection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { CreateRecipesInput } from "./dto/createRecipes.input";
-import { CATEGORY_TYPES, COOKING_LEVEL, Recipes } from "./entities/recipes.entity";
+import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 
 
 @Injectable()

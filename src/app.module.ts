@@ -23,19 +23,20 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
-      // cors: {
-      //   origin: 'http://itoutsider.shop',
-      //   credentials: true,
-      // },
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+        // frontend 배포 되면
+        // origin: 'https://domain-url',
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'vegan-database',
-      // host: "10.31.224.4", 
+      // host: 'vegan-database',
+      host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',
-      // database: "vegan-table",
       database: 'vegan-docker02',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
@@ -51,6 +52,5 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
     }),
   ],
 })
-
 
 export class AppModule { }

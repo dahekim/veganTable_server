@@ -21,15 +21,17 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google-cloud/storage": "^5.20.5",
     "@nestjs/apollo": "^10.0.11",
     "@nestjs/common": "^8.0.0",
-    "@nestjs/config": "^2.0.0",
+    "@nestjs/config": "^2.0.1",
     "@nestjs/core": "^8.0.0",
     "@nestjs/graphql": "^10.0.11",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
+    "@types/graphql-upload": "^8.0.11",
     "add": "^2.0.6",
     "apollo-server-express": "^3.7.0",
     "axios": "^0.27.2",

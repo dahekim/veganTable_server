@@ -22,15 +22,21 @@ export class AuthService {
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' })
 
         // 개발환경
-        res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/;`)
+        // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
 
         // 배포환경
-        // res.setHeader('Access-Control-Allow-Origin', 'http://itoutsider.shop')
-        // res.setHeader(
-        //     'Set-Cookie',
-        //     `refreshToken=${refreshToken}`
-        //     )
-    }
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/')
+        res.setHeader(
+            'Set-Cookie',
+            `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
+            )
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
+            )
+        }
 
     async socialLogin({ req, res }) {
         let user = await this.userService.findOne({

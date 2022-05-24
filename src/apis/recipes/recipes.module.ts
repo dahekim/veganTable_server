@@ -10,6 +10,7 @@ import { RecipesService } from "./recipes.service";
 @Module({
     imports: [
         TypeOrmModule.forFeature([
+            User,
             Recipes,
             User,
         ]),

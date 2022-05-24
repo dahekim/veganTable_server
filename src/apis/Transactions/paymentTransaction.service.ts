@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, getRepository, Repository } from "typeorm";
-import { User } from "../user/entities/user.entity";
+import { SUB_TYPE, User } from "../user/entities/user.entity";
 import { PaymentTransaction, TRANSACTION_STATUS_ENUM } from "../Transactions/entities/paymentTransaction.entity";
 
 @Injectable()
@@ -38,6 +38,7 @@ export class PaymentTransactionService {
         amount,
         currentUser,
         status = TRANSACTION_STATUS_ENUM.PAYMENT,
+        isSubs = SUB_TYPE.NON_SUB,
     }) {
         //queryRunner 등록
         const queryRunner = await this.connection.createQueryRunner();
@@ -70,7 +71,7 @@ export class PaymentTransactionService {
 
             const updatedUser = this.userRepository.create({
                 ...user,
-                isSubs: true
+                isSubs,
             });
             // this.userRepository.save(updatedUser);
             await queryRunner.manager.save(updatedUser);
@@ -121,7 +122,11 @@ export class PaymentTransactionService {
             throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.');
     }
 
-    async cancelTransaction({ impUid, amount, currentUser }) {
+    async cancelTransaction({
+        impUid,
+        amount,
+        currentUser,
+        isSubs = SUB_TYPE.BASIC || SUB_TYPE.PREMIUM }) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
@@ -132,10 +137,11 @@ export class PaymentTransactionService {
                 amount: -amount,
                 currentUser,
                 status: TRANSACTION_STATUS_ENUM.CANCEL,
+                isSubs,
             });
             const updatedUser = this.userRepository.create({
                 ...currentUser,
-                isSubs: false
+                isSubs: SUB_TYPE.NON_SUB,
             });
 
             await queryRunner.manager.save(canceledTransaction);

@@ -8,10 +8,10 @@ type User {
   name: String!
   phone: String!
   address: String
-  type: VEGAN_TYPE!
+  type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
-  isSubs: Boolean
+  isSubs: SUB_TYPE
   SubsHistory: String
   profilePic: String
 }
@@ -28,6 +28,12 @@ enum VEGAN_TYPE {
 enum CLASS_TYPE {
   PRO
   COMMON
+}
+
+enum SUB_TYPE {
+  NON_SUB
+  BASIC
+  PREMIUM
 }
 
 type PaymentTransaction {
@@ -86,14 +92,27 @@ type Mutation {
   login(email: String!, password: String!): String!
   restoreAccessToken: String!
   logout: String!
-  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  createUser(
+    email: String!
+    password: String!
+    name: String!
+    phone: String!
+  ): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
-  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
+  updateUserDetail(
+    user_id: String!
+    updateUserDetailInput: UpdateUserDetailInput!
+  ): User!
+  uploadProfileImage(file: Upload!): User!
+  deleteProfileImage: User!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  updateRecipe(
+    recipe_id: String!
+    updateRecipesInput: UpdateRecipesInput!
+  ): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
@@ -113,6 +132,11 @@ input UpdateUserDetailInput {
   isSubs: Boolean
   profilePic: String
 }
+
+"""
+The `Upload` scalar type represents a file upload.
+"""
+scalar Upload
 
 input CreateRecipesInput {
   title: String!

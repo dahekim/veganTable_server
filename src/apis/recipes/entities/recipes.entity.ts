@@ -32,8 +32,8 @@ export class Recipes {
     @Field(() => String, { nullable: true })
     id: string;
 
-    @Column({ default: null })
-    @Field(() => String, { nullable: true })
+    @Column({ unique: true, nullable: false })
+    @Field(() => String)
     title: string;
 
     @Column({ default: null })
