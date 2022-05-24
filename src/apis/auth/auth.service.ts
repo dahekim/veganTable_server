@@ -30,7 +30,6 @@ export class AuthService {
             'Set-Cookie',
             `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
             )
-        //    
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
         res.setHeader(

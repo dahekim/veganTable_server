@@ -1,7 +1,7 @@
 version: '3.3'
 
 services:
-   vegan-backend: 
+    vegan-backend: 
         # image: asia.gcr.io/vegan-project-350105/vegan-backen:0.0.01
         build:
             context: .
