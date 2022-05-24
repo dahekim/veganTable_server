@@ -11,7 +11,7 @@ export class CreateRecipesInput {
     @Field(() => String, { nullable: true })
     types: string;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => [String]!, { nullable: true })
     desc: { image: string, text: string };
 
     @Field(() => Int, { nullable: true })
@@ -26,11 +26,11 @@ export class CreateRecipesInput {
     @Field(() => Int, { nullable: true })
     serve: number;
 
-    @Field(() => [String], { nullable: true })
-    tags: string;
+    @Field(() => [String]!, { nullable: true })
+    tags: string[];
 
-    @Field(() => String, { nullable: true })
-    thumbNailPic: string;
+    @Field(() => [String]!, { nullable: true })
+    thumbNailPic: string[];
 
     @Field(() => String, { nullable: true })
     recipesPic: string;

@@ -46,7 +46,7 @@ export class Recipes {
     types: CATEGORY_TYPES;
 
     @Column("simple-json")
-    @Field(() => String)
+    @Field(() => [String]!)
     desc: { image: string, text: string };
 
     @Column()
@@ -66,12 +66,12 @@ export class Recipes {
     serve: number;
 
     @Column("simple-array")
-    @Field(() => String)
+    @Field(() => [String]!)
     tags: string[];
 
     @Column("simple-array", { default: null, nullable: true })
-    @Field(() => [String], { nullable: true })
-    thumbnailPic: string;
+    @Field(() => [String]!)
+    thumbNailPic: string[];
 
     @ManyToOne(() => User, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @Field(() => User, { nullable: true })
