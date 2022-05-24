@@ -24,7 +24,7 @@ export class AuthService {
         // 개발환경
         // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
 
-        // 배포환경
+        // // 배포환경
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/')
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
@@ -49,12 +49,11 @@ export class AuthService {
                 name: req.user.name,
                 phone: req.user.phone,
             })
-
         }
         this.setRefreshToken({ user, res })
-        res.redirect(
-            302,
-            "http://localhost:5501/frontend/login/index.html",
-        );
+        // res.redirect(
+        //     302,
+        //     "http://localhost:5501/frontend/login/index.html",
+        // )
     }
 }
