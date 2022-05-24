@@ -26,9 +26,12 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       cors: {
         origin: 'http://localhost:3000',
         credentials: true,
-        // frontend 배포 되면
+        // frontend 배포 이후
         // origin: 'https://domain-url',
-      },
+      },      
+      bodyParserConfig: {
+        limit:"100mb"
+      }
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

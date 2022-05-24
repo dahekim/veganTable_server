@@ -7,7 +7,7 @@ import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param"
 import { UseGuards } from "@nestjs/common"
 import { GqlAuthAccessGuard, GqlAuthRefreshGuard } from "src/commons/auth/gql-auth.guard"
 import { UpdateUserDetailInput } from "./dto/updateUserDetail.input"
-// import { FileUpload, GraphQLUpload } from 'graphql-upload'
+import { FileUpload, GraphQLUpload } from 'graphql-upload'
 
 
 @Resolver()
@@ -81,13 +81,25 @@ export class UserResolver {
     }
 
     // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(()=>User)
-    // async uploadProfileImage(
-    //     @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
-    // ){
-    //     return await this.userService.upload({ file });
-    // }
+    @Mutation(()=> String)
+    async uploadProfileImage(
+        @Args({ name: 'file', type: () => GraphQLUpload }) 
+        file: FileUpload,
+    ){
+        return await this.userService.upload({ file });
+    }
 
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(() => String)
+    async deleteProfileImage(
+        @Args('user_id') user_id: string, 
+    ) {
+        return await this.userService.deleteImage({ user_id })
+    }
+
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(()=>User)
     async deleteUser(
         @Args('user_id') user_id: string,
     ) {
