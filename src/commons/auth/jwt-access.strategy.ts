@@ -18,9 +18,12 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, "access") {
 
     async validate(req, payload) {
         const accessToken = req.headers.authorization.split(" ")[1]
-        let isExist = await this.cacheManager.get(`accessToken:${accessToken}`)
+        let isExist = await this.cacheManager.get(
+            `accessToken:${accessToken}`
+            )
+
         if (isExist) {
-            throw new UnauthorizedException('로그아웃된 사용자입니다')
+            throw new UnauthorizedException("이미 로그아웃한 사용자입니다.")
         }
         return {
             user_id: payload.sub,
