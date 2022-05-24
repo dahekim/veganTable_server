@@ -41,7 +41,6 @@ registerEnumType(SUB_TYPE, {
     name: 'SUB_TYPE',
 })
 
-
 @Entity()
 @ObjectType()
 export class User {
@@ -83,7 +82,6 @@ export class User {
     @Column({ type: "enum", enum: SUB_TYPE, default: SUB_TYPE.NON_SUB })
     @Field(() => SUB_TYPE, { nullable: true })
     isSubs?: string;
-
 
     // 구독 개월 수
     @Column({ default: 0 })
