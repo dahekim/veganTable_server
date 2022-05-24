@@ -12,11 +12,14 @@ type User {
   nickname: String
   isPro: CLASS_TYPE
   isSubs: SUB_TYPE
-  SubsHistory: String
+  SubsHistory: Int
+  startDate: DateTime
+  endDate: DateTime
   profilePic: String
 }
 
 enum VEGAN_TYPE {
+  NON_VEGAN
   VEGAN
   LACTO
   OVO
@@ -35,6 +38,11 @@ enum SUB_TYPE {
   BASIC
   PREMIUM
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type PaymentTransaction {
   id: String!
@@ -98,8 +106,6 @@ type Mutation {
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
   uploadProfileImage(file: Upload!): User!
-  deleteProfileImage: User!
-  deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
