@@ -19,6 +19,7 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
     RecipesModule,
     JwtRefreshStrategy,
     PaymentTransactionModule,
+    RecipesModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
