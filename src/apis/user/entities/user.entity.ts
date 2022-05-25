@@ -53,14 +53,14 @@ export class User {
     @Field(()=> String!)
     email!: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     password: string
 
-    @Column()
+    @Column({ nullable: false })
     @Field(() => String!)
     name!: string
 
-    @Column()
+    @Column({ nullable: false })
     @Field(()=> String!)
     phone: string
 

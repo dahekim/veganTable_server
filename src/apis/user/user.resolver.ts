@@ -31,12 +31,6 @@ export class UserResolver {
         return await this.userService.findAll()
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Query(() => [User])
-    fetchUsersWithDel() {
-        return this.userService.findWithDelete()
-    }
-
     @Mutation(() => User)
     async createUser(
         @Args('email') email: string,

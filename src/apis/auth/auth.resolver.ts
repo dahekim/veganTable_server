@@ -32,29 +32,32 @@ export class AuthResolver {
         const isAuth = await bcrypt.compare(password, user.password)
         if (!isAuth) throw new UnprocessableEntityException("비밀번호가 일치하지 않습니다.")
         this.authService.setRefreshToken({ user, res: context.res })
-
         return this.authService.getAccessToken({ user })
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => String)
     async logout(@Context() context: any) {
+        console.log(context.email)
+        console.log("===========================")
+        console.log(context.req.headers.cookie+"👽")
         const accessToken = await context.req.headers.authorization.split(" ")[1]
         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
         try {
             const myAccess = jwt.verify( accessToken, process.env.ACCESS_TOKEN )
             const myRefresh = jwt.verify( refreshToken, process.env.REFRESH_TOKEN )
             await this.cacheManager.set(
-                `accessToken:${accessToken}`, 
+                `accessToken : ${accessToken}`, 
                 'accessToken', 
                 { ttl: myAccess['exp'] - myAccess['iat'] } 
                 )
         
             await this.cacheManager.set(
-                `refreshToken:${refreshToken}`,
+                `refreshToken : ${refreshToken}`,
                 'refreshToken',
                 { ttl: myRefresh['exp'] - myRefresh['iat'] }
                 )
+
         } catch(error){
             if (error?.response?.data?.message) throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
             else throw new UnauthorizedException(error)

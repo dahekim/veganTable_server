@@ -10,7 +10,6 @@ import { RecipesReplyService } from "./recipesReply.service";
 export class RecipesReplyResolver{
     constructor(
         private readonly recipesReplyService: RecipesReplyService,
-        private readonly userService: UserService,
     ){}
 
     @Query(()=>[RecipesReply])
