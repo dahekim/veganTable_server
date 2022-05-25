@@ -89,7 +89,6 @@ enum COOKING_LEVEL {
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
-  fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
   fetchRecipe(userid: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
