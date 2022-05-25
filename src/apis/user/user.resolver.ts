@@ -16,7 +16,7 @@ export class UserResolver {
         private readonly userService: UserService,
     ) { }
 
-    @UseGuards(GqlAuthRefreshGuard)
+    @UseGuards(GqlAuthAccessGuard)
     @Query(() => User)
     async fetchUser(
         @CurrentUser() currentUser: ICurrentUser,
