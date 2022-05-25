@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 @Entity()
@@ -7,11 +7,14 @@ import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 export class RecipesReply {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    id: string;
+    id: string; 
 
     @Column()
     @Field(() => String)
     contents: string;
+
+    @CreateDateColumn()
+    createdAt: Date;
 
     @DeleteDateColumn()
     deletedAt: Date;

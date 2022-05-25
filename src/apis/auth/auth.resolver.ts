@@ -36,18 +36,11 @@ export class AuthResolver {
         return this.authService.getAccessToken({ user })
     }
 
-    @UseGuards(GqlAuthRefreshGuard)
-    @Mutation(() => String)
-    restoreAccessToken(@CurrentUser() currentUser: ICurrentUser) {
-        return this.authService.getAccessToken({ user: currentUser })
-    }
-
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => String)
     async logout(@Context() context: any) {
         const accessToken = await context.req.headers.authorization.split(" ")[1]
         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
-        // const now = Date.parse(getToday()) / 1000
         try {
             const myAccess = jwt.verify( accessToken, process.env.ACCESS_TOKEN )
             const myRefresh = jwt.verify( refreshToken, process.env.REFRESH_TOKEN )
@@ -66,8 +59,13 @@ export class AuthResolver {
             if (error?.response?.data?.message) throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
             else throw new UnauthorizedException(error)
         }
-
         console.log("⭕️ 로그아웃 성공!")
         return "⭕️ 로그아웃 성공!"
+    }
+
+    @UseGuards(GqlAuthRefreshGuard)
+    @Mutation(() => String)
+    restoreAccessToken(@CurrentUser() currentUser: ICurrentUser) {
+        return this.authService.getAccessToken({ user: currentUser })
     }
 }

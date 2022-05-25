@@ -98,8 +98,8 @@ type Query {
 
 type Mutation {
   login(email: String!, password: String!): String!
-  restoreAccessToken: String!
   logout: String!
+  restoreAccessToken: String!
   createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!

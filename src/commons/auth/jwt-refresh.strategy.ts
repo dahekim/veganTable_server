@@ -12,6 +12,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         .filter((el) => el.includes('refreshToken='))[0]
         .replace('refreshToken=', ''),
         secretOrKey: process.env.REFRESH_TOKEN,
+        passReqToCallback: true,
     });
 }
 
