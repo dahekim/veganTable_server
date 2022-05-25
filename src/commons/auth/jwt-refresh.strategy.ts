@@ -25,7 +25,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         let isExist = await this.cacheManager.get(
             `refreshToken:${refreshToken}`
             )
-        
         if(isExist){
             throw new UnauthorizedException("이미 로그아웃한 사용자입니다.")
         }

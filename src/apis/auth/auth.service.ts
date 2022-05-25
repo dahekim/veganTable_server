@@ -21,8 +21,6 @@ export class AuthService {
             { email: user.email, sub: user.user_id },
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' })
 
-
-
         // 개발환경
         // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
         // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`);
