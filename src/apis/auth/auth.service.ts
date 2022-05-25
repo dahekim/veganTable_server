@@ -24,21 +24,21 @@ export class AuthService {
 
 
         // 개발환경
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-        res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`);
+        // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+        // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`);
 
         // 배포환경
-        // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-        // res.setHeader('Access-Control-Allow-Credentials', 'true');
-        // res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-        // res.setHeader(
-        //     'Access-Control-Allow-Headers',
-        //     'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
-        //     )
-        // res.setHeader(
-        //     'Set-Cookie',
-        //     `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
-        //     )
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
+            )
+        res.setHeader(
+            'Set-Cookie',
+            `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
+            )
         }
 
     // async socialLogin({ req, res }) {
