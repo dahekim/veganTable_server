@@ -38,9 +38,6 @@ export class AuthResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => String)
     async logout(@Context() context: any) {
-        console.log(context.email)
-        console.log("===========================")
-        console.log(context.req.headers.cookie+"👽")
         const accessToken = await context.req.headers.authorization.split(" ")[1]
         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
         try {
