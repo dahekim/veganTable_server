@@ -45,6 +45,7 @@ export class AuthService {
         let user = await this.userService.findOne({
             email: req.user.email,
         })
+        console.log("🐞🐞🐞🐞🐞🐞"+user)
         if (!user) {
             user = await this.userService.createSocial({
                 email: req.user.email,
@@ -52,11 +53,20 @@ export class AuthService {
                 name: req.user.name,
                 phone: req.user.phone,
             })
+            this.setRefreshToken({ user, res })
+            res.redirect(
+                302,
+                // 회원정보 수정페이지로 이동
+                "http://localhost:3000/myPage/edit",
+            )
+            console.log("🦁수정 페이지 이동~~~")
         }
         this.setRefreshToken({ user, res })
         res.redirect(
             302,
-            "http://localhost:3000/",
+            //메인으로 이동
+            "http://localhost:3000",
         )
+        console.log("🦋 메인 페이지로 이동~~")
     }
 }
