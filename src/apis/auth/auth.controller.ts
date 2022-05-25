@@ -20,7 +20,7 @@ export class AuthController {
         @Req() req: Request & IOAuthUser, 
         @Res() res: Response,
         ) {
-            this.authService.socialLogin({ req, res })
+        await this.authService.socialLogin({ req, res })
     }
 
     @Get('/naver')
@@ -29,9 +29,8 @@ export class AuthController {
         @Req() req: Request & IOAuthUser, 
         @Res() res: Response
         ) {
-        this.authService.socialLogin({req, res})
+        await this.authService.socialLogin({req, res})
     }
-
 
     @Get('/kakao')
     @UseGuards(AuthGuard('kakao'))
@@ -39,6 +38,6 @@ export class AuthController {
         @Req() req: Request & IOAuthUser,
         @Res() res: Response
         ) {
-        this.authService.socialLogin({req, res});
+        await this.authService.socialLogin({req, res});
     }
 }

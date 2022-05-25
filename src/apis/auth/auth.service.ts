@@ -45,28 +45,14 @@ export class AuthService {
         let user = await this.userService.findOne({
             email: req.user.email,
         })
-        console.log("🐞🐞🐞🐞🐞🐞"+user)
         if (!user) {
-            user = await this.userService.createSocial({
-                email: req.user.email,
-                hashedPassword: req.user.password,
-                name: req.user.name,
-                phone: req.user.phone,
-            })
+            const { password, ...rest } = req.user
+            const newUser = {...rest, password}
+            user = await this.userService.createSocial({ ...newUser })
             this.setRefreshToken({ user, res })
-            res.redirect(
-                302,
-                // 회원정보 수정페이지로 이동
-                "http://localhost:3000/myPage/edit",
-            )
-            console.log("🦁수정 페이지 이동~~~")
+            res.redirect("http://localhost:3000/myPage/edit")
         }
         this.setRefreshToken({ user, res })
-        res.redirect(
-            302,
-            //메인으로 이동
-            "http://localhost:3000",
-        )
-        console.log("🦋 메인 페이지로 이동~~")
+        res.redirect("http://localhost:3000")
     }
 }
