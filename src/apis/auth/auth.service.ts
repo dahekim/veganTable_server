@@ -54,9 +54,9 @@ export class AuthService {
             })
         }
         this.setRefreshToken({ user, res })
-        // res.redirect(
-        //     302,
-        //     "http://localhost:5501/frontend/login/index.html",
-        // )
+        res.redirect(
+            302,
+            "http://localhost:3000/",
+        )
     }
 }

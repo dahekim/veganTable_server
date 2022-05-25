@@ -9,7 +9,7 @@ import { AuthModule } from './apis/auth/auth.module';
 import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
 import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
-import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
+
 
 
 
@@ -19,7 +19,6 @@ import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
     UserModule,
     RecipesModule,
     PaymentTransactionModule,
-    // RecipesReplyModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
