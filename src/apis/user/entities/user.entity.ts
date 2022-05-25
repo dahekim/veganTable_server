@@ -1,9 +1,11 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entities";
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -111,4 +113,8 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date
+
+    // @ManyToOne()
+    // @Field(()=>[RecipesReply])
+    // userReply:RecipesReply[]
 }
