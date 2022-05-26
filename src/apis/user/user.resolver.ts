@@ -65,6 +65,16 @@ export class UserResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
+    @Mutation(() => User)
+    async updatePassword(
+        @Args('user_id') user_id: string,
+        @Args('password') password: string,
+    ) {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        return this.userService.updatePassword({ user_id, hashedPassword })
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> String)
     async uploadProfileImage(
         @Args({ name: 'file', type: () => GraphQLUpload }) 

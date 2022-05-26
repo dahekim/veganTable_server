@@ -24,7 +24,6 @@ export class CreateRecipesInput {
     @Field(() => String, { nullable: true })
     ingredients: string;
 
-    @Field(() => String, { nullable: true })
-    recipesPic: string;
-
+    @Field(() => [String], { nullable: true })
+    recipesPics: string[];
 }

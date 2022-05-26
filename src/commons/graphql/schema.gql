@@ -107,12 +107,14 @@ type Mutation {
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
+  updatePassword(user_id: String!, password: String!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
+  uploadRecipeImage(files: [Upload!]!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(user_id: String!, contents: String!, id: String!): String!
@@ -121,7 +123,6 @@ type Mutation {
 }
 
 input UpdateUserInput {
-  password: String
   name: String
   phone: String
   address: String
@@ -144,7 +145,7 @@ input CreateRecipesInput {
   cookTime: Int
   level: String
   ingredients: String
-  recipesPic: String
+  recipesPics: [String!]
 }
 
 input UpdateRecipesInput {
@@ -155,5 +156,5 @@ input UpdateRecipesInput {
   cookTime: Int
   level: String
   ingredients: String
-  recipesPic: String
+  recipesPics: [String!]
 }
