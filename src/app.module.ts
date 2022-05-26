@@ -10,14 +10,12 @@ import { AuthModule } from './apis/auth/auth.module';
 import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
 import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
-import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     RecipesModule,
-    JwtRefreshStrategy,
     PaymentTransactionModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -37,7 +35,7 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'vegan-database',
-      // host: "10.31.224.4",
+      // host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',

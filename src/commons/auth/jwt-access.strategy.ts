@@ -21,7 +21,6 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, "access") {
         let isExist = await this.cacheManager.get(
             `accessToken:${accessToken}`
             )
-
         if (isExist) {
             throw new UnauthorizedException("이미 로그아웃한 사용자입니다.")
         }

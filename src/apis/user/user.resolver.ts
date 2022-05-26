@@ -16,7 +16,7 @@ export class UserResolver {
         private readonly userService: UserService,
     ) { }
 
-    @UseGuards(GqlAuthRefreshGuard)
+    @UseGuards(GqlAuthAccessGuard)
     @Query(() => User)
     async fetchUser(
         @CurrentUser() currentUser: ICurrentUser,
@@ -29,12 +29,6 @@ export class UserResolver {
     @Query(() => [User])
     async fetchUsers() {
         return await this.userService.findAll()
-    }
-
-    @UseGuards(GqlAuthAccessGuard)
-    @Query(() => [User])
-    fetchUsersWithDel() {
-        return this.userService.findWithDelete()
     }
 
     @Mutation(() => User)
@@ -71,14 +65,14 @@ export class UserResolver {
         return this.userService.update({ user_id, updateUserInput })
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
-    async updateUserDetail(
-        @Args('user_id') user_id: string,
-        @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
-    ) {
-        return this.userService.update({ user_id, updateUserInput })
-    }
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(() => User)
+    // async updateUserDetail(
+    //     @Args('user_id') user_id: string,
+    //     @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
+    // ) {
+    //     return this.userService.update({ user_id, updateUserInput })
+    // }
 
     // @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> String)

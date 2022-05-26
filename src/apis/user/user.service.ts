@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from 'cache-manager'
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
-import { FileUpload } from 'graphql-upload';
 import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
@@ -24,13 +23,9 @@ export class UserService {
     }
 
     async findOne({ email }) {
-        return await this.userRepository.findOne({ email })
-    }
-
-    async findWithDelete() {
-        return await this.userRepository.find({
-            withDeleted: true,
-        })
+        const myInfo = await this.userRepository.findOne({ 
+            where: { email: email } })
+        return myInfo
     }
 
     async create({ email, hashedPassword: password, name, phone }) {

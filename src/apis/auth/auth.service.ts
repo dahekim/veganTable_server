@@ -22,39 +22,35 @@ export class AuthService {
             { secret: process.env.REFRESH_TOKEN, expiresIn: '2w' })
 
         // 개발환경
-        // res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`)
-
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+        res.setHeader('Set-Cookie',`refreshToken=${refreshToken}; path=/;`);
 
         // 배포환경
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-        res.setHeader(
-            'Access-Control-Allow-Headers',
-            'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
-            )
-        res.setHeader(
-            'Set-Cookie',
-            `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
-            )
+        // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+        // res.setHeader('Access-Control-Allow-Credentials', 'true');
+        // res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+        // res.setHeader(
+        //     'Access-Control-Allow-Headers',
+        //     'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
+        //     )
+        // res.setHeader(
+        //     'Set-Cookie',
+        //     `refreshToken=${refreshToken}; path=/; domain=.itoutsider.shop; SameSite=None; Secure; httpOnly;`,
+        //     )
         }
 
-    async socialLogin({ req, res }) {
-        let user = await this.userService.findOne({
-            email: req.user.email,
-        })
-        if (!user) {
-            user = await this.userService.createSocial({
-                email: req.user.email,
-                hashedPassword: req.user.password,
-                name: req.user.name,
-                phone: req.user.phone,
-            })
-        }
-        this.setRefreshToken({ user, res })
-        // res.redirect(
-        //     302,
-        //     "http://localhost:5501/frontend/login/index.html",
-        // )
-    }
+    // async socialLogin({ req, res }) {
+    //     let user = await this.userService.findOne({
+    //         email: req.user.email,
+    //     })
+    //     if (!user) {
+    //         const { password, ...rest } = req.user
+    //         const newUser = {...rest, password}
+    //         user = await this.userService.createSocial({ ...newUser })
+    //         this.setRefreshToken({ user, res })
+    //         res.redirect("http://localhost:3000/myPage/edit")
+    //     }
+    //     this.setRefreshToken({ user, res })
+    //     res.redirect("http://localhost:3000")
+    // }
 }
