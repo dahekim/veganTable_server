@@ -13,8 +13,10 @@ export class RecipesReplyResolver{
     ){}
 
     @Query(()=>[RecipesReply])
-    async fetchReplies(){
-        return await this.recipesReplyService.findAll()
+    async fetchReplies(
+        @Args('id') id: string,
+    ){
+        return await this.recipesReplyService.findAll(id)
     }
 
     @Query(()=>[RecipesReply])
@@ -31,27 +33,29 @@ export class RecipesReplyResolver{
         @CurrentUser() user: ICurrentUser,
         @Args('user_id') user_id: string,
         @Args('contents') contents: string,
+        @Args('id') id: string
     ){
         return await this.recipesReplyService.create({
-            user, user_id, contents
+            user, user_id, contents, id
         })
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>String)
     async updateReply(
-        @Args('user_id') user_id: string,
-        @Args('id') reply_id: string,
+        @CurrentUser() user: ICurrentUser,
+        @Args('reply_id') reply_id: string,
+        @Args('contents') contents: string,
     ){
-        return await this.recipesReplyService.update({user_id, reply_id})
+        return await this.recipesReplyService.update({user, reply_id, contents})
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>String)
     async deleteRely(
-        @Args('user_id') user_id: string,
-        @Args('id') reply_id: string,
+        @CurrentUser() user: ICurrentUser,
+        @Args('reply_id') reply_id: string,
     ){
-        return this.recipesReplyService.delete({user_id, reply_id})
+        return this.recipesReplyService.delete({user, reply_id})
     }
 }

@@ -1,5 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Recipes } from "src/apis/recipes/entities/recipes.entity";
+import { User } from "src/apis/user/entities/user.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 @Entity()
@@ -7,11 +9,11 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedCol
 export class RecipesReply {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    id: string; 
+    reply_id!: string; 
 
     @Column()
     @Field(() => String)
-    contents: string;
+    contents!: string;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -21,4 +23,12 @@ export class RecipesReply {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(()=> Recipes, (recipes)=> recipes.recipesReply, {nullable: true})
+    @Field(()=> Recipes)
+    recipes: Recipes
+
+    @ManyToOne(() => User, (user) => user.recipesReply, { onDelete: 'CASCADE',onUpdate: 'CASCADE'})
+    @Field(() => User)
+    user: User;
 }
