@@ -29,6 +29,12 @@ export class UserService{
         return myInfo
     }
 
+    async withDelete(){
+        return await this.userRepository.find({
+            withDeleted: true
+        })
+    }
+
     async create({ email, hashedPassword: password, name, phone }){
         const user = await this.userRepository.findOne({ email })
         if(user) throw new ConflictException("이미 등록된 이메일입니다.")
@@ -64,13 +70,13 @@ export class UserService{
     }
 
     async delete({user_id}){
-        const result = await this.userRepository.softDelete({
-            user_id: user_id
-        })
-        return result.affected ? true: false
+        const result = await  this.userRepository.update ( 
+            { user_id }, 
+            { deletedAt: new Date() } 
+        )
     }
 
-    async upload({ file }) {
+    async uploadImage({ file }) {
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,

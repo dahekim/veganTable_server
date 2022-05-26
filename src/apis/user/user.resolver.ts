@@ -30,6 +30,12 @@ export class UserResolver {
         return await this.userService.findAll()
     }
 
+    @UseGuards(GqlAuthAccessGuard)
+    @Query(() => [User])
+    async fetchUsersWithDel() {
+        return await this.userService.withDelete()
+    }
+
     @Mutation(() => User)
     async createUser(
         @Args('email') email: string,
@@ -80,7 +86,7 @@ export class UserResolver {
         @Args({ name: 'file', type: () => GraphQLUpload }) 
         file: FileUpload,
     ){
-        return await this.userService.upload({ file });
+        return await this.userService.uploadImage({ file });
     }
 
     @UseGuards(GqlAuthAccessGuard)
