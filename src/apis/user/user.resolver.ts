@@ -5,7 +5,7 @@ import { UpdateUserInput } from "./dto/updateUser.input"
 import * as bcrypt from 'bcrypt'
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param"
 import { UseGuards } from "@nestjs/common"
-import { GqlAuthAccessGuard, GqlAuthRefreshGuard } from "src/commons/auth/gql-auth.guard"
+import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard"
 import { FileUpload, GraphQLUpload } from 'graphql-upload'
 
 
@@ -96,7 +96,6 @@ export class UserResolver {
     ) {
         return await this.userService.deleteImage({ user_id })
     }
-
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)

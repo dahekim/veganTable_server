@@ -48,12 +48,13 @@ export class RecipesResolver {
     ) {
         return this.recipesService.delete({ id });
     }
-
+    
+    // @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> [String])
-    uploadRecipeImage(
-        @Args({name:'files', type: () => [ GraphQLUpload ]}) files: FileUpload[]
+    uploadRecipeImages(
+        @Args({name:'files', type: () => [GraphQLUpload]}) files: FileUpload[]
     ){
-        return this.recipesService.uploadImage({files})
+        return this.recipesService.uploadImages({files})
     }
 
     // @UseGuards(GqlAuthAccessGuard)

@@ -121,7 +121,7 @@ type Mutation {
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
-  uploadRecipeImage(files: [Upload!]!): [String!]!
+  uploadRecipeImages(files: [Upload!]!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(user_id: String!, contents: String!, id: String!): String!

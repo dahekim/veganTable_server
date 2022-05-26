@@ -74,21 +74,24 @@ export class UserService{
             { user_id }, 
             { deletedAt: new Date() } 
         )
+        return result ? true : false
     }
 
     async uploadImage({ file }) {
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
-        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+        }).bucket(bucket)
 
         const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
+
         const url = await new Promise((resolve, reject) => {
             file
             .createReadStream()
             .pipe(storage.file(fileName).createWriteStream())
-            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
-            .on('error', (error) => reject("🔔"+error));
+            .on("finish", () => resolve(`${bucket}/${fileName}`))
+            .on("error", (error) => reject("🔔"+error));
         })
         return url
     }
