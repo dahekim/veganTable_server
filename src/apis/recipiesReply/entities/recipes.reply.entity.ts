@@ -15,6 +15,14 @@ export class RecipesReply {
     @Field(() => String)
     contents!: string;
 
+    @ManyToOne(()=> Recipes, {nullable: true})
+    @Field(()=> Recipes)
+    recipes: Recipes
+
+    @ManyToOne(() => User, { onDelete: 'CASCADE',onUpdate: 'CASCADE'} )
+    @Field(() => User)
+    user: User
+
     @CreateDateColumn()
     createdAt: Date;
 
@@ -23,12 +31,4 @@ export class RecipesReply {
 
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @ManyToOne(()=> Recipes, (recipes)=> recipes.recipesReply, {nullable: true})
-    @Field(()=> Recipes)
-    recipes: Recipes
-
-    @ManyToOne(() => User, (user) => user.recipesReply, { onDelete: 'CASCADE',onUpdate: 'CASCADE'})
-    @Field(() => User)
-    user: User;
 }

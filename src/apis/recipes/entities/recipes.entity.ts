@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entities";
+import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -65,13 +65,9 @@ export class Recipes {
     @Field(() => String, { nullable: true })
     recipesPic: string;
 
-    @ManyToOne(() => User, (user)=>user.recipesReply, {nullable: true})
+    @ManyToOne(() => User, {nullable: true})
     @Field(() => User)
     user: User;
-
-    @OneToMany(()=> RecipesReply, (recipesReply)=> recipesReply.recipes, {nullable: true} )
-    @Field(()=>[RecipesReply], {nullable: true})
-    recipesReply: RecipesReply[]
 
     @CreateDateColumn()
     createdAt: Date;
@@ -81,5 +77,4 @@ export class Recipes {
 
     @UpdateDateColumn()
     updatedAt: Date;
-    
 }

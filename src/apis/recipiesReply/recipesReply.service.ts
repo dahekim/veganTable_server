@@ -3,40 +3,118 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { Recipes } from '../recipes/entities/recipes.entity';
 import { User } from '../user/entities/user.entity';
-import { RecipesReply } from './entities/recipes.reply.entities';
+import { RecipesReply } from './entities/recipes.reply.entity';
 
 @Injectable()
 export class RecipesReplyService{
     constructor(
-        // @InjectRepository(RecipesReply)
-        // private readonly recipesReplyRepository: Repository<RecipesReply>,
+        @InjectRepository(RecipesReply)
+        private readonly recipesReplyRepository: Repository<RecipesReply>,
 
-        // @InjectRepository(Recipes)
-        // private readonly recipesRepository: Repository<Recipes>,
+        @InjectRepository(Recipes)
+        private readonly recipesRepository: Repository<Recipes>,
 
-        // @InjectRepository(User)
-        // private readonly userRepository: Repository<User>,
-        
-        // private readonly connection: Connection
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        private readonly connection: Connection,
     ){}
 
     findAll(id){
 
     }
 
-    findMine({user, user_id}){
+    async create({currentUser, user_id, contents, recipe_id}){
+        const queryRunner = this.connection.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+        
+        try {
+            const user = await queryRunner.manager.findOne(User, { user_id: currentUser.user_id })
+            const recipe = await queryRunner.manager.findOne(Recipes, { id: recipe_id })
+            const createRecipe = await this.recipesRepository.create({ ...recipe })
+            
+            const createReply = await this.recipesReplyRepository.create({
+                recipes : createRecipe,
+                contents: contents,
+                user: user,
+            })
 
+            await queryRunner.manager.save(createRecipe)
+            await queryRunner.manager.save(createReply)
+            await queryRunner.commitTransaction()
+            
+            return createReply
+        } catch (error) {
+            await queryRunner.rollbackTransaction()
+            throw error
+        } finally {
+            await queryRunner.release()
+        }
     }
 
-    create({user, user_id, contents, id}){
+    async update({ currentUser, reply_id, contents }) {
+        const queryRunner = this.connection.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
 
-    }
+        try {
+            const user = await queryRunner.manager.findOne(User, {
+                user_id: currentUser.user_id,
+            })
+            const prevReply = await queryRunner.manager.findOne( Recipes, {
+                id: reply_id,
+            })
+            const newContent = { ...prevReply, user: user, contents }
 
-    update({user, reply_id, contents}){
+            const result = await this.recipesReplyRepository.create(newContent)
 
+            await queryRunner.manager.save(result)
+            await queryRunner.commitTransaction()
+            return result
+        } catch (error) {
+            await queryRunner.rollbackTransaction()
+            throw error
+        } finally {
+            await queryRunner.release()
+        }
     }
     
-    delete({user, reply_id}){
+    
+    async delete({ currentUser, reply_id }) {
+        const queryRunner = this.connection.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
 
+        try {
+            const deleteReply = await this.recipesReplyRepository
+            .createQueryBuilder('replies')
+            .innerJoinAndSelect('replies.user', 'user')
+            .innerJoinAndSelect('replies.recipes', 'recipes')
+            .where('user.id = :userId', { userId: currentUser.id })
+            .andWhere('replies.id = :Id', { Id: reply_id })
+            .getOne()
+            
+            if (deleteReply) {
+                await this.recipesReplyRepository.softDelete({ reply_id })
+            const post = await this.recipesRepository.findOne({
+                id: deleteReply.recipes.id,
+            })
+            
+            const createQtBoard = await this.recipesRepository.create({
+                ...post,
+            })
+            await queryRunner.manager.save(createQtBoard)
+            await queryRunner.commitTransaction()
+            return true;
+        } else {await queryRunner.commitTransaction()
+            return false
+        }
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error
+        } finally {
+            await queryRunner.release();
+        }
     }
 }
