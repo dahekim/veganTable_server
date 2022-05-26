@@ -19,7 +19,7 @@ export class CreateRecipesInput {
     cookTime: number;
 
     @Field(() => String, { nullable: true })
-    level: String;
+    level: string;
 
     @Field(() => String, { nullable: true })
     ingredients: string;

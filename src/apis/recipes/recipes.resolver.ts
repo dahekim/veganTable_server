@@ -2,8 +2,6 @@ import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
-import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
-import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/upgradeRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
@@ -49,21 +47,11 @@ export class RecipesResolver {
         return this.recipesService.delete({ id });
     }
     
-    // @UseGuards(GqlAuthAccessGuard)
+    @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> [String])
     uploadRecipeImages(
         @Args({name:'files', type: () => [GraphQLUpload]}) files: FileUpload[]
     ){
         return this.recipesService.uploadImages({files})
     }
-
-    // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(()=> RecipesImage )
-    // deleteRecipeImage(
-    //     @CurrentUser() user: ICurrentUser,
-    //     @Args('id') recipe_id: string,
-    //     @Args('image_id') image_id: string
-    // ){
-    //     return this.recipesService.deleteImage({user, recipe_id, image_id})
-    // }
 }
