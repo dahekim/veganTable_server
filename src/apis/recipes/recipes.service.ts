@@ -134,4 +134,27 @@ export class RecipesService {
         )
         return results
     }
+
+    async deleteImage({recipe_id}){
+        const recipeId = await this.recipesRepository.findOne({ id: recipe_id })
+
+        const prevImage = recipeId.recipesPic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+        const prevImageName = prevImage[prevImage.length - 1]
+
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        })
+
+        const result = await storage
+        .bucket(process.env.STORAGE_BUCKET)
+        .file(prevImageName)
+        .delete()
+
+        const { recipesPic, ...user } = recipeId
+        const deleteUrl = { ...user, recipesPic: null }
+        await this.recipesRepository.save(deleteUrl)
+
+        return result ? true : false
+    }
 }

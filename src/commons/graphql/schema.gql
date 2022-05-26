@@ -2,6 +2,43 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cookTime: Int!
+  level: COOKING_LEVEL!
+  ingredients: String!
+  recipesPic: String
+  user: User!
+  scrapCount: RecipeScrap!
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
+type RecipeScrap {
+  scrap_id: String!
+  user: User!
+  recipes: Recipes!
+  scraped: Boolean!
+}
+
 type User {
   user_id: String!
   email: String!
@@ -17,6 +54,7 @@ type User {
   startDate: String
   endDate: String
   profilePic: String
+  scrapCount: RecipeScrap
   deletedAt: DateTime
 }
 
@@ -59,35 +97,6 @@ enum TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
-type Recipes {
-  id: String!
-  title: String!
-  summary: String!
-  types: CATEGORY_TYPES!
-  desc: String!
-  cookTime: Int!
-  level: COOKING_LEVEL!
-  ingredients: String!
-  recipesPic: String
-  user: User!
-}
-
-enum CATEGORY_TYPES {
-  ALL
-  VEGAN
-  LACTO
-  OVO
-  LACTO_OVO
-  PESCO
-  POLLO
-}
-
-enum COOKING_LEVEL {
-  SIMPLE
-  NORMAL
-  DIFFICULT
-}
-
 type RecipesReply {
   reply_id: String!
   contents: String!
@@ -104,6 +113,7 @@ type Query {
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!
+  fetchMyScraps: [Recipes!]!
 }
 
 type Mutation {
@@ -122,11 +132,13 @@ type Mutation {
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
+  deleteRecipeImages(id: String!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(user_id: String!, contents: String!, id: String!): String!
   updateReply(reply_id: String!, contents: String!): String!
   deleteRely(reply_id: String!): String!
+  createScrap(id: String!): RecipeScrap!
 }
 
 input UpdateUserInput {

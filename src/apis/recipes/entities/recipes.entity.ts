@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { RecipeScrap } from "src/apis/recipeScrap/entities/recipeScrap.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -67,6 +68,10 @@ export class Recipes {
     @ManyToOne(() => User, {nullable: true})
     @Field(() => User)
     user: User;
+
+    @ManyToOne(()=> RecipeScrap, {nullable: false})
+    @Field(()=>RecipeScrap)
+    scrapCount: number 
 
     @CreateDateColumn()
     createdAt: Date;

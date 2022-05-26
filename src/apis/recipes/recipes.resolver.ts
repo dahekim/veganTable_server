@@ -54,4 +54,12 @@ export class RecipesResolver {
     ){
         return this.recipesService.uploadImages({files})
     }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(()=> [String])
+    deleteRecipeImages(
+        @Args('id') recipe_id: string,
+    ){
+        return this.recipesService.deleteImage({recipe_id})
+    }
 }
