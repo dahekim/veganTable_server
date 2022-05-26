@@ -107,7 +107,6 @@ type Mutation {
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
-  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
@@ -125,9 +124,6 @@ input UpdateUserInput {
   password: String
   name: String
   phone: String
-}
-
-input UpdateUserDetailInput {
   address: String
   type: String
   nickname: String
