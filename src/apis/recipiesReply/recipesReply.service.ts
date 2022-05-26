@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection, getRepository, Repository } from 'typeorm';
 import { Recipes } from '../recipes/entities/recipes.entity';
 import { User } from '../user/entities/user.entity';
 import { RecipesReply } from './entities/recipes.reply.entity';
@@ -20,7 +20,14 @@ export class RecipesReplyService{
         private readonly connection: Connection,
     ){}
 
-    findAll(id){
+    async findAll({recipe_id}){
+        return await getRepository(RecipesReply)
+        .createQueryBuilder('recipesReply')
+        .leftJoinAndSelect('recipesReply.recipe', 'recipe')
+        .leftJoinAndSelect('recipesReply.user', 'user')
+        .where('recipe.id = :id', { id: recipe_id })
+        .orderBy('recipesReply.id', 'DESC')
+        .getMany();
 
     }
 
