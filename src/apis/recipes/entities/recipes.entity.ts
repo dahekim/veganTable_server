@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entity";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum CATEGORY_TYPES {
     ALL = 'ALL',
@@ -64,9 +65,9 @@ export class Recipes {
     @Field(() => String, { nullable: true })
     recipesPic: string;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {nullable: true})
     @Field(() => User)
-    user_id: User;
+    user: User;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -76,5 +77,4 @@ export class Recipes {
 
     @UpdateDateColumn()
     updatedAt: Date;
-    static title: any;
 }

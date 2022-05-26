@@ -8,6 +8,7 @@ type User {
   name: String!
   phone: String!
   address: String
+  addressDetail: String
   type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
@@ -62,7 +63,7 @@ type Recipes {
   level: COOKING_LEVEL!
   ingredients: String!
   recipesPic: String
-  user_id: User!
+  user: User!
 }
 
 enum CATEGORY_TYPES {
@@ -81,6 +82,13 @@ enum COOKING_LEVEL {
   DIFFICULT
 }
 
+type RecipesReply {
+  reply_id: String!
+  contents: String!
+  recipes: Recipes!
+  user: User!
+}
+
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
@@ -88,6 +96,7 @@ type Query {
   fetchRecipe(userid: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
+  fetchReplies(id: String!): [RecipesReply!]!
 }
 
 type Mutation {
@@ -106,6 +115,9 @@ type Mutation {
   deleteRecipe(recipe_id: String!): Boolean!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
+  createReply(user_id: String!, contents: String!, id: String!): String!
+  updateReply(reply_id: String!, contents: String!): String!
+  deleteRely(reply_id: String!): String!
 }
 
 input UpdateUserInput {

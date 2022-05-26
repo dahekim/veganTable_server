@@ -9,6 +9,7 @@ import { AuthModule } from './apis/auth/auth.module';
 import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction.module';
 import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
+import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
 
 
 @Module({
@@ -17,6 +18,7 @@ import { UserModule } from './apis/user/user.module';
     UserModule,
     RecipesModule,
     PaymentTransactionModule,
+    RecipesReplyModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
@@ -25,7 +27,7 @@ import { UserModule } from './apis/user/user.module';
         origin: 'http://localhost:3000',
         credentials: true,
         // frontend 배포 이후
-        // origin: 'https://domain-url',
+        // origin: 'https://vegantable.shop',
       },      
       bodyParserConfig: {
         limit:"100mb"

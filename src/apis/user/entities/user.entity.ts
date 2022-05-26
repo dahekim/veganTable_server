@@ -1,11 +1,13 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entities";
+import { Recipes } from "src/apis/recipes/entities/recipes.entity";
+import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entity";
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -70,6 +72,10 @@ export class User {
     @Field(() => String, { nullable: true })
     address?: string
 
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
+    addressDetail?: string
+
     @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
     @Field(()=>VEGAN_TYPE, {nullable: true})
     type?: string
@@ -86,17 +92,14 @@ export class User {
     @Field(() => SUB_TYPE, { nullable: true })
     isSubs?: string;
 
-    // 구독 개월 수
     @Column({default: 0 })
     @Field(()=>Int, { nullable: true })
     SubsHistory?: number
 
-    // 시작 날짜
     @Column({default: null})
     @Field(()=>String, {nullable: true})
     startDate?: string
 
-    // 종료 날짜
     @Column({default: null})
     @Field(()=> String, {nullable: true})
     endDate?: string
@@ -113,8 +116,4 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date
-
-    // @ManyToOne()
-    // @Field(()=>[RecipesReply])
-    // userReply:RecipesReply[]
 }
