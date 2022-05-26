@@ -1,12 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Connection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { Recipes } from "./entities/recipes.entity";
+import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
+import { CreateRecipesInput } from "./dto/createRecipes.input";
 
 interface IFile{
     files:FileUpload[]
@@ -20,9 +21,9 @@ export class RecipesService {
 
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-
+        // private readonly createRecipesInput: CreateRecipesInput,
         private readonly connection: Connection
-    ) { }
+    ) {}
 
     async fetchRecipesAll() {
         return await getRepository(Recipes)
@@ -30,6 +31,32 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.user', 'user')
             .orderBy('recipes.createdAt', 'DESC')
             .getMany();
+    }
+
+    async fetchRecipeTypes({ id, typesCode }) {
+        const checkedType = await this.recipesRepository.findOne({
+            where: { id }
+        })
+        const { types, ...rest } = checkedType
+        if (checkedType.types !== 'ALL') {
+            let typesEnum: CATEGORY_TYPES;
+            if (typesCode === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
+            else if (typesCode === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
+            else if (typesCode === "OVO") typesEnum = CATEGORY_TYPES.OVO;
+            else if (typesCode === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
+            else if (typesCode === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
+            else if (typesCode === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
+            else {
+                console.log('정확한 채식 타입을 선택해 주세요.');
+                throw new ConflictException('적합한 채식 타입을 선택하지 않으셨습니다.');
+            }
+            const collectedTypes = await this.recipesRepository.create({
+                types: typesEnum,
+                ...rest
+            });
+            const result = await this.recipesRepository.save(collectedTypes);
+            return result;
+        }
     }
 
     async fetchRecipesTitlewithUserid({ user_id }) {
@@ -41,7 +68,26 @@ export class RecipesService {
             .orderBy
     }
 
-    async
+    async fetchMyRecipe({ id, user_id }) {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.id', 'id')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .where('recipes.id = :recipesId', { id })
+            .andWhere('user.user_id = :userUserId', { user_id })
+            .orderBy('recipes.createdAt', 'DESC')
+            .getManyAndCount();
+    }
+    async fetchRecipeIsPro({ isPro }) {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .where('user.isPro = :userIsPro', { isPro })
+            .orderBy('recipes.createdAt', 'DESC')
+            .getManyAndCount();
+    }
+
+
 
     async create({ createRecipesInput }) {
         const result = await this.recipesRepository.save({
@@ -88,23 +134,4 @@ export class RecipesService {
         )
         return results
     }
-
-    // async deleteImage({user, recipe_id, image_id }){
-    //     const bucket = process.env.VEGAN_STORAGE_BUCKET
-    //     const storage = new Storage({
-    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
-    //         projectId: process.env.STORAGE_PROJECT_ID,
-    //     }).bucket(bucket)
-
-    //     const prevImage = recipe_id.url.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
-    //     const prevImageName = prevImage[prevImage.length - 1]
-
-    //     const result = await storage.file(prevImageName).delete()
-
-    //     const { profilePic, ...user } = user;
-    //     const deleteUrl = { ...user, profilePic: null };
-    //     await this.recipesRepository.save(deleteUrl);
-
-    //     return result ? true : false
-    // }
 }

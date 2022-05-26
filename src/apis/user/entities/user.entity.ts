@@ -1,13 +1,10 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Recipes } from "src/apis/recipes/entities/recipes.entity";
-import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entity";
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToOne,
-    OneToMany,
+
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
