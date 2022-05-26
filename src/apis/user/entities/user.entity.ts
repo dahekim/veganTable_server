@@ -1,9 +1,11 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entities";
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -91,13 +93,13 @@ export class User {
 
     // 시작 날짜
     @Column({default: null})
-    @Field(()=>Date, {nullable: true})
-    startDate?: Date
+    @Field(()=>String, {nullable: true})
+    startDate?: string
 
     // 종료 날짜
     @Column({default: null})
-    @Field(()=> Date, {nullable: true})
-    endDate?: Date
+    @Field(()=> String, {nullable: true})
+    endDate?: string
 
     @Column({ type: 'varchar', default: null, nullable: true })
     @Field(() => String, { nullable: true })
@@ -111,4 +113,8 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date
+
+    // @ManyToOne()
+    // @Field(()=>[RecipesReply])
+    // userReply:RecipesReply[]
 }
