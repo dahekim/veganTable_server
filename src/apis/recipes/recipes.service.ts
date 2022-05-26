@@ -67,7 +67,7 @@ export class RecipesService {
         return result.affected ? true : false;
     }
 
-    async uploadImage( {files }: IFile ){
+    async uploadImages( {files}: IFile ){
         const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
@@ -75,19 +75,18 @@ export class RecipesService {
         }).bucket(bucket)
 
         const waitedFiles = await Promise.all(files)
-
         const results = await Promise.all(waitedFiles.map( file => {
-            new Promise( (resolve, reject) => {
-                const fileName = `${getToday()}/${uuidv4()}/origin/${file.filename}`
-                file.createReadStream()
-                .pipe(storage.file(fileName).createWriteStream ())
+            return new Promise( (resolve, reject) => {
+                const fileName = `recipes/${getToday()}/${uuidv4()}/${file.filename}`
+                file
+                .createReadStream()
+                .pipe(storage.file(fileName).createWriteStream())
                 .on( "finish" , () => resolve (`${bucket}/${fileName}`) )
-                .on( "error" , () =>reject() )
+                .on( "error" , (error) => reject("🔔"+error) )
                 })
             })
         )
         return results
-
     }
 
     // async deleteImage({user, recipe_id, image_id }){
@@ -97,7 +96,7 @@ export class RecipesService {
     //         projectId: process.env.STORAGE_PROJECT_ID,
     //     }).bucket(bucket)
 
-    //     const prevImage = user.url.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+    //     const prevImage = recipe_id.url.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
     //     const prevImageName = prevImage[prevImage.length - 1]
 
     //     const result = await storage.file(prevImageName).delete()
@@ -107,6 +106,5 @@ export class RecipesService {
     //     await this.recipesRepository.save(deleteUrl);
 
     //     return result ? true : false
-    
     // }
 }

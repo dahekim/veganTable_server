@@ -29,6 +29,12 @@ export class UserService{
         return myInfo
     }
 
+    async withDelete(){
+        return await this.userRepository.find({
+            withDeleted: true
+        })
+    }
+
     async create({ email, hashedPassword: password, name, phone }){
         const user = await this.userRepository.findOne({ email })
         if(user) throw new ConflictException("이미 등록된 이메일입니다.")
@@ -64,25 +70,28 @@ export class UserService{
     }
 
     async delete({user_id}){
-        const result = await this.userRepository.softDelete({
-            user_id: user_id
-        })
-        return result.affected ? true: false
+        const result = await  this.userRepository.update ( 
+            { user_id }, 
+            { deletedAt: new Date() } 
+        )
+        return result ? true : false
     }
 
-    async upload({ file }) {
+    async uploadImage({ file }) {
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
-        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+        }).bucket(bucket)
 
         const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
+
         const url = await new Promise((resolve, reject) => {
             file
             .createReadStream()
             .pipe(storage.file(fileName).createWriteStream())
-            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
-            .on('error', (error) => reject("🔔"+error));
+            .on("finish", () => resolve(`${bucket}/${fileName}`))
+            .on("error", (error) => reject("🔔"+error));
         })
         return url
     }

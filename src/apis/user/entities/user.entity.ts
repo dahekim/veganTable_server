@@ -112,6 +112,7 @@ export class User {
     createdAt: Date
 
     @DeleteDateColumn()
+    @Field(()=>Date, {nullable: true})
     deletedAt: Date
 
     @UpdateDateColumn()
