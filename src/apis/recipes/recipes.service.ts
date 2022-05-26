@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Connection, getRepository, Repository } from "typeorm";
@@ -6,8 +6,8 @@ import { User } from "../user/entities/user.entity";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
-import { v4 as uuidv4 } from 'uuid'
-import { CreateRecipesInput } from "./dto/createRecipes.input";
+import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
+
 
 interface IFile{
     files:FileUpload[]
@@ -19,9 +19,12 @@ export class RecipesService {
         @InjectRepository(Recipes)
         private readonly recipesRepository: Repository<Recipes>,
 
+        @InjectRepository(RecipesImage)
+        private readonly recipesImageRepository: Repository<RecipesImage>,
+
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        // private readonly createRecipesInput: CreateRecipesInput,
+
         private readonly connection: Connection
     ) {}
 
@@ -123,7 +126,7 @@ export class RecipesService {
         const waitedFiles = await Promise.all(files)
         const results = await Promise.all(waitedFiles.map( file => {
             return new Promise( (resolve, reject) => {
-                const fileName = `recipes/${getToday()}/${uuidv4()}/${file.filename}`
+                const fileName = `recipes/${getToday()}/${file.filename}`
                 file
                 .createReadStream()
                 .pipe(storage.file(fileName).createWriteStream())
@@ -136,9 +139,10 @@ export class RecipesService {
     }
 
     async deleteImage({recipe_id}){
-        const recipeId = await this.recipesRepository.findOne({ id: recipe_id })
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
+        const recipeId = await this.recipesImageRepository.findOne({ recipes: recipe_id })
 
-        const prevImage = recipeId.recipesPic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+        const prevImage = recipeId.url.split(`${bucket}/recipes/${getToday()}/`)
         const prevImageName = prevImage[prevImage.length - 1]
 
         const storage = new Storage({
@@ -151,8 +155,8 @@ export class RecipesService {
         .file(prevImageName)
         .delete()
 
-        const { recipesPic, ...user } = recipeId
-        const deleteUrl = { ...user, recipesPic: null }
+        const { url, ...recipe } = recipeId
+        const deleteUrl = { ...recipe, url: null }
         await this.recipesRepository.save(deleteUrl)
 
         return result ? true : false
