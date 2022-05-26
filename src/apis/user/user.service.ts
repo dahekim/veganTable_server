@@ -7,6 +7,7 @@ import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 import { getToday } from 'src/commons/libraries/utils';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService{
@@ -51,6 +52,17 @@ export class UserService{
         return await this.userRepository.save(updateUser)
     }
 
+    async updatePassword({user_id, hashedPassword: password}){
+        const user = await this.userRepository.findOne({
+            where: { user_id: user_id },
+        })
+        const updateUser = {
+            ...user,
+            password
+        }
+        return await this.userRepository.save(updateUser)
+    }
+
     async delete({user_id}){
         const result = await this.userRepository.softDelete({
             user_id: user_id
@@ -91,9 +103,9 @@ export class UserService{
         .file(prevImageName)
         .delete()
 
-        const { profilePic, ...user } = userId;
-        const deleteUrl = { ...user, profilePic: null };
-        await this.userRepository.save(deleteUrl);
+        const { profilePic, ...user } = userId
+        const deleteUrl = { ...user, profilePic: null }
+        await this.userRepository.save(deleteUrl)
 
         return result ? true : false
     }
