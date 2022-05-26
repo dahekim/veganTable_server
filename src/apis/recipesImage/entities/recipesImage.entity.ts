@@ -9,7 +9,7 @@ export class RecipesImage {
     @Field(() => String)
     image_id: string;
 
-    @Column({ type: "string", default: false })
+    @Column({ default: false })
     @Field(() => String)
     url: string;
 
@@ -17,7 +17,7 @@ export class RecipesImage {
     @Field(() => String)
     thumbNail: string;
 
-    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @ManyToOne(() => Recipes, (recipes) => recipes.image_id, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @Field(() => Recipes, { nullable: true })
     recipes: Recipes;
 

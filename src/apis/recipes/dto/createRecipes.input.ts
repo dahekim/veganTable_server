@@ -37,5 +37,5 @@ export class CreateRecipesInput {
     tags: string[];
 
     @Field(() => RecipesImage)
-    recipesImage: RecipesImage;
+    image_id: RecipesImage;
 }

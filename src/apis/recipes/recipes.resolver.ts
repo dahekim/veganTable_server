@@ -52,13 +52,12 @@ export class RecipesResolver {
     @Mutation(() => Recipes)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
-        // @Args({ name: 'desc', type: () => [GraphQLJSON] }) desc: JSON,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return await this.recipesService.create({
-            createRecipesInput,
+        return await this.recipesService.create(
+            { ...createRecipesInput },
             currentUser,
-        });
+        );
     }
 
     @UseGuards(GqlAuthAccessGuard)

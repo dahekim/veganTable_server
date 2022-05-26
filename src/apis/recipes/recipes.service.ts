@@ -1,14 +1,10 @@
-import { ConflictException, createParamDecorator, ExecutionContext, Injectable } from "@nestjs/common";
-import { addFieldMetadata, GqlExecutionContext } from "@nestjs/graphql";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { stringify } from "querystring";
-import { Connection, getRepository, Repository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { CLASS_TYPE, User } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
-import { CATEGORY_TYPES, COOKING_LEVEL, Recipes } from "./entities/recipes.entity";
-import { jsonToSchema } from "@walmartlabs/json-to-simple-graphql-schema";
-
+import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 
 @Injectable()
 export class RecipesService {
@@ -76,93 +72,87 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create({
-        { ...createRecipesInput }, image_id, currentUser
-    }) {
-    try {
-        const user = await this.userRepository.findOne(
-            { user_id: currentUser.user_id },
-        );
-        const images = await getRepository(RecipesImage)
-            .createQueryBuilder('recipesimage')
-            .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
-            .withDeleted()
-            .getOne();
+    async create(
+        { images, image_id, ...rest },
+        currentUser,
+    ) {
 
-        const registRecipe = await this.recipesRepository.save({
-            ...user,
-            images,
-            thumbNail: images[0],
-            isPro: user.isPro,
-            ...rest
-        });
+        try {
+            const user = await this.userRepository.findOne(
+                { user_id: currentUser.user_id },
+            );
+            const recipeImages = await getRepository(RecipesImage)
+                .createQueryBuilder('recipesimage')
+                .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
+                .withDeleted()
+                .getOne();
 
-        for (let i = 0; i < images.length; i++) {
-            if (i === 0) {
-                await this.recipesImageRepository.save({
-                    url: images[i],
-                    recipes: registRecipe,
-                });
-            } else {
+            const registRecipe = await this.recipesRepository.save({
+                user: user,
+                recipeImages: recipeImages,
+                isPro: user.isPro,
+                ...rest
+            });
+
+            for (let i = 0; i < images.length; i++) {
                 await this.recipesImageRepository.save({
                     url: images[i],
                     recipes: registRecipe,
                 });
             }
+            if (registRecipe.isPro === 'COMMON') {
+                await this.recipesRepository.save({
+                    user: user,
+                    isPro: CLASS_TYPE.COMMON,
+                })
+                console.log('작성자: 일반인');
+            } else if (registRecipe.isPro === 'PRO') {
+                await this.recipesRepository.save({
+                    user: user,
+                    isPro: CLASS_TYPE.PRO,
+                })
+                console.log('작성자: 전문가');
+            }
+            return registRecipe;
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
         }
-        if (registRecipe.isPro === 'COMMON') {
-            await this.recipesRepository.save({
-                user,
-                isPro: CLASS_TYPE.COMMON,
-            })
-            console.log('작성자: 일반인');
-        } else if (registRecipe.isPro === 'PRO') {
-            await this.recipesRepository.save({
-                user,
-                isPro: CLASS_TYPE.PRO,
-            })
-            console.log('작성자: 전문가');
-        }
-        return registRecipe;
-    } catch (error) {
-        console.log(error)
-        if (error?.response?.data?.message || error?.response?.status) {
-            console.log(error.response.data.message);
-            console.log(error.response.status);
-        } else {
-            throw error;
-        }
-    }
 
-}
+    }
 
     async update({ id, updateRecipesInput }) {
-    const registedRecipe = await this.recipesRepository.findOne({
-        where: { id }
-    });
-
-    const newRegistRecipe = {
-        ...registedRecipe,
-        ...updateRecipesInput,
-    }
-    return await this.recipesRepository.save(newRegistRecipe);
-}
-
-    async delete ({ id, currentUser }) {
-    try {
-        const result = await this.recipesRepository.softDelete({
-            id,
-            user: currentUser.user_id,
+        const registedRecipe = await this.recipesRepository.findOne({
+            where: { id }
         });
-        return result.affected ? true : false;
-    } catch (error) {
-        console.log(error)
-        if (error?.response?.data?.message || error?.response?.status) {
-            console.log(error.response.data.message);
-            console.log(error.response.status);
-        } else {
-            throw error;
+
+        const newRegistRecipe = {
+            ...registedRecipe,
+            ...updateRecipesInput,
+        }
+        return await this.recipesRepository.save(newRegistRecipe);
+    }
+
+    async delete({ id, currentUser }) {
+        try {
+            const result = await this.recipesRepository.softDelete({
+                id,
+                user: currentUser.user_id,
+            });
+            return result.affected ? true : false;
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
         }
     }
-}
 }

@@ -82,7 +82,7 @@ export class Recipes {
 
     @OneToMany(() => RecipesImage, (image_id) => image_id.recipes)
     @Field(() => [RecipesImage])
-    recipesImages: RecipesImage[];
+    image_id: RecipesImage[];
 
     @ManyToOne(() => User, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
     @Field(() => User)
