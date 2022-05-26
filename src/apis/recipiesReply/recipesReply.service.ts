@@ -33,7 +33,7 @@ export class RecipesReplyService{
     async create({currentUser, user_id, contents, recipe_id}){
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect()
-        await queryRunner.startTransaction()
+        await queryRunner.startTransaction('REPEATABLE READ')
         
         try {
             const user = await queryRunner.manager.findOne(User, { user_id: currentUser.user_id })
@@ -62,7 +62,7 @@ export class RecipesReplyService{
     async update({ currentUser, reply_id, contents }) {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect()
-        await queryRunner.startTransaction()
+        await queryRunner.startTransaction('REPEATABLE READ')
 
         try {
             const user = await queryRunner.manager.findOne(User, {
@@ -90,7 +90,7 @@ export class RecipesReplyService{
     async delete({ currentUser, reply_id }) {
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect()
-        await queryRunner.startTransaction()
+        await queryRunner.startTransaction('REPEATABLE READ')
 
         try {
             const deleteReply = await this.recipesReplyRepository
