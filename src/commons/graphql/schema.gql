@@ -57,25 +57,21 @@ enum TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
-type RecipesImage {
-  id: String!
-  url: String!
-}
-
 type Recipes {
   id: String!
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  desc: [String!]!
+  steps: [String!]
+  images: [String!]
+  texts: [String!]
   cookTime: Int!
   level: COOKING_LEVEL!
-  ingredients: String!
+  ingredients: [String!]
   serve: Int!
-  tags: [String!]!
-  thumbNailPic: [String!]!
-  user: User
-  recipesPic: RecipesImage
+  tags: [String!]
+  recipesImage: [RecipesImage!]!
+  user: User!
 }
 
 enum CATEGORY_TYPES {
@@ -94,12 +90,20 @@ enum COOKING_LEVEL {
   DIFFICULT
 }
 
+type RecipesImage {
+  image_id: String!
+  url: String!
+  recipes: Recipes
+}
+
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipesAll: [Recipes!]!
   fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
+  fetchMyRecipe(id: String!, user_id: String!): Recipes!
+  fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
 }
@@ -143,28 +147,28 @@ scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String
-  types: String
-  desc: [String!]
-  cookTime: Int
-  level: String
-  ingredients: String
-  serve: Int
-  tags: [String!]
-  thumbNailPic: [String!]
-  recipesPic: String
+  summary: String!
+  types: String!
+  steps: [String!]!
+  images: [String!]!
+  texts: [String!]!
+  cookTime: Int!
+  level: String!
+  ingredients: [String!]!
+  serve: Int!
+  tags: [String!]!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  desc: [String!]
+  steps: [String!]
+  images: [String!]
+  texts: [String!]
   cookTime: Int
   level: String
-  ingredients: String
+  ingredients: [String!]
   serve: Int
   tags: [String!]
-  thumbNailPic: [String!]
-  recipesPic: String
 }

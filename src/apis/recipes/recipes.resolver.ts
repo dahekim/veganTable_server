@@ -8,39 +8,57 @@ import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
 import { RecipesService } from "./recipes.service";
+// import GraphQLJSON from 'graphql-type-json'
 
 @Resolver()
 export class RecipesResolver {
     constructor(
         private readonly recipesService: RecipesService,
-        private readonly userService: UserService,
     ) { }
 
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
-    fetchRecipesAll() {
-        return this.recipesService.fetchRecipesAll();
+    async fetchRecipesAll() {
+        return await this.recipesService.fetchRecipesAll();
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => Recipes)
-    fetchRecipeTypes(
+    async fetchRecipeTypes(
         @Args('recipes_id') id: string,
         @Args('vegan_types') typesCode: string,
     ) {
-        return this.recipesService.fetchRecipeTypes({ id, typesCode });
+        return await this.recipesService.fetchRecipeTypes({ id, typesCode });
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Query(() => Recipes)
+    async fetchMyRecipe(
+        @Args('id') id: string,
+        @Args('user_id') user_id: string,
+    ) {
+        return await this.recipesService.fetchMyRecipe({ id, user_id });
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Query(() => Recipes)
+    async fetchRecipeIsPro(
+        @Args('isPro') isPro: CLASS_TYPE.PRO,
+    ) {
+        return await this.recipesService.fetchRecipeIsPro({ isPro });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => Recipes)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
+        // @Args({ name: 'desc', type: () => [GraphQLJSON] }) desc: JSON,
         @CurrentUser() currentUser: ICurrentUser,
     ) {
-        return await this.recipesService.create(
-            { createRecipesInput },
+        return await this.recipesService.create({
+            createRecipesInput,
             currentUser,
-        );
+        });
     }
 
     @UseGuards(GqlAuthAccessGuard)

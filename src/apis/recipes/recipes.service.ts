@@ -1,20 +1,13 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, createParamDecorator, ExecutionContext, Injectable } from "@nestjs/common";
+import { addFieldMetadata, GqlExecutionContext } from "@nestjs/graphql";
 import { InjectRepository } from "@nestjs/typeorm";
-import { timingSafeEqual } from "crypto";
+import { stringify } from "querystring";
 import { Connection, getRepository, Repository } from "typeorm";
-import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
-import { CLASS_TYPE, SUB_TYPE, User } from "../user/entities/user.entity";
+import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
+import { CLASS_TYPE, User } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { CATEGORY_TYPES, COOKING_LEVEL, Recipes } from "./entities/recipes.entity";
-
-export interface ICreateRecipes {
-    createRecipesInput: CreateRecipesInput
-}
-
-// interface IUpdateRecipes {
-//     id: string
-//     updateRecipesInput: UpdateRecipesInput
-// }
+import { jsonToSchema } from "@walmartlabs/json-to-simple-graphql-schema";
 
 
 @Injectable()
@@ -29,7 +22,6 @@ export class RecipesService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
-        private readonly connection: Connection,
         private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
@@ -64,16 +56,18 @@ export class RecipesService {
         }
     }
 
-    async fetchRecipesWithNickname({ nickname }) {
+    async fetchMyRecipe({ id, user_id }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.id', 'id')
             .leftJoinAndSelect('recipes.user', 'user')
-            .where('user.nickname = :userUserNickname', { nickname })
+            .where('recipes.id = :recipesId', { id })
+            .andWhere('user.user_id = :userUserId', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
             .getManyAndCount();
     }
 
-    async fetchRecipesWithIsPro({ isPro }) {
+    async fetchRecipeIsPro({ isPro }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
@@ -82,95 +76,93 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create(
-        { createRecipesInput }: ICreateRecipes, currentUser,
-    ) {
-        const recipesInput = new CreateRecipesInput();
-        recipesInput.desc = { image: "url", text: "text" };
-        const queryRunner = await this.connection.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction('SERIALIZABLE')
-        try {
-            const writeRecipe = await this.recipesRepository.create({
+    async create({
+        { ...createRecipesInput }, image_id, currentUser
+    }) {
+    try {
+        const user = await this.userRepository.findOne(
+            { user_id: currentUser.user_id },
+        );
+        const images = await getRepository(RecipesImage)
+            .createQueryBuilder('recipesimage')
+            .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
+            .withDeleted()
+            .getOne();
 
-                user: currentUser,
-            });
-            await queryRunner.manager.save(writeRecipe);
-
-            const user = await queryRunner.manager.findOne(
-                User,
-                { user_id: currentUser.user_id },
-                { lock: { mode: 'pessimistic_write' } }
-            );
-
-            const registRecipe = await this.userRepository.create({
-                ...user,
-                isPro: currentUser.isPro,
-            });
-            if (registRecipe.isPro === 'COMMON') {
-                throw new MessageEvent('작성자: 일반인');
-            } else if (registRecipe.isPro === 'PRO') {
-                throw new MessageEvent('작성자: 전문가');
-            }
-            await queryRunner.manager.save(registRecipe);
-            await queryRunner.commitTransaction();
-            return writeRecipe;
-
-        } catch (error) {
-            console.log(error)
-            if (error?.response?.data?.message || error?.response?.status) {
-                console.log(error.response.data.message);
-                console.log(error.response.status);
-            } else {
-                throw error;
-            }
-            await queryRunner.rollbackTransaction();
-        } finally {
-            await queryRunner.release();
-        }
-
-    }
-
-    async update({ id, updateRecipesInput }) {
-        const checkRecipe = await this.recipesRepository.findOne({
-            where: { id }
+        const registRecipe = await this.recipesRepository.save({
+            ...user,
+            images,
+            thumbNail: images[0],
+            isPro: user.isPro,
+            ...rest
         });
 
-        const newRegistRecipe = {
-            ...checkRecipe,
-            ...updateRecipesInput,
-        }
-        return await this.recipesRepository.save(newRegistRecipe);
-    }
-
-    async delete({ id, currentUser }) {
-        const queryRunner = await this.connection.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction('SERIALIZABLE')
-
-        try {
-            const user = await queryRunner.manager.findOne(
-                User,
-                { user_id: currentUser.user_id },
-                { lock: { mode: 'pessimistic_write' } }
-            );
-            const result = await this.recipesRepository.softDelete({
-                id,
-                ...user,
-                user: currentUser.user_id,
-            });
-            return result.affected ? true : false;
-        } catch (error) {
-            console.log(error)
-            if (error?.response?.data?.message || error?.response?.status) {
-                console.log(error.response.data.message);
-                console.log(error.response.status);
+        for (let i = 0; i < images.length; i++) {
+            if (i === 0) {
+                await this.recipesImageRepository.save({
+                    url: images[i],
+                    recipes: registRecipe,
+                });
             } else {
-                throw error;
+                await this.recipesImageRepository.save({
+                    url: images[i],
+                    recipes: registRecipe,
+                });
             }
-            await queryRunner.rollbackTransaction();
-        } finally {
-            await queryRunner.release();
+        }
+        if (registRecipe.isPro === 'COMMON') {
+            await this.recipesRepository.save({
+                user,
+                isPro: CLASS_TYPE.COMMON,
+            })
+            console.log('작성자: 일반인');
+        } else if (registRecipe.isPro === 'PRO') {
+            await this.recipesRepository.save({
+                user,
+                isPro: CLASS_TYPE.PRO,
+            })
+            console.log('작성자: 전문가');
+        }
+        return registRecipe;
+    } catch (error) {
+        console.log(error)
+        if (error?.response?.data?.message || error?.response?.status) {
+            console.log(error.response.data.message);
+            console.log(error.response.status);
+        } else {
+            throw error;
         }
     }
+
+}
+
+    async update({ id, updateRecipesInput }) {
+    const registedRecipe = await this.recipesRepository.findOne({
+        where: { id }
+    });
+
+    const newRegistRecipe = {
+        ...registedRecipe,
+        ...updateRecipesInput,
+    }
+    return await this.recipesRepository.save(newRegistRecipe);
+}
+
+    async delete ({ id, currentUser }) {
+    try {
+        const result = await this.recipesRepository.softDelete({
+            id,
+            user: currentUser.user_id,
+        });
+        return result.affected ? true : false;
+    } catch (error) {
+        console.log(error)
+        if (error?.response?.data?.message || error?.response?.status) {
+            console.log(error.response.data.message);
+            console.log(error.response.status);
+        } else {
+            throw error;
+        }
+    }
+}
 }

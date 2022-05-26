@@ -72,15 +72,15 @@ export class UserService {
         const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
         const url = await new Promise((resolve, reject) => {
             file
-            .createReadStream()
-            .pipe(storage.file(fileName).createWriteStream())
-            .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
-            .on('error', (error) => reject("🔔"+error));
+                .createReadStream()
+                .pipe(storage.file(fileName).createWriteStream())
+                .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
+                .on('error', (error) => reject("🔔" + error));
         })
         return url
     }
 
-    async deleteImage({user_id}){
+    async deleteImage({ user_id }) {
         const userId = await this.userRepository.findOne({ user_id: user_id })
 
         const prevImage = userId.profilePic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
@@ -92,9 +92,9 @@ export class UserService {
         })
 
         const result = await storage
-        .bucket(process.env.STORAGE_BUCKET)
-        .file(prevImageName)
-        .delete()
+            .bucket(process.env.STORAGE_BUCKET)
+            .file(prevImageName)
+            .delete()
 
         const { profilePic, ...user } = userId;
         const deleteUrl = { ...user, profilePic: null };
@@ -103,25 +103,6 @@ export class UserService {
         return result ? true : false
     }
 
-<<<<<<< HEAD
-    //     const storage = new Storage({
-    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
-    //         projectId: process.env.STORAGE_PROJECT_ID,
-    //         }).bucket(process.env.VEGAN_STORAGE_BUCKET)
-    //         .file(file.filename)
-
-    //         const result = await new Promise((resolve, reject)=> {
-    //             file                  
-    //             .createReadStream()
-    //             .pipe(storage.createWriteStream ())
-    //             .on( "finish" , () => resolve( `${process.env.VEGAN_STORAGE_BUCKET}/${file.filename}` ) )
-    //             .on( "error" , () => reject() )
-    //         })
-    //         // 스토리지에 올린 후 받아온 url값을 프론트에 return 
-    //         return result
-    // }
-=======
->>>>>>> 0938badc99f4463171f02d9f7592c9f9ef9ed609
 
     async sendTokenToSMS({ phone }) {
         const phNum = await this.userRepository.findOne({

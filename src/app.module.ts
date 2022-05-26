@@ -1,4 +1,5 @@
 import * as redisStore from 'cache-manager-redis-store';
+import GraphQLJSON from 'graphql-type-json';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -10,7 +11,6 @@ import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction
 import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
 import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
-
 
 @Module({
   imports: [
@@ -31,7 +31,8 @@ import { JwtRefreshStrategy } from './commons/auth/jwt-refresh.strategy';
       // },      
       bodyParserConfig: {
         limit: "100mb"
-      }
+      },
+      // resolvers: { JSON: GraphQLJSON },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

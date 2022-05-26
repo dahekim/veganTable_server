@@ -1,37 +1,41 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-
+import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
+// import GraphQLJSON from 'graphql-type-json';
 @InputType()
 export class CreateRecipesInput {
-    @Field(() => String, { nullable: false })
+    @Field(() => String)
     title: string;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     summary: string;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     types: string;
 
-    @Field(() => [String]!, { nullable: true })
-    desc: { image: string, text: string };
+    @Field(() => [String])
+    steps: string[];
 
-    @Field(() => Int, { nullable: true })
+    @Field(() => [String])
+    images: string[];
+
+    @Field(() => [String])
+    texts: string[];
+
+    @Field(() => Int)
     cookTime: number;
 
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     level: String;
 
-    @Field(() => String, { nullable: true })
-    ingredients: string;
+    @Field(() => [String])
+    ingredients: string[];
 
-    @Field(() => Int, { nullable: true })
+    @Field(() => Int)
     serve: number;
 
-    @Field(() => [String]!, { nullable: true })
+    @Field(() => [String])
     tags: string[];
 
-    @Field(() => [String]!, { nullable: true })
-    thumbNailPic: string[];
-
-    @Field(() => String, { nullable: true })
-    recipesPic: string;
+    @Field(() => RecipesImage)
+    recipesImage: RecipesImage;
 }
