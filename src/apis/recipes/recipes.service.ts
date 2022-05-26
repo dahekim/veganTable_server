@@ -1,3 +1,4 @@
+import { IAMExceptionMessages } from "@google-cloud/storage/build/src/iam";
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getRepository, Repository } from "typeorm";
@@ -5,6 +6,8 @@ import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { CLASS_TYPE, User } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+
+
 
 @Injectable()
 export class RecipesService {
@@ -72,46 +75,54 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create(
-        { images, image_id, ...rest },
-        currentUser,
-    ) {
-
+    async create(createRecipesInput, currentUser) {
+        const { types, level, image_urls, ...rest } = createRecipesInput;
+        console.log("111111");
+        console.log(createRecipesInput);
         try {
             const user = await this.userRepository.findOne(
-                { user_id: currentUser.user_id },
+                currentUser,
+                { where: { user_id: currentUser.user_id } }
             );
-            const recipeImages = await getRepository(RecipesImage)
-                .createQueryBuilder('recipesimage')
-                .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
-                .withDeleted()
-                .getOne();
+            console.log(user);
+            console.log("222222");
+            console.log('유저 정보 확인');
 
+            console.log("333333");
+            console.log("레시피 등록 과정 시작");
             const registRecipe = await this.recipesRepository.save({
+                ...rest,
+                types,
+                level,
                 user: user,
-                recipeImages: recipeImages,
-                isPro: user.isPro,
-                ...rest
+                currentUser: user.isPro,
+                urls: image_urls,
             });
+            console.log("444444");
+            console.log(registRecipe);
 
-            for (let i = 0; i < images.length; i++) {
+            console.log("레시피 등록 과정 확인");
+
+            for (let i = 0; i < image_urls.length; i++) {
                 await this.recipesImageRepository.save({
-                    url: images[i],
+                    url: image_urls[i],
                     recipes: registRecipe,
                 });
-            }
-            if (registRecipe.isPro === 'COMMON') {
-                await this.recipesRepository.save({
-                    user: user,
-                    isPro: CLASS_TYPE.COMMON,
-                })
-                console.log('작성자: 일반인');
-            } else if (registRecipe.isPro === 'PRO') {
-                await this.recipesRepository.save({
-                    user: user,
-                    isPro: CLASS_TYPE.PRO,
-                })
-                console.log('작성자: 전문가');
+                console.log("레시피 이미지 DB로 이미지 URL 전달 확인")
+                if (registRecipe.isPro === 'COMMON') {
+                    await this.recipesRepository.save({
+                        user: user,
+                        isPro: user.isPro = CLASS_TYPE.COMMON,
+                    })
+                    console.log('작성자: 일반인');
+                }
+                if (registRecipe.isPro === 'PRO') {
+                    await this.recipesRepository.save({
+                        user: user,
+                        isPro: user.isPro = CLASS_TYPE.PRO,
+                    })
+                    console.log('작성자: 전문가');
+                }
             }
             return registRecipe;
         } catch (error) {
@@ -123,9 +134,7 @@ export class RecipesService {
                 throw error;
             }
         }
-
     }
-
     async update({ id, updateRecipesInput }) {
         const registedRecipe = await this.recipesRepository.findOne({
             where: { id }
@@ -156,3 +165,55 @@ export class RecipesService {
         }
     }
 }
+
+    // ) {
+    //     const result = await this.recipesImageRepository.save({
+
+    //     })
+    //     try {
+    //         const { image_id, images, ...rest } = createRecipesInput;
+    //         const user = await this.userRepository.findOne(
+    //             { user_id: currentUser.user_id },
+    //         );
+    //         const recipeImages = await getRepository(RecipesImage)
+    //             .createQueryBuilder('recipesimage')
+    //             .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
+    //             .withDeleted()
+    //             .getOne();
+
+    //     const registRecipe = await this.recipesRepository.save({
+    //         user: user,
+    //         recipeImages: recipeImages,
+    //         isPro: user.isPro,
+    //         ...rest
+    //     });
+
+    //     for (let i = 0; i < images.length; i++) {
+    //         await this.recipesImageRepository.save({
+    //             url: images[i],
+    //             recipes: registRecipe,
+    //         });
+    //     }
+    //     if (registRecipe.isPro === 'COMMON') {
+    //         await this.recipesRepository.save({
+    //             user: user,
+    //             isPro: CLASS_TYPE.COMMON,
+    //         })
+    //         console.log('작성자: 일반인');
+    //     } else if (registRecipe.isPro === 'PRO') {
+    //         await this.recipesRepository.save({
+    //             user: user,
+    //             isPro: CLASS_TYPE.PRO,
+    //         })
+    //         console.log('작성자: 전문가');
+    //     }
+    //     return registRecipe;
+    // } catch (error) {
+    //     console.log(error)
+    //     if (error?.response?.data?.message || error?.response?.status) {
+    //         console.log(error.response.data.message);
+    //         console.log(error.response.status);
+    //     } else {
+    //         throw error;
+    //     }
+    // }

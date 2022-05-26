@@ -1,5 +1,4 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 // import GraphQLJSON from 'graphql-type-json';
 @InputType()
 export class CreateRecipesInput {
@@ -12,30 +11,25 @@ export class CreateRecipesInput {
     @Field(() => String)
     types: string;
 
-    @Field(() => [String])
-    steps: string[];
+    @Field(() => [String], { defaultValue: null })
+    image_urls: string[];
 
-    @Field(() => [String])
-    images: string[];
-
-    @Field(() => [String])
-    texts: string[];
+    // @Field(() => String)
+    // texts: string;
 
     @Field(() => Int)
     cookTime: number;
 
     @Field(() => String)
-    level: String;
+    level: string;
 
-    @Field(() => [String])
-    ingredients: string[];
+    // @Field(() => String)
+    // ingredients: string
 
     @Field(() => Int)
     serve: number;
 
-    @Field(() => [String])
-    tags: string[];
+    // @Field(() => [String])
+    // tags: string;
 
-    @Field(() => RecipesImage)
-    image_id: RecipesImage;
 }

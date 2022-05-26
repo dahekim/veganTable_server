@@ -38,7 +38,6 @@ export class PaymentTransactionService {
         amount,
         currentUser,
         status = TRANSACTION_STATUS_ENUM.PAYMENT,
-        isSubs = SUB_TYPE.NON_SUB,
     }) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
@@ -61,7 +60,7 @@ export class PaymentTransactionService {
 
             const updatedUser = this.userRepository.create({
                 ...user,
-                isSubs,
+                isSubs: user.isSubs = SUB_TYPE.BASIC || SUB_TYPE.PREMIUM,
             });
 
             await queryRunner.manager.save(updatedUser);
@@ -124,7 +123,6 @@ export class PaymentTransactionService {
                 amount: -amount,
                 currentUser,
                 status: TRANSACTION_STATUS_ENUM.CANCEL,
-                isSubs,
             });
             const updatedUser = this.userRepository.create({
                 ...currentUser,

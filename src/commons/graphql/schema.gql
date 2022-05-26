@@ -57,15 +57,10 @@ type Recipes {
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  steps: [String!]
-  images: [String!]
-  texts: [String!]
+  image_urls: [String!]
   cookTime: Int!
   level: COOKING_LEVEL!
-  ingredients: [String!]
   serve: Int!
-  tags: [String!]
-  recipesImage: [RecipesImage!]!
   user: User!
 }
 
@@ -85,16 +80,25 @@ enum COOKING_LEVEL {
   DIFFICULT
 }
 
-type RecipesImage {
-  image_id: String!
-  url: String!
-  recipes: Recipes
+input user {
+  user_id: String!
+  email: String!
+  name: String!
+  phone: String!
+  address: String
+  type: VEGAN_TYPE
+  nickname: String
+  isPro: CLASS_TYPE
+  isSubs: SUB_TYPE
+  SubsHistory: Int
+  startDate: String
+  endDate: String
+  profilePic: String
 }
 
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
-  fetchUsersWithDel: [User!]!
   fetchRecipesAll: [Recipes!]!
   fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
@@ -107,23 +111,15 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(
-    email: String!
-    password: String!
-    name: String!
-    phone: String!
-  ): User!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(
-    recipe_id: String!
-    updateRecipesInput: UpdateRecipesInput!
-  ): Recipes!
+  createRecipe(createRecipesInput: CreateRecipesInput!, image_urls: [String!]!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
@@ -141,35 +137,25 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input CreateRecipesInput {
   title: String!
   summary: String!
   types: String!
-  steps: [String!]!
-  images: [String!]!
-  texts: [String!]!
+  image_urls: [String!] = null
   cookTime: Int!
   level: String!
-  ingredients: [String!]!
   serve: Int!
-  tags: [String!]!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  steps: [String!]
-  images: [String!]
-  texts: [String!]
+  image_urls: [String!] = null
   cookTime: Int
   level: String
-  ingredients: [String!]
   serve: Int
-  tags: [String!]
 }

@@ -1,7 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 export enum CATEGORY_TYPES {
     ALL = 'ALL',
     VEGAN = 'VEGAN',
@@ -24,7 +23,6 @@ registerEnumType(COOKING_LEVEL, {
     name: 'COOKING_LEVEL',
 });
 
-
 @Entity()
 @ObjectType()
 export class Recipes {
@@ -44,17 +42,13 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES)
     types: CATEGORY_TYPES;
 
-    @Column({ nullable: true })
-    @Field(() => [String], { nullable: true })
-    steps: string;
+    @Column("simple-array")
+    @Field(() => [String], { defaultValue: null, nullable: true })
+    image_urls?: string;
 
-    @Column({ nullable: true })
-    @Field(() => [String], { nullable: true })
-    images: string;
-
-    @Column({ nullable: true })
-    @Field(() => [String], { nullable: true })
-    texts: string;
+    // @Column({ nullable: true })
+    // @Field(() => String, { nullable: true })
+    // texts: string;
 
     @Column()
     @Field(() => Int)
@@ -64,27 +58,19 @@ export class Recipes {
     @Field(() => COOKING_LEVEL)
     level: COOKING_LEVEL;
 
-    @Column({ nullable: true })
-    @Field(() => [String], { nullable: true })
-    ingredients: string;
+    // @Column({ nullable: true })
+    // @Field(() => String, { nullable: true })
+    // ingredients: string;
 
     @Column()
     @Field(() => Int)
     serve: number;
 
-    @Column({ nullable: true })
-    @Field(() => [String], { nullable: true })
-    tags: string;
+    // @Column({ nullable: true })
+    // @Field(() => String, { nullable: true })
+    // tags: string;
 
-    @Column()
-    @Field(() => String)
-    thumbNail: string;
-
-    @OneToMany(() => RecipesImage, (image_id) => image_id.recipes)
-    @Field(() => [RecipesImage])
-    image_id: RecipesImage[];
-
-    @ManyToOne(() => User, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @ManyToOne(() => User)
     @Field(() => User)
     user?: User;
 

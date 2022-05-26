@@ -3,4 +3,4 @@ import { CreateRecipesInput } from "./createRecipes.input";
 
 @InputType()
 export class UpdateRecipesInput
-    extends PartialType(CreateRecipesInput) { }
+    extends PartialType(CreateRecipesInput, InputType) { }

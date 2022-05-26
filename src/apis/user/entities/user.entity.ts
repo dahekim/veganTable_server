@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entities";
 import {
     Column,
@@ -44,6 +44,7 @@ registerEnumType(SUB_TYPE, {
 })
 
 @Entity()
+@InputType('user')
 @ObjectType()
 export class User {
     @PrimaryGeneratedColumn("uuid")

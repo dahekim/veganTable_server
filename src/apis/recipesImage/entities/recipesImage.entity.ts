@@ -10,16 +10,18 @@ export class RecipesImage {
     image_id: string;
 
     @Column({ default: false })
-    @Field(() => String)
-    url: string;
+    @Field(() => [String])
+    urls: string;
 
-    @Column()
-    @Field(() => String)
-    thumbNail: string;
+    // @Column()
+    // @Field(() => String)
+    // thumbNail: string;
 
-    @ManyToOne(() => Recipes, (recipes) => recipes.image_id, { cascade: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
-    @Field(() => Recipes, { nullable: true })
+    @ManyToOne(() => Recipes, recipes => recipes.id, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @Field(() => Recipes)
     recipes: Recipes;
+    @Column()
+    recipesId: String;
 
     @CreateDateColumn()
     createdAt: Date;

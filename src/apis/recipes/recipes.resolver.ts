@@ -2,8 +2,8 @@ import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
+import { RecipesImageInput } from "../recipesImage/dto/recipesImage.input";
 import { CLASS_TYPE } from "../user/entities/user.entity";
-import { UserService } from "../user/user.service";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
@@ -52,11 +52,12 @@ export class RecipesResolver {
     @Mutation(() => Recipes)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
-        @CurrentUser() currentUser: ICurrentUser,
+        @Args({ name: 'image_urls', type: () => [String] }) image_urls: string[],
+        @CurrentUser() currentUser: ICurrentUser
     ) {
         return await this.recipesService.create(
             { ...createRecipesInput },
-            currentUser,
+            currentUser
         );
     }
 
