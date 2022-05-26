@@ -27,8 +27,7 @@ export class RecipesReplyService{
         .leftJoinAndSelect('recipesReply.user', 'user')
         .where('recipe.id = :id', { id: recipe_id })
         .orderBy('recipesReply.id', 'DESC')
-        .getMany();
-
+        .getMany()
     }
 
     async create({currentUser, user_id, contents, recipe_id}){
@@ -46,7 +45,7 @@ export class RecipesReplyService{
                 contents: contents,
                 user: user,
             })
-
+            
             await queryRunner.manager.save(createRecipe)
             await queryRunner.manager.save(createReply)
             await queryRunner.commitTransaction()
