@@ -1,33 +1,27 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-// import GraphQLJSON from 'graphql-type-json';
+
 @InputType()
 export class CreateRecipesInput {
-    @Field(() => String)
+    @Field(() => String, { nullable: false })
     title: string;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     summary: string;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     types: string;
 
-    @Field(() => [String], { defaultValue: " " })
-    image_urls: string[];
+    @Field(() => String, { nullable: true })
+    desc: string;
 
-    // @Field(() => String)
-    // texts: string;
-
-    @Field(() => Int)
+    @Field(() => Int, { nullable: true })
     cookTime: number;
 
     @Field(() => String, { nullable: true })
     level: string;
 
-    // @Field(() => String)
-    // ingredients: string
-
-    @Field(() => Int)
-    serve: number;
+    @Field(() => [String], { nullable: true })
+    ingredients: string[];
 
     @Field(() => [String], { nullable: true })
     recipesPics: string[];

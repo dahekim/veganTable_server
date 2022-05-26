@@ -17,11 +17,9 @@ export class RecipesImage {
     // @Field(() => String)
     // thumbNail: string;
 
-    @ManyToOne(() => Recipes, recipes => recipes.id, { nullable: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+    @ManyToOne(() => Recipes)
     @Field(() => Recipes)
     recipes: Recipes;
-    @Column()
-    recipesId: String;
 
     @CreateDateColumn()
     createdAt: Date;

@@ -52,12 +52,14 @@ export class RecipesResolver {
     @Mutation(() => Recipes)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
-        @Args({ name: 'image_urls', type: () => [String] }) image_urls: string[],
+        @Args({ name: 'recipesPic', type: () => [String] }) recipesPic: string[],
+        @Args({ name: 'ingredients', type: () => [String] }) ingredients: string[],
         @CurrentUser() currentUser: ICurrentUser
     ) {
         return await this.recipesService.create(
             { ...createRecipesInput },
-            image_urls,
+            recipesPic,
+            ingredients,
             currentUser
         );
     }

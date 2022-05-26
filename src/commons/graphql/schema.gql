@@ -59,16 +59,23 @@ enum TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
+type RecipesIngredients {
+  id: String!
+  name: String!
+  recipe: [Recipes!]!
+}
+
 type Recipes {
   id: String!
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  image_urls: String!
+  desc: String!
   cookTime: Int!
   level: COOKING_LEVEL!
-  serve: Int!
+  recipesPic: [String!]
   user: User!
+  ingredients: [RecipesIngredients!]!
 }
 
 enum CATEGORY_TYPES {
@@ -119,7 +126,7 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!, image_urls: [String!]!): Recipes!
+  createRecipe(createRecipesInput: CreateRecipesInput!, recipesPic: [String!]!, ingredients: [String!]!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
@@ -147,12 +154,12 @@ scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String!
-  types: String!
-  image_urls: [String!] = " "
-  cookTime: Int!
+  summary: String
+  types: String
+  desc: String
+  cookTime: Int
   level: String
-  serve: Int!
+  ingredients: [String!]
   recipesPics: [String!]
 }
 
@@ -160,9 +167,9 @@ input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  image_urls: [String!] = " "
+  desc: String
   cookTime: Int
   level: String
-  serve: Int
+  ingredients: [String!]
   recipesPics: [String!]
 }
