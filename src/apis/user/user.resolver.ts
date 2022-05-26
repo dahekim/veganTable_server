@@ -65,14 +65,14 @@ export class UserResolver {
         return this.userService.update({ user_id, updateUserInput })
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
-    async updateUserDetail(
-        @Args('user_id') user_id: string,
-        @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
-    ) {
-        return this.userService.update({ user_id, updateUserInput })
-    }
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(() => User)
+    // async updateUserDetail(
+    //     @Args('user_id') user_id: string,
+    //     @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
+    // ) {
+    //     return this.userService.update({ user_id, updateUserInput })
+    // }
 
     // @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> String)

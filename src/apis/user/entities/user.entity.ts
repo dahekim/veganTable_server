@@ -93,13 +93,13 @@ export class User {
 
     // 시작 날짜
     @Column({default: null})
-    @Field(()=>Date, {nullable: true})
-    startDate?: Date
+    @Field(()=>String, {nullable: true})
+    startDate?: string
 
     // 종료 날짜
     @Column({default: null})
-    @Field(()=> Date, {nullable: true})
-    endDate?: Date
+    @Field(()=> String, {nullable: true})
+    endDate?: string
 
     @Column({ type: 'varchar', default: null, nullable: true })
     @Field(() => String, { nullable: true })

@@ -13,8 +13,8 @@ type User {
   isPro: CLASS_TYPE
   isSubs: SUB_TYPE
   SubsHistory: Int
-  startDate: DateTime
-  endDate: DateTime
+  startDate: String
+  endDate: String
   profilePic: String
 }
 
@@ -38,11 +38,6 @@ enum SUB_TYPE {
   BASIC
   PREMIUM
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type PaymentTransaction {
   id: String!
@@ -103,7 +98,6 @@ type Mutation {
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
-  updateUserDetail(user_id: String!, updateUserDetailInput: UpdateUserDetailInput!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
@@ -118,9 +112,6 @@ input UpdateUserInput {
   password: String
   name: String
   phone: String
-}
-
-input UpdateUserDetailInput {
   address: String
   type: String
   nickname: String
