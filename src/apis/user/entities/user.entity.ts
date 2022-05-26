@@ -46,7 +46,6 @@ registerEnumType(SUB_TYPE, {
 })
 
 @Entity()
-@InputType('user')
 @ObjectType()
 export class User {
     @PrimaryGeneratedColumn("uuid")

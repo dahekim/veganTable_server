@@ -11,7 +11,7 @@ export class CreateRecipesInput {
     @Field(() => String)
     types: string;
 
-    @Field(() => [String], { defaultValue: null })
+    @Field(() => [String], { defaultValue: " " })
     image_urls: string[];
 
     // @Field(() => String)
@@ -25,6 +25,9 @@ export class CreateRecipesInput {
 
     // @Field(() => String)
     // ingredients: string
+
+    @Field(() => Int)
+    serve: number;
 
     @Field(() => [String], { nullable: true })
     recipesPics: string[];

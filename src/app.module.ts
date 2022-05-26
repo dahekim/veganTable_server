@@ -1,5 +1,5 @@
 import * as redisStore from 'cache-manager-redis-store';
-import GraphQLJSON from 'graphql-type-json';
+// import GraphQLJSON from 'graphql-type-json';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';

@@ -64,11 +64,10 @@ type Recipes {
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  image_urls: String
+  image_urls: String!
   cookTime: Int!
   level: COOKING_LEVEL!
-  ingredients: String!
-  recipesPic: String
+  serve: Int!
   user: User!
 }
 
@@ -100,7 +99,9 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
-  fetchRecipe(userid: String!): Recipes!
+  fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
+  fetchMyRecipe(id: String!, user_id: String!): Recipes!
+  fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!
@@ -110,12 +111,7 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(
-    email: String!
-    password: String!
-    name: String!
-    phone: String!
-  ): User!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
@@ -123,14 +119,8 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(
-    createRecipesInput: CreateRecipesInput!
-    image_urls: [String!]!
-  ): Recipes!
-  updateRecipe(
-    recipe_id: String!
-    updateRecipesInput: UpdateRecipesInput!
-  ): Recipes!
+  createRecipe(createRecipesInput: CreateRecipesInput!, image_urls: [String!]!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
@@ -152,19 +142,17 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String
-  types: String
-  desc: String
-  cookTime: Int
-  level: String
-  ingredients: String
+  summary: String!
+  types: String!
+  image_urls: [String!] = " "
+  cookTime: Int!
+  level: String!
+  serve: Int!
   recipesPics: [String!]
 }
 
@@ -172,9 +160,9 @@ input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  image_urls: [String!] = null
+  image_urls: [String!] = " "
   cookTime: Int
   level: String
-  ingredients: String
+  serve: Int
   recipesPics: [String!]
 }

@@ -4,6 +4,7 @@ import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
 import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
+import { CLASS_TYPE } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";

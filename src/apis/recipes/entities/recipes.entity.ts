@@ -45,7 +45,7 @@ export class Recipes {
     types: CATEGORY_TYPES;
 
     @Column()
-    @Field(() => String, { defaultValue: null, nullable: true })
+    @Field(() => String, { defaultValue: " ", nullable: false })
     image_urls: string;
 
     // @Column({ nullable: true })
