@@ -5,7 +5,7 @@ import { UpdateUserInput } from "./dto/updateUser.input"
 import * as bcrypt from 'bcrypt'
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param"
 import { UseGuards } from "@nestjs/common"
-import { GqlAuthAccessGuard, GqlAuthRefreshGuard } from "src/commons/auth/gql-auth.guard"
+import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard"
 import { FileUpload, GraphQLUpload } from 'graphql-upload'
 
 
@@ -28,6 +28,12 @@ export class UserResolver {
     @Query(() => [User])
     async fetchUsers() {
         return await this.userService.findAll()
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Query(() => [User])
+    async fetchUsersWithDel() {
+        return await this.userService.withDelete()
     }
 
     @Mutation(() => User)
@@ -64,22 +70,23 @@ export class UserResolver {
         return this.userService.update({ user_id, updateUserInput })
     }
 
-    // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(() => User)
-    // async updateUserDetail(
-    //     @Args('user_id') user_id: string,
-    //     @Args('updateUserDetailInput') updateUserInput: UpdateUserDetailInput,
-    // ) {
-    //     return this.userService.update({ user_id, updateUserInput })
-    // }
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(() => User)
+    async updatePassword(
+        @Args('user_id') user_id: string,
+        @Args('password') password: string,
+    ) {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        return this.userService.updatePassword({ user_id, hashedPassword })
+    }
 
-    // @UseGuards(GqlAuthAccessGuard)
+    @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=> String)
     async uploadProfileImage(
         @Args({ name: 'file', type: () => GraphQLUpload }) 
         file: FileUpload,
     ){
-        return await this.userService.upload({ file });
+        return await this.userService.uploadImage({ file });
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -89,7 +96,6 @@ export class UserResolver {
     ) {
         return await this.userService.deleteImage({ user_id })
     }
-
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>User)

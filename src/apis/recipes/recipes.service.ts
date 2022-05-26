@@ -1,13 +1,26 @@
 import { IAMExceptionMessages } from "@google-cloud/storage/build/src/iam";
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+<<<<<<< HEAD
 import { getRepository, Repository } from "typeorm";
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { CLASS_TYPE, User } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 
+=======
+import { FileUpload } from "graphql-upload";
+import { Connection, getRepository, Repository } from "typeorm";
+import { User } from "../user/entities/user.entity";
+import { Recipes } from "./entities/recipes.entity";
+import { getToday } from 'src/commons/libraries/utils'
+import { Storage } from '@google-cloud/storage'
+import { v4 as uuidv4 } from 'uuid'
+>>>>>>> 7d4634a9f65f17533c4e99afe564f79385d99e40
 
+interface IFile{
+    files:FileUpload[]
+}
 
 @Injectable()
 export class RecipesService {
@@ -25,6 +38,7 @@ export class RecipesService {
     ) { }
 
     async fetchRecipesAll() {
+<<<<<<< HEAD
         await this.recipesRepository.findOne({
             types: CATEGORY_TYPES.ALL
         });
@@ -56,6 +70,8 @@ export class RecipesService {
     }
 
     async fetchMyRecipe({ id, user_id }) {
+=======
+>>>>>>> 7d4634a9f65f17533c4e99afe564f79385d99e40
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.id', 'id')
@@ -177,6 +193,7 @@ export class RecipesService {
             }
         }
     }
+<<<<<<< HEAD
 }
 
     // ) {
@@ -230,3 +247,47 @@ export class RecipesService {
     //         throw error;
     //     }
     // }
+=======
+
+    async uploadImages( {files}: IFile ){
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        }).bucket(bucket)
+
+        const waitedFiles = await Promise.all(files)
+        const results = await Promise.all(waitedFiles.map( file => {
+            return new Promise( (resolve, reject) => {
+                const fileName = `recipes/${getToday()}/${uuidv4()}/${file.filename}`
+                file
+                .createReadStream()
+                .pipe(storage.file(fileName).createWriteStream())
+                .on( "finish" , () => resolve (`${bucket}/${fileName}`) )
+                .on( "error" , (error) => reject("🔔"+error) )
+                })
+            })
+        )
+        return results
+    }
+
+    // async deleteImage({user, recipe_id, image_id }){
+    //     const bucket = process.env.VEGAN_STORAGE_BUCKET
+    //     const storage = new Storage({
+    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //         projectId: process.env.STORAGE_PROJECT_ID,
+    //     }).bucket(bucket)
+
+    //     const prevImage = recipe_id.url.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+    //     const prevImageName = prevImage[prevImage.length - 1]
+
+    //     const result = await storage.file(prevImageName).delete()
+
+    //     const { profilePic, ...user } = user;
+    //     const deleteUrl = { ...user, profilePic: null };
+    //     await this.recipesRepository.save(deleteUrl);
+
+    //     return result ? true : false
+    // }
+}
+>>>>>>> 7d4634a9f65f17533c4e99afe564f79385d99e40

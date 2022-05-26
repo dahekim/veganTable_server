@@ -7,6 +7,7 @@ import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid';
 import { getToday } from 'src/commons/libraries/utils';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -23,9 +24,16 @@ export class UserService {
     }
 
     async findOne({ email }) {
-        const myInfo = await this.userRepository.findOne({ 
-            where: { email: email } })
+        const myInfo = await this.userRepository.findOne({
+            where: { email: email }
+        })
         return myInfo
+    }
+
+    async withDelete() {
+        return await this.userRepository.find({
+            withDeleted: true
+        })
     }
 
     async create({ email, hashedPassword: password, name, phone }) {
@@ -51,26 +59,40 @@ export class UserService {
         return await this.userRepository.save(updateUser)
     }
 
-    async delete({ user_id }) {
-        const result = await this.userRepository.softDelete({
-            user_id: user_id
+    async updatePassword({ user_id, hashedPassword: password }) {
+        const user = await this.userRepository.findOne({
+            where: { user_id: user_id },
         })
-        return result.affected ? true : false
+        const updateUser = {
+            ...user,
+            password
+        }
+        return await this.userRepository.save(updateUser)
     }
 
-    async upload({ file }) {
+    async delete({ user_id }) {
+        const result = await this.userRepository.update(
+            { user_id },
+            { deletedAt: new Date() }
+        )
+        return result ? true : false
+    }
+
+    async uploadImage({ file }) {
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
-        }).bucket(process.env.VEGAN_STORAGE_BUCKET)
+        }).bucket(bucket)
 
         const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
+
         const url = await new Promise((resolve, reject) => {
             file
                 .createReadStream()
                 .pipe(storage.file(fileName).createWriteStream())
-                .on('finish', () => resolve(`${process.env.VEGAN_STORAGE_BUCKET}/${fileName}`))
-                .on('error', (error) => reject("🔔" + error));
+                .on("finish", () => resolve(`${bucket}/${fileName}`))
+                .on("error", (error) => reject("🔔" + error));
         })
         return url
     }
@@ -91,9 +113,9 @@ export class UserService {
             .file(prevImageName)
             .delete()
 
-        const { profilePic, ...user } = userId;
-        const deleteUrl = { ...user, profilePic: null };
-        await this.userRepository.save(deleteUrl);
+        const { profilePic, ...user } = userId
+        const deleteUrl = { ...user, profilePic: null }
+        await this.userRepository.save(deleteUrl)
 
         return result ? true : false
     }

@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
+import { JwtAccessStrategy } from "src/commons/auth/jwt-access.strategy";
+import { RecipesImage } from "../recipesImage/entities/recipes.image.entity";
+import { RecipesReply } from "../recipiesReply/entities/recipes.reply.entity";
 import { User } from "../user/entities/user.entity";
 import { UserService } from "../user/user.service";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
@@ -11,17 +13,12 @@ import { RecipesService } from "./recipes.service";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            User,
-            Recipes,
-            RecipesImage,
-        ]),
+        TypeOrmModule.forFeature([User, Recipes, RecipesReply, RecipesImage]),
     ],
     providers: [
         RecipesResolver,
         RecipesService,
-        UserService,
-        CreateRecipesInput,
+        JwtAccessStrategy
     ]
 })
 export class RecipesModule { }

@@ -8,6 +8,7 @@ type User {
   name: String!
   phone: String!
   address: String
+  addressDetail: String
   type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
@@ -16,6 +17,7 @@ type User {
   startDate: String
   endDate: String
   profilePic: String
+  deletedAt: DateTime
 }
 
 enum VEGAN_TYPE {
@@ -39,6 +41,11 @@ enum SUB_TYPE {
   PREMIUM
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type PaymentTransaction {
   id: String!
   impUid: String!
@@ -60,7 +67,8 @@ type Recipes {
   image_urls: String
   cookTime: Int!
   level: COOKING_LEVEL!
-  serve: Int!
+  ingredients: String!
+  recipesPic: String
   user: User!
 }
 
@@ -80,56 +88,63 @@ enum COOKING_LEVEL {
   DIFFICULT
 }
 
-input user {
-  user_id: String!
-  email: String!
-  name: String!
-  phone: String!
-  address: String
-  type: VEGAN_TYPE
-  nickname: String
-  isPro: CLASS_TYPE
-  isSubs: SUB_TYPE
-  SubsHistory: Int
-  startDate: String
-  endDate: String
-  profilePic: String
+type RecipesReply {
+  reply_id: String!
+  contents: String!
+  recipes: Recipes!
+  user: User!
 }
 
 type Query {
   fetchUser: User!
   fetchUsers: [User!]!
-  fetchRecipesAll: [Recipes!]!
-  fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
-  fetchMyRecipe(id: String!, user_id: String!): Recipes!
-  fetchRecipeIsPro(isPro: String!): Recipes!
+  fetchUsersWithDel: [User!]!
+  fetchRecipes: [Recipes!]!
+  fetchRecipe(userid: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
+  fetchReplies(id: String!): [RecipesReply!]!
 }
 
 type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  createUser(
+    email: String!
+    password: String!
+    name: String!
+    phone: String!
+  ): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
+  updatePassword(user_id: String!, password: String!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!, image_urls: [String!]!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  createRecipe(
+    createRecipesInput: CreateRecipesInput!
+    image_urls: [String!]!
+  ): Recipes!
+  updateRecipe(
+    recipe_id: String!
+    updateRecipesInput: UpdateRecipesInput!
+  ): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
+  uploadRecipeImages(files: [Upload!]!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
+  createReply(user_id: String!, contents: String!, id: String!): String!
+  updateReply(reply_id: String!, contents: String!): String!
+  deleteRely(reply_id: String!): String!
 }
 
 input UpdateUserInput {
-  password: String
   name: String
   phone: String
   address: String
+  addressDetail: String
   type: String
   nickname: String
   isPro: String
@@ -137,17 +152,20 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateRecipesInput {
   title: String!
-  summary: String!
-  types: String!
-  image_urls: [String!] = null
-  cookTime: Int!
-  level: String!
-  serve: Int!
+  summary: String
+  types: String
+  desc: String
+  cookTime: Int
+  level: String
+  ingredients: String
+  recipesPics: [String!]
 }
 
 input UpdateRecipesInput {
@@ -157,5 +175,6 @@ input UpdateRecipesInput {
   image_urls: [String!] = null
   cookTime: Int
   level: String
-  serve: Int
+  ingredients: String
+  recipesPics: [String!]
 }

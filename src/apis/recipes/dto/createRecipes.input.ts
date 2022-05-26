@@ -26,10 +26,6 @@ export class CreateRecipesInput {
     // @Field(() => String)
     // ingredients: string
 
-    @Field(() => Int)
-    serve: number;
-
-    // @Field(() => [String])
-    // tags: string;
-
+    @Field(() => [String], { nullable: true })
+    recipesPics: string[];
 }
