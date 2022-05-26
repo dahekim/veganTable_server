@@ -14,6 +14,9 @@ export class UpdateUserInput {
     @Field(()=>String, {nullable: true})
     address?: string
 
+    @Field(()=>String, {nullable: true})
+    addressDetail?: string
+
     @Field(()=> String, {nullable: true})
     type?: string
 
