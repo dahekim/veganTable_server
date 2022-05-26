@@ -151,7 +151,7 @@ input CreateRecipesInput {
   types: String!
   image_urls: [String!] = " "
   cookTime: Int!
-  level: String!
+  level: String
   serve: Int!
   recipesPics: [String!]
 }

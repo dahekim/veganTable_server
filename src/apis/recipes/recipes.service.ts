@@ -1,19 +1,19 @@
-import { IAMExceptionMessages } from "@google-cloud/storage/build/src/iam";
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { getToday } from "src/commons/libraries/utils";
-import { getRepository, Repository } from "typeorm";
-import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
-import { CLASS_TYPE, User } from "../user/entities/user.entity";
-import { CreateRecipesInput } from "./dto/createRecipes.input";
+import { Connection, getRepository, Repository } from "typeorm";
+import { User } from "../user/entities/user.entity";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
+import { CreateRecipesInput } from "./dto/createRecipes.input";
+import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 
 interface IFile {
     files: FileUpload[]
 }
+
 
 
 @Injectable()
@@ -121,12 +121,14 @@ export class RecipesService {
                 }
                 imageurls_string += "]";
                 this.recipesRepository.save({ image_urls: imageurls_string });
-
-
-
-
             }
-            jsonArray(image_urls);
+            //     async findjsonArray(): Promise < Recipes > {
+            //         const recipes_arr = await this.recipesRepository.find();
+            //         for(let i = 0; i <recipes_arr.length; i++) {
+            //         recipes_arr[i].
+            //         }
+            // }
+            //     jsonArray(image_urls);
             // for (let i = 0; i < image_urls.length; i++) {
             //     await this.recipesImageRepository.save({
             //         url: image_urls[i],
@@ -210,7 +212,7 @@ export class RecipesService {
         )
         return results
     }
-}
+
 
     // ) {
     //     const result = await this.recipesImageRepository.save({
@@ -263,3 +265,4 @@ export class RecipesService {
     //         throw error;
     //     }
     // }
+}
