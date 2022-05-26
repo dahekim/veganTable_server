@@ -125,6 +125,7 @@ input UpdateUserInput {
   name: String
   phone: String
   address: String
+  addressDetail: String
   type: String
   nickname: String
   isPro: String
