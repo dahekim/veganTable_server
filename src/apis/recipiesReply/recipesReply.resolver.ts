@@ -14,9 +14,9 @@ export class RecipesReplyResolver{
 
     @Query(()=>[RecipesReply])
     async fetchReplies(
-        @Args('id') id: string,
+        @Args('id') recipe_id: string,
     ){
-        return await this.recipesReplyService.findAll(id)
+        return await this.recipesReplyService.findAll({recipe_id})
     }
 
     @UseGuards(GqlAuthAccessGuard)
