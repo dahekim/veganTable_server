@@ -208,56 +208,26 @@ export class RecipesService {
         return results
     }
 
+    async deleteImage({ recipe_id }) {
+        const recipeId = await this.recipesRepository.findOne({ id: recipe_id })
 
-    // ) {
-    //     const result = await this.recipesImageRepository.save({
+        const prevImage = recipeId.recipesPic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+        const prevImageName = prevImage[prevImage.length - 1]
 
-    //     })
-    //     try {
-    //         const { image_id, images, ...rest } = createRecipesInput;
-    //         const user = await this.userRepository.findOne(
-    //             { user_id: currentUser.user_id },
-    //         );
-    //         const recipeImages = await getRepository(RecipesImage)
-    //             .createQueryBuilder('recipesimage')
-    //             .where('recipesimage.image_id = :recipesimageImageId', { id: image_id })
-    //             .withDeleted()
-    //             .getOne();
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        })
 
-    //     const registRecipe = await this.recipesRepository.save({
-    //         user: user,
-    //         recipeImages: recipeImages,
-    //         isPro: user.isPro,
-    //         ...rest
-    //     });
+        const result = await storage
+            .bucket(process.env.STORAGE_BUCKET)
+            .file(prevImageName)
+            .delete()
 
-    //     for (let i = 0; i < images.length; i++) {
-    //         await this.recipesImageRepository.save({
-    //             url: images[i],
-    //             recipes: registRecipe,
-    //         });
-    //     }
-    //     if (registRecipe.isPro === 'COMMON') {
-    //         await this.recipesRepository.save({
-    //             user: user,
-    //             isPro: CLASS_TYPE.COMMON,
-    //         })
-    //         console.log('작성자: 일반인');
-    //     } else if (registRecipe.isPro === 'PRO') {
-    //         await this.recipesRepository.save({
-    //             user: user,
-    //             isPro: CLASS_TYPE.PRO,
-    //         })
-    //         console.log('작성자: 전문가');
-    //     }
-    //     return registRecipe;
-    // } catch (error) {
-    //     console.log(error)
-    //     if (error?.response?.data?.message || error?.response?.status) {
-    //         console.log(error.response.data.message);
-    //         console.log(error.response.status);
-    //     } else {
-    //         throw error;
-    //     }
-    // }
+        const { recipesPic, ...user } = recipeId
+        const deleteUrl = { ...user, recipesPic: null }
+        await this.recipesRepository.save(deleteUrl)
+
+        return result ? true : false
+    }
 }

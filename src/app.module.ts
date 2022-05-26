@@ -11,6 +11,7 @@ import { PaymentTransactionModule } from './apis/Transactions/paymentTransaction
 import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
 import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
+import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
 
 @Module({
   imports: [
@@ -19,6 +20,8 @@ import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
     RecipesModule,
     PaymentTransactionModule,
     RecipesReplyModule,
+    RecipeScrapModule,
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',

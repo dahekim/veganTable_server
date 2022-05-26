@@ -2,6 +2,43 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  desc: String!
+  cookTime: Int!
+  level: COOKING_LEVEL!
+  ingredients: String!
+  recipesPic: String
+  user: User!
+  scrapCount: RecipeScrap!
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
+type RecipeScrap {
+  scrap_id: String!
+  user: User!
+  recipes: Recipes!
+  scraped: Boolean!
+}
+
 type User {
   user_id: String!
   email: String!
@@ -17,6 +54,7 @@ type User {
   startDate: String
   endDate: String
   profilePic: String
+  scrapCount: RecipeScrap
   deletedAt: DateTime
 }
 
@@ -112,13 +150,19 @@ type Query {
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!
+  fetchMyScraps: [Recipes!]!
 }
 
 type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  createUser(
+    email: String!
+    password: String!
+    name: String!
+    phone: String!
+  ): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
@@ -126,15 +170,24 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!, recipesPic: [String!]!, ingredients: [String!]!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  createRecipe(
+    createRecipesInput: CreateRecipesInput!
+    recipesPic: [String!]!
+    ingredients: [String!]!
+  ): Recipes!
+  updateRecipe(
+    recipe_id: String!
+    updateRecipesInput: UpdateRecipesInput!
+  ): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
+  deleteRecipeImages(id: String!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(user_id: String!, contents: String!, id: String!): String!
   updateReply(reply_id: String!, contents: String!): String!
   deleteRely(reply_id: String!): String!
+  createScrap(id: String!): RecipeScrap!
 }
 
 input UpdateUserInput {
@@ -149,7 +202,9 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateRecipesInput {
