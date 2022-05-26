@@ -42,9 +42,9 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES)
     types: CATEGORY_TYPES;
 
-    @Column("simple-array")
-    @Field(() => [String], { defaultValue: null, nullable: true })
-    image_urls?: string;
+    @Column()
+    @Field(() => String, { defaultValue: null, nullable: true })
+    image_urls: string;
 
     // @Column({ nullable: true })
     // @Field(() => String, { nullable: true })

@@ -75,8 +75,9 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create(createRecipesInput, currentUser) {
-        const { types, level, image_urls, ...rest } = createRecipesInput;
+    async create(createRecipesInput, image_urls, currentUser) {
+
+        const { types, level, ...rest } = createRecipesInput;
         console.log("111111");
         console.log(createRecipesInput);
         try {
@@ -90,6 +91,7 @@ export class RecipesService {
 
             console.log("333333");
             console.log("레시피 등록 과정 시작");
+
             const registRecipe = await this.recipesRepository.save({
                 ...rest,
                 types,
@@ -103,27 +105,38 @@ export class RecipesService {
 
             console.log("레시피 등록 과정 확인");
 
-            for (let i = 0; i < image_urls.length; i++) {
-                await this.recipesImageRepository.save({
-                    url: image_urls[i],
-                    recipes: registRecipe,
-                });
-                console.log("레시피 이미지 DB로 이미지 URL 전달 확인")
-                if (registRecipe.isPro === 'COMMON') {
-                    await this.recipesRepository.save({
-                        user: user,
-                        isPro: user.isPro = CLASS_TYPE.COMMON,
-                    })
-                    console.log('작성자: 일반인');
+            function jsonArray(image_urls: JSON[]) {
+                let imageurls_string = "[";
+                for (let i = 0; i < image_urls.length; i++) {
+                    if (i < image_urls.length - 1) {
+                        imageurls_string += ",";
+                    }
                 }
-                if (registRecipe.isPro === 'PRO') {
-                    await this.recipesRepository.save({
-                        user: user,
-                        isPro: user.isPro = CLASS_TYPE.PRO,
-                    })
-                    console.log('작성자: 전문가');
-                }
+                imageurls_string += "]";
+                this.recipesRepository.save({ image_urls: imageurls_string });
+
             }
+            // for (let i = 0; i < image_urls.length; i++) {
+            //     await this.recipesImageRepository.save({
+            //         url: image_urls[i],
+            //         recipes: registRecipe,
+            //     });
+            //     console.log("레시피 이미지 DB로 이미지 URL 전달 확인")
+            //     if (registRecipe.isPro === 'COMMON') {
+            //         await this.recipesRepository.save({
+            //             user: user,
+            //             isPro: user.isPro = CLASS_TYPE.COMMON,
+            //         })
+            //         console.log('작성자: 일반인');
+            //     }
+            //     if (registRecipe.isPro === 'PRO') {
+            //         await this.recipesRepository.save({
+            //             user: user,
+            //             isPro: user.isPro = CLASS_TYPE.PRO,
+            //         })
+            //         console.log('작성자: 전문가');
+            //     }
+            // }
             return registRecipe;
         } catch (error) {
             console.log(error)

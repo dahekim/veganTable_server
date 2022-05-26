@@ -57,7 +57,7 @@ type Recipes {
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  image_urls: [String!]
+  image_urls: String
   cookTime: Int!
   level: COOKING_LEVEL!
   serve: Int!

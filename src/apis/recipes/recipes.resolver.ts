@@ -57,6 +57,7 @@ export class RecipesResolver {
     ) {
         return await this.recipesService.create(
             { ...createRecipesInput },
+            image_urls,
             currentUser
         );
     }
