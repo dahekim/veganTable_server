@@ -6,7 +6,6 @@ import * as bcrypt from 'bcrypt'
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param"
 import { UseGuards } from "@nestjs/common"
 import { GqlAuthAccessGuard, GqlAuthRefreshGuard } from "src/commons/auth/gql-auth.guard"
-import { UpdateUserDetailInput } from "./dto/updateUserDetail.input"
 import { FileUpload, GraphQLUpload } from 'graphql-upload'
 
 
