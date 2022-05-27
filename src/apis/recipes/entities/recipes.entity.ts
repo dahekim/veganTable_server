@@ -1,7 +1,9 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { RecipeScrap } from "src/apis/recipeScrap/entities/recipeScrap.entity";
+import { RecipesIngredients } from "src/apis/recipesIngrediants/entities/recipesIngrediants.entity";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
+import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
 
 export enum CATEGORY_TYPES {
     ALL = 'ALL',
@@ -33,7 +35,7 @@ export class Recipes {
     @Field(() => String)
     id: string;
 
-    @Column({ unique: true, nullable: false })
+    @Column({ nullable: false })
     @Field(() => String)
     title: string;
 
@@ -46,8 +48,12 @@ export class Recipes {
     types: CATEGORY_TYPES;
 
     @Column()
-    @Field(() => String)
-    desc: string;
+    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
+    url: string;
+
+    @Column()
+    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
+    description: string;
 
     @Column()
     @Field(() => Int)
@@ -57,21 +63,23 @@ export class Recipes {
     @Field(() => COOKING_LEVEL)
     level: COOKING_LEVEL;
 
-    @Column()
-    @Field(() => String)
-    ingredients: string;
-
-    @Column({ default: null, nullable: true })
-    @Field(() => String, { nullable: true })
-    recipesPic: string;
-
-    @ManyToOne(() => User, {nullable: true})
+    @ManyToOne(() => User, { nullable: true })
     @Field(() => User)
     user: User;
 
-    @ManyToOne(()=> RecipeScrap, {nullable: false})
-    @Field(()=>RecipeScrap)
-    scrapCount: number 
+    @JoinTable()
+    @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipe)
+    @Field(() => [RecipesIngredients], { nullable: false })
+    ingredients: RecipesIngredients[];
+
+    @JoinTable()
+    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipe)
+    @Field(() => [RecipesTag], { nullable: false })
+    recipesTags: RecipesTag[];
+
+    @Column({ default: 0 })
+    @Field(() => Int)
+    scrapCount: number;
 
     @CreateDateColumn()
     createdAt: Date;

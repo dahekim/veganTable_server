@@ -39,14 +39,11 @@ export class PaymentTransactionService {
         currentUser,
         status = TRANSACTION_STATUS_ENUM.PAYMENT,
     }) {
-        //queryRunner 등록
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
-        // 트랜잭션 시작
         await queryRunner.startTransaction('SERIALIZABLE');
 
         try {
-            // 1. Trasaction 테이블에 거래 기록 1줄 생성
             const paymentTransaction = await this.paymentTransactionRepository.create({
                 impUid,
                 amount,
@@ -55,30 +52,20 @@ export class PaymentTransactionService {
             });
             await queryRunner.manager.save(paymentTransaction);
 
-            // 2. 사용자 정보 확인
             const user = await queryRunner.manager.findOne(
                 User,
                 { user_id: currentUser.user_id },
                 { lock: { mode: 'pessimistic_write' } },
             );
 
-            // // 3. 사용자 정보 업데이트
-            // await this.userRepository.update(
-            //     { id: user.id },
-            //     { point: user.point + amount },
-            // );
-
             const updatedUser = this.userRepository.create({
                 ...user,
                 isSubs: user.isSubs = SUB_TYPE.BASIC || SUB_TYPE.PREMIUM,
             });
-            // this.userRepository.save(updatedUser);
-            await queryRunner.manager.save(updatedUser);
 
-            // +@ commit(성공 확정)
+            await queryRunner.manager.save(updatedUser);
             await queryRunner.commitTransaction();
 
-            // 4. 최종 결과 프론트엔드로 전송
             return paymentTransaction;
 
         } catch (error) {

@@ -9,12 +9,12 @@ export class RecipesImage {
     @Field(() => Int)
     image_id: number
 
-    @Column()
-    @Field(() => String)
+    @Column({ default: " " })
+    @Field(() => [String], { defaultValue: " ", nullable: false })
     url: string
 
-    @Column({length: 5000 })
-    @Field(()=> String)
+    @Column({ length: 5000, default: " " })
+    @Field(() => [String], { defaultValue: " ", nullable: false })
     description: string
 
     @CreateDateColumn()
@@ -26,7 +26,7 @@ export class RecipesImage {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(()=> Recipes)
-    @Field(()=>Recipes)
+    @ManyToOne(() => Recipes)
+    @Field(() => Recipes)
     recipes: Recipes
 }

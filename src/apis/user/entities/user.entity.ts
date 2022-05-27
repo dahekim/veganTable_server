@@ -17,6 +17,7 @@ export enum CLASS_TYPE {
     COMMON = 'COMMON',
 }
 
+
 export enum VEGAN_TYPE{
     NON_Vegan='NON_Vegan',
     Vegan='Vegan',
@@ -27,10 +28,10 @@ export enum VEGAN_TYPE{
     Pollo='Pollo',
 }
 
-export enum SUB_TYPE{
-    NON_SUB='NON_SUB',
-    BASIC='BASIC',
-    PREMIUM='PREMIUM',
+export enum SUB_TYPE {
+    NON_SUB = 'NON_SUB',
+    BASIC = 'BASIC',
+    PREMIUM = 'PREMIUM',
 }
 
 registerEnumType(CLASS_TYPE, {
@@ -40,7 +41,6 @@ registerEnumType(CLASS_TYPE, {
 registerEnumType(VEGAN_TYPE, {
     name: 'VEGAN_TYPE',
 })
-
 
 registerEnumType(SUB_TYPE, {
     name: 'SUB_TYPE',
@@ -54,7 +54,7 @@ export class User {
     user_id!: string
 
     @Column({ nullable: false })
-    @Field(()=> String!)
+    @Field(() => String!)
     email!: string
 
     @Column({ nullable: false })
@@ -65,7 +65,7 @@ export class User {
     name!: string
 
     @Column({ nullable: false })
-    @Field(()=> String!)
+    @Field(() => String!)
     phone: string
 
     @Column({ default: null })
@@ -75,6 +75,7 @@ export class User {
     @Column({ default: null })
     @Field(() => String, { nullable: true })
     addressDetail?: string
+
 
     @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_Vegan })
     @Field(()=>VEGAN_TYPE, {nullable: true})
@@ -92,16 +93,16 @@ export class User {
     @Field(() => SUB_TYPE, { nullable: true })
     isSubs?: string;
 
-    @Column({default: 0 })
-    @Field(()=>Int, { nullable: true })
+    @Column({ default: 0 })
+    @Field(() => Int, { nullable: true })
     SubsHistory?: number
 
-    @Column({default: null})
-    @Field(()=>String, {nullable: true})
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     startDate?: string
 
-    @Column({default: null})
-    @Field(()=> String, {nullable: true})
+    @Column({ default: null })
+    @Field(() => String, { nullable: true })
     endDate?: string
 
     @Column({ type: 'varchar', default: " ", nullable: true })
@@ -116,7 +117,7 @@ export class User {
     createdAt: Date
 
     @DeleteDateColumn()
-    @Field(()=>Date, {nullable: true})
+    @Field(() => Date, { nullable: true })
     deletedAt: Date
 
     @UpdateDateColumn()

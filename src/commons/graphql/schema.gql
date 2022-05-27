@@ -2,18 +2,38 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type RecipesIngredients {
+  id: String!
+  name: String!
+  recipe: [Recipes!]!
+}
+
+type RecipesImage {
+  image_id: Int!
+  url: [String!]!
+  description: [String!]!
+  recipes: Recipes!
+}
+
+type RecipesTag {
+  id: String!
+  name: String!
+  recipe: [Recipes!]!
+}
+
 type Recipes {
   id: String!
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  desc: String!
+  url: [RecipesImage!]!
+  description: [RecipesImage!]!
   cookTime: Int!
   level: COOKING_LEVEL!
-  ingredients: String!
-  recipesPic: String
   user: User!
-  scrapCount: RecipeScrap!
+  ingredients: [RecipesIngredients!]!
+  recipesTags: [RecipesTag!]!
+  scrapCount: Int!
 }
 
 enum CATEGORY_TYPES {
@@ -109,7 +129,9 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
-  fetchRecipe(userid: String!): Recipes!
+  fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
+  fetchMyRecipe(id: String!, user_id: String!): Recipes!
+  fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!
@@ -128,9 +150,8 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
+  createRecipe(createRecipesInput: CreateRecipesInput!): String!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
-  deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
@@ -160,20 +181,24 @@ input CreateRecipesInput {
   title: String!
   summary: String
   types: String
-  desc: String
+  url: [String!]!
+  description: [String!]!
   cookTime: Int
   level: String
-  ingredients: String
-  recipesPics: [String!]
+  ingredients: [String!]!
+  recipesTags: [String!]!
+  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  desc: String
+  url: [String!]
+  description: [String!]
   cookTime: Int
   level: String
-  ingredients: String
-  recipesPics: [String!]
+  ingredients: [String!]
+  recipesTags: [String!]
+  scrapCount: Int
 }
