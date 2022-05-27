@@ -2,7 +2,6 @@ import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { RecipesIngredients } from "src/apis/recipesIngrediants/entities/recipesIngrediants.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
 
 export enum CATEGORY_TYPES {
@@ -35,11 +34,11 @@ export class Recipes {
     @Field(() => String)
     id: string;
 
-    @Column({ nullable: false })
+    @Column({ default: " " })
     @Field(() => String)
     title: string;
 
-    @Column()
+    @Column({ default: " " })
     @Field(() => String)
     summary: string;
 
@@ -47,15 +46,7 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES)
     types: CATEGORY_TYPES;
 
-    @Column()
-    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
-    url: string;
-
-    @Column()
-    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
-    description: string;
-
-    @Column()
+    @Column({ default: 0 })
     @Field(() => Int)
     cookTime: number;
 
@@ -63,18 +54,18 @@ export class Recipes {
     @Field(() => COOKING_LEVEL)
     level: COOKING_LEVEL;
 
-    @ManyToOne(() => User, { nullable: true })
+    @ManyToOne(() => User)
     @Field(() => User)
     user: User;
 
     @JoinTable()
     @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipe)
-    @Field(() => [RecipesIngredients], { nullable: false })
+    @Field(() => [RecipesIngredients])
     ingredients: RecipesIngredients[];
 
     @JoinTable()
     @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipe)
-    @Field(() => [RecipesTag], { nullable: false })
+    @Field(() => [RecipesTag])
     recipesTags: RecipesTag[];
 
     @Column({ default: 0 })

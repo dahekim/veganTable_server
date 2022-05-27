@@ -8,13 +8,6 @@ type RecipesIngredients {
   recipe: [Recipes!]!
 }
 
-type RecipesImage {
-  image_id: Int!
-  url: [String!]!
-  description: [String!]!
-  recipes: Recipes!
-}
-
 type RecipesTag {
   id: String!
   name: String!
@@ -26,8 +19,6 @@ type Recipes {
   title: String!
   summary: String!
   types: CATEGORY_TYPES!
-  url: [RecipesImage!]!
-  description: [RecipesImage!]!
   cookTime: Int!
   level: COOKING_LEVEL!
   user: User!
@@ -129,7 +120,7 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
-  fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
+  fetchRecipeTypes(vegan_types: String!): Recipes!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
   fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
@@ -150,7 +141,7 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!): String!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
@@ -178,27 +169,27 @@ input UpdateUserInput {
 scalar Upload
 
 input CreateRecipesInput {
-  title: String!
+  title: String
   summary: String
   types: String
-  url: [String!]!
-  description: [String!]!
-  cookTime: Int
+  url: [String!] = " "
+  description: [String!] = " "
+  cookTime: Int = 0
   level: String
-  ingredients: [String!]!
-  recipesTags: [String!]!
-  scrapCount: Int!
+  ingredients: [String!] = " "
+  recipesTags: [String!] = " "
+  scrapCount: Int = 0
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  url: [String!]
-  description: [String!]
-  cookTime: Int
+  url: [String!] = " "
+  description: [String!] = " "
+  cookTime: Int = 0
   level: String
-  ingredients: [String!]
-  recipesTags: [String!]
-  scrapCount: Int
+  ingredients: [String!] = " "
+  recipesTags: [String!] = " "
+  scrapCount: Int = 0
 }

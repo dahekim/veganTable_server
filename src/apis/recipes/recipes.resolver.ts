@@ -25,10 +25,9 @@ export class RecipesResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => Recipes)
     async fetchRecipeTypes(
-        @Args('recipes_id') id: string,
-        @Args('vegan_types') typesCode: string,
+        @Args('vegan_types') types: string,
     ) {
-        return await this.recipesService.fetchRecipeTypes({ id, typesCode });
+        return await this.recipesService.fetchRecipeTypes({ types });
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -49,7 +48,7 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => String)
+    @Mutation(() => Recipes)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
         @CurrentUser() currentUser: ICurrentUser
