@@ -5,9 +5,8 @@ import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { Storage } from '@google-cloud/storage';
 import axios from 'axios'
-import { v4 as uuidv4 } from 'uuid';
 import { getToday } from 'src/commons/libraries/utils';
-import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
@@ -85,7 +84,7 @@ export class UserService {
             projectId: process.env.STORAGE_PROJECT_ID,
         }).bucket(bucket)
 
-        const fileName = `profile/${getToday()}/${uuidv4()}/${file.filename}`
+        const fileName = `profile/${getToday()}/${file.filename}`
 
         const url = await new Promise((resolve, reject) => {
             file
@@ -97,10 +96,12 @@ export class UserService {
         return url
     }
 
-    async deleteImage({ user_id }) {
+
+    async deleteImage({user_id}){
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
         const userId = await this.userRepository.findOne({ user_id: user_id })
 
-        const prevImage = userId.profilePic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
+        const prevImage = userId.profilePic.split(`${bucket}/profile/${getToday()}/`)
         const prevImageName = prevImage[prevImage.length - 1]
 
         const storage = new Storage({

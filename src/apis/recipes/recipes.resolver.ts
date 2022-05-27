@@ -69,17 +69,17 @@ export class RecipesResolver {
         return await this.recipesService.update({ id, updateRecipesInput });
     }
 
-    // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(() => Boolean)
-    // async deleteRecipe(
-    //     @Args('recipe_id') id: string,
-    //     @CurrentUser() currentUser: ICurrentUser
-    // ) {
-    //     return await this.recipesService.delete({
-    //         id,
-    //         currentUser
-    //     });
-    // }
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(() => Boolean)
+    async deleteRecipe(
+        @Args('recipe_id') id: string,
+        @CurrentUser() currentUser: ICurrentUser
+    ) {
+        return await this.recipesService.delete({
+            id,
+            currentUser
+        });
+    }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])

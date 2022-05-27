@@ -17,14 +17,15 @@ export enum CLASS_TYPE {
     COMMON = 'COMMON',
 }
 
-export enum VEGAN_TYPE {
-    NON_VEGAN = 'NON_VEGAN',
-    VEGAN = 'VEGAN',
-    LACTO = 'LACTO',
-    OVO = 'OVO',
-    LACTO_OVO = 'LACTO_OVO',
-    PESCO = 'PESCO',
-    POLLO = 'POLLO',
+
+export enum VEGAN_TYPE{
+    NON_Vegan='NON_Vegan',
+    Vegan='Vegan',
+    Lacto='Lacto',
+    Ovo='Ovo',
+    Lacto_Ovo='Lacto_Ovo',
+    Pesco='Pesco',
+    Pollo='Pollo',
 }
 
 export enum SUB_TYPE {
@@ -75,8 +76,9 @@ export class User {
     @Field(() => String, { nullable: true })
     addressDetail?: string
 
-    @Column({ type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_VEGAN })
-    @Field(() => VEGAN_TYPE, { nullable: true })
+
+    @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_Vegan })
+    @Field(()=>VEGAN_TYPE, {nullable: true})
     type?: string
 
     @Column({ nullable: true })
@@ -103,7 +105,7 @@ export class User {
     @Field(() => String, { nullable: true })
     endDate?: string
 
-    @Column({ type: 'varchar', default: null, nullable: true })
+    @Column({ type: 'varchar', default: " ", nullable: true })
     @Field(() => String, { nullable: true })
     profilePic: string;
 

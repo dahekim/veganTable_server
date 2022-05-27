@@ -70,13 +70,13 @@ type User {
 }
 
 enum VEGAN_TYPE {
-  NON_VEGAN
-  VEGAN
-  LACTO
-  OVO
-  LACTO_OVO
-  PESCO
-  POLLO
+  NON_Vegan
+  Vegan
+  Lacto
+  Ovo
+  Lacto_Ovo
+  Pesco
+  Pollo
 }
 
 enum CLASS_TYPE {
@@ -143,6 +143,7 @@ type Mutation {
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
