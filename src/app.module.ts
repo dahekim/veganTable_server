@@ -39,8 +39,8 @@ import { SearchModule } from './search/search.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'vegan-database',
-      // host: "10.31.224.4", 
+      // host: 'vegan-database',
+      host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',
