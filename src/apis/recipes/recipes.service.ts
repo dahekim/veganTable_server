@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { getRepository, Repository } from "typeorm";
@@ -11,6 +11,7 @@ import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
 import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
+
 
 interface IFile {
     files: FileUpload[]
@@ -38,8 +39,10 @@ export class RecipesService {
 
         @InjectRepository(RecipesTag)
         private readonly recipesTagRepository: Repository<RecipesTag>,
+         
         // private readonly createRecipesInput: CreateRecipesInput,
-    ) { }
+    ) {}
+
 
     async fetchRecipesAll() {
         await this.recipesRepository.find();
@@ -92,26 +95,14 @@ export class RecipesService {
 
     async create({ createRecipesInput }, currentUser) {
 
-        console.log("111111");
-        console.log(createRecipesInput);
-        console.log("플레이그라운드에서 입력된 값 확인")
-        console.log(currentUser);
-
         try {
             const { url, description, ingredients, recipesTags, ...recipes } =
                 createRecipesInput;
-            console.log(ingredients);
-            console.log(recipesTags);
-            console.log(url);
-            console.log(description);;
 
             const searchUser = await this.userRepository.findOne(
                 currentUser,
                 { where: { user_id: currentUser.user_id } }
             );
-            console.log("222222");
-            console.log(searchUser);
-            console.log('회원 정보 확인');
 
             const impTags1 = [];
             for (let i = 0; i < ingredients.length; i++) {
@@ -129,9 +120,6 @@ export class RecipesService {
                     impTags1.push(newTags1);
                 }
             }
-            console.log("333333");
-            console.log(impTags1);
-            console.log("저장될 재료 태그 목록 확인");
 
             const impTags2 = [];
             for (let i = 0; i < recipesTags.length; i++) {
@@ -146,22 +134,7 @@ export class RecipesService {
                     const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
                     impTags2.push(newTags2);
                 }
-            }
-            console.log("444444");
-            console.log(impTags2);
-            console.log("저장될 레시피 태그 목록 확인");
-
-            console.log("555555");
-            console.log(ingredients);
-            console.log("레시피 재료 DB로 전달될 값 확인");
-
-            console.log("555555-1");
-            console.log(recipesTags);
-            console.log("레시피 태그 DB로 전달될 값 확인");
-
-            console.log(recipes);
-
-            // console.log(JSON.stringify(registRecipe.hits.hits, null, '  '))            
+            }         
 
             await this.recipesRepository.save({
                 ...recipes,
@@ -172,9 +145,6 @@ export class RecipesService {
                 ingredients: ingredients[0],
                 recipesTags: recipesTags[0],
             });
-            console.log("666666");
-            // console.log(registRecipe);
-            console.log("레시피 DB로 전체 레시피 전달");
 
             for (let i = 0; i < url.length; i++) {
                 await this.recipesImageRepository.save({
@@ -183,13 +153,6 @@ export class RecipesService {
                     recipe: recipes.id
                 });
             }
-            console.log("777777");
-            console.log(url);
-            console.log("레시피 이미지 DB로 전달될 이미지 URL 확인");
-
-            console.log("888888");
-            console.log(description);
-            console.log("레시피 이미지 DB로 전달될 설명 텍스트 확인");
 
             // if (registRecipe.isPro === 'COMMON') {
             //     await this.recipesRepository.save({
@@ -268,6 +231,7 @@ export class RecipesService {
         return results
     }
 
+
     async deleteImage({ recipe_id }) {
         const images = await this.recipesImageRepository.find({ recipes: recipe_id })
         const imageURLs = await Promise.all(images.map(el => el.url))
@@ -287,6 +251,7 @@ export class RecipesService {
 
         const { url, ...user } = recipe_id
         const deleteUrl = { ...user, url: null }
+
         await this.recipesRepository.save(deleteUrl)
 
         return recipe_id ? true : false
