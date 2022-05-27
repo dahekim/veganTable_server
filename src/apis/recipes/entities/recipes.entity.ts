@@ -60,7 +60,7 @@ export class Recipes {
     user: User;
 
     @JoinTable()
-    @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipe)
+    @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipes)
     @Field(() => [RecipesIngredients], { nullable: false })
     ingredients: RecipesIngredients[];
 
