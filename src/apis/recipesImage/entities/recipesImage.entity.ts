@@ -1,32 +1,32 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Recipes } from "src/apis/recipes/entities/recipes.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 @ObjectType()
 export class RecipesImage {
-    @PrimaryGeneratedColumn('uuid')
-    @Field(() => String)
-    image_id: string;
+    @PrimaryGeneratedColumn()
+    @Field(() => Int)
+    image_id: number
 
-    @Column({ default: false })
-    @Field(() => [String])
-    urls: string;
+    @Column({ default: " " })
+    @Field(() => [String], { defaultValue: " ", nullable: false })
+    url: string
 
-    // @Column()
-    // @Field(() => String)
-    // thumbNail: string;
+    @Column({ length: 5000, default: " " })
+    @Field(() => [String], { defaultValue: " ", nullable: false })
+    description: string
+
+    @CreateDateColumn()
+    createdAt: Date
+
+    @DeleteDateColumn()
+    deletedAt: Date
+
+    @UpdateDateColumn()
+    updatedAt: Date
 
     @ManyToOne(() => Recipes)
     @Field(() => Recipes)
-    recipes: Recipes;
-
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @DeleteDateColumn()
-    deletedAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
+    recipes: Recipes
 }

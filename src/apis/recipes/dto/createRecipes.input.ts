@@ -11,8 +11,11 @@ export class CreateRecipesInput {
     @Field(() => String, { nullable: true })
     types: string;
 
-    @Field(() => String, { nullable: true })
-    desc: string;
+    @Field(() => [String], { nullable: false })
+    url: string[];
+
+    @Field(() => [String], { nullable: false })
+    description: string[];
 
     @Field(() => Int, { nullable: true })
     cookTime: number;
@@ -20,9 +23,12 @@ export class CreateRecipesInput {
     @Field(() => String, { nullable: true })
     level: string;
 
-    @Field(() => [String], { nullable: true })
+    @Field(() => [String], { nullable: false })
     ingredients: string[];
 
-    @Field(() => [String], { nullable: true })
-    recipesPics: string[];
+    @Field(() => [String], { nullable: false })
+    recipesTags: string[];
+
+    @Field(() => Int)
+    scrapCount: number;
 }

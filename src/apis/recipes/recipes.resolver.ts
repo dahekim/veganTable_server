@@ -49,17 +49,14 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => Recipes)
+    @Mutation(() => String)
     async createRecipe(
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
-        @Args({ name: 'recipesPic', type: () => [String] }) recipesPic: string[],
-        @Args({ name: 'ingredients', type: () => [String] }) ingredients: string[],
         @CurrentUser() currentUser: ICurrentUser
     ) {
+        console.log(createRecipesInput);
         return await this.recipesService.create(
-            { ...createRecipesInput },
-            recipesPic,
-            ingredients,
+            { createRecipesInput },
             currentUser
         );
     }
@@ -73,17 +70,17 @@ export class RecipesResolver {
         return await this.recipesService.update({ id, updateRecipesInput });
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => Boolean)
-    async deleteRecipe(
-        @Args('recipe_id') id: string,
-        @CurrentUser() currentUser: ICurrentUser
-    ) {
-        return await this.recipesService.delete({
-            id,
-            currentUser
-        });
-    }
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(() => Boolean)
+    // async deleteRecipe(
+    //     @Args('recipe_id') id: string,
+    //     @CurrentUser() currentUser: ICurrentUser
+    // ) {
+    //     return await this.recipesService.delete({
+    //         id,
+    //         currentUser
+    //     });
+    // }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
@@ -94,10 +91,10 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=> [String])
+    @Mutation(() => [String])
     deleteRecipeImages(
         @Args('id') recipe_id: string,
-    ){
-        return this.recipesService.deleteImage({recipe_id})
+    ) {
+        return this.recipesService.deleteImage({ recipe_id })
     }
 }

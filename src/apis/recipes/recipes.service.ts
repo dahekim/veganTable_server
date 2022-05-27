@@ -9,6 +9,8 @@ import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
+import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
+import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
 
 interface IFile {
     files: FileUpload[]
@@ -29,8 +31,13 @@ export class RecipesService {
         private readonly userRepository: Repository<User>,
 
         @InjectRepository(RecipesIngredients)
-        private readonly recipesIngredientsRepository: Repository<RecipesIngredients>
+        private readonly recipesIngredientsRepository: Repository<RecipesIngredients>,
 
+        @InjectRepository(RecipeScrap)
+        private readonly recipeScrapRepository: Repository<RecipeScrap>,
+
+        @InjectRepository(RecipesTag)
+        private readonly recipesTagRepository: Repository<RecipesTag>,
         // private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
@@ -83,69 +90,122 @@ export class RecipesService {
             .getManyAndCount();
     }
 
-    async create(createRecipesInput, recipesPic, ingredients, currentUser) {
+    async create({ createRecipesInput }, currentUser) {
 
-        const { types, level, ...rest } = createRecipesInput;
         console.log("111111");
         console.log(createRecipesInput);
+        console.log("플레이그라운드에서 입력된 값 확인")
+        console.log(currentUser);
+
         try {
-            const user = await this.userRepository.findOne(
+            const { url, description, ingredients, recipesTags, ...recipes } =
+                createRecipesInput;
+            console.log(ingredients);
+            console.log(recipesTags);
+            console.log(url);
+            console.log(description);;
+
+            const searchUser = await this.userRepository.findOne(
                 currentUser,
                 { where: { user_id: currentUser.user_id } }
             );
-            console.log(user);
             console.log("222222");
-            console.log('유저 정보 확인');
+            console.log(searchUser);
+            console.log('회원 정보 확인');
 
-            console.log("333333");
-            console.log("레시피 등록 과정 시작");
-
-            const registRecipe = await this.recipesRepository.save({
-                ...rest,
-                types,
-                level,
-                ingredients,
-                user: user,
-                isPro: user.isPro,
-            });
-            console.log("444444");
-            console.log(registRecipe);
-
-            for (let i = 0; i < recipesPic.length; i++) {
-                await this.recipesImageRepository.save({
-                    url: recipesPic[i],
-                    recipes: registRecipe,
-                });
-                console.log("레시피 이미지 DB로 이미지 URL 전달");
-                return recipesPic;
-            }
-            console.log(recipesPic);
-
+            const impTags1 = [];
             for (let i = 0; i < ingredients.length; i++) {
-                await this.recipesIngredientsRepository.save({
-                    name: ingredients[i],
-                    recipes: registRecipe,
-                });
-                console.log("레시피 재료 DB로 재료 이름 전달");
-                return ingredients;
-            }
-            console.log(ingredients);
+                const ingredientTags = ingredients[i].replace('#', '');
 
-            if (registRecipe.isPro === 'COMMON') {
-                await this.recipesRepository.save({
-                    user: user,
-                    isPro: user.isPro,
-                })
-                console.log('작성자: 일반인');
+                const prevTags1 = await this.recipesIngredientsRepository.findOne({
+                    name: ingredientTags,
+                });
+
+                if (prevTags1) {
+                    impTags1.push(prevTags1);
+
+                } else {
+                    const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
+                    impTags1.push(newTags1);
+                }
             }
-            if (registRecipe.isPro === 'PRO') {
-                await this.recipesRepository.save({
-                    user: user,
-                    isPro: user.isPro,
-                })
-                console.log('작성자: 전문가');
+            console.log("333333");
+            console.log(impTags1);
+            console.log("저장될 재료 태그 목록 확인");
+
+            const impTags2 = [];
+            for (let i = 0; i < recipesTags.length; i++) {
+                const recipeTags = recipesTags[i].replace('#', '');
+                const prevTags2 = await this.recipesTagRepository.findOne({
+                    name: recipeTags,
+                });
+
+                if (prevTags2) {
+                    impTags2.push(prevTags2);
+                } else {
+                    const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
+                    impTags2.push(newTags2);
+                }
             }
-            return registRecipe;
+            console.log("444444");
+            console.log(impTags2);
+            console.log("저장될 레시피 태그 목록 확인");
+
+            console.log("555555");
+            console.log(ingredients);
+            console.log("레시피 재료 DB로 전달될 값 확인");
+
+            console.log("555555-1");
+            console.log(recipesTags);
+            console.log("레시피 태그 DB로 전달될 값 확인");
+
+            console.log(recipes);
+
+            // console.log(JSON.stringify(registRecipe.hits.hits, null, '  '))            
+
+            await this.recipesRepository.save({
+                ...recipes,
+
+                url: url[0],
+                user: searchUser,
+                description: description[0],
+                ingredients: ingredients[0],
+                recipesTags: recipesTags[0],
+            });
+            console.log("666666");
+            // console.log(registRecipe);
+            console.log("레시피 DB로 전체 레시피 전달");
+
+            for (let i = 0; i < url.length; i++) {
+                await this.recipesImageRepository.save({
+                    url: url[i],
+                    description: description[i],
+                    recipe: recipes.id
+                });
+            }
+            console.log("777777");
+            console.log(url);
+            console.log("레시피 이미지 DB로 전달될 이미지 URL 확인");
+
+            console.log("888888");
+            console.log(description);
+            console.log("레시피 이미지 DB로 전달될 설명 텍스트 확인");
+
+            // if (registRecipe.isPro === 'COMMON') {
+            //     await this.recipesRepository.save({
+            //         user: user,
+            //         isPro: user.isPro,
+            //     })
+            //     console.log('작성자: 일반인');
+            // }
+            // if (registRecipe.isPro === 'PRO') {
+            //     await this.recipesRepository.save({
+            //         user: user,
+            //         isPro: user.isPro,
+            //     })
+            //     console.log('작성자: 전문가');
+            // }
+            return `DB 등록 완료: ${recipes.title[0]}`
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
@@ -168,23 +228,23 @@ export class RecipesService {
         return await this.recipesRepository.save(newRegistRecipe);
     }
 
-    async delete({ id, currentUser }) {
-        try {
-            const result = await this.recipesRepository.softDelete({
-                id,
-                user: currentUser.user_id,
-            });
-            return result.affected ? true : false;
-        } catch (error) {
-            console.log(error)
-            if (error?.response?.data?.message || error?.response?.status) {
-                console.log(error.response.data.message);
-                console.log(error.response.status);
-            } else {
-                throw error;
-            }
-        }
-    }
+    // async delete({ id, currentUser }) {
+    //     try {
+    //         const result = await this.recipesRepository.softDelete({
+    //             id,
+    //             user: currentUser.user_id,
+    //         });
+    //         return result.affected ? true : false;
+    //     } catch (error) {
+    //         console.log(error)
+    //         if (error?.response?.data?.message || error?.response?.status) {
+    //             console.log(error.response.data.message);
+    //             console.log(error.response.status);
+    //         } else {
+    //             throw error;
+    //         }
+    //     }
+    // }
 
     async uploadImages({ files }: IFile) {
         const bucket = process.env.VEGAN_STORAGE_BUCKET
@@ -209,25 +269,26 @@ export class RecipesService {
     }
 
     async deleteImage({ recipe_id }) {
-        const recipeId = await this.recipesRepository.findOne({ id: recipe_id })
-
-        const prevImage = recipeId.recipesPic.split(`${process.env.VEGAN_STORAGE_BUCKET}/`)
-        const prevImageName = prevImage[prevImage.length - 1]
+        const images = await this.recipesImageRepository.find({ recipes: recipe_id })
+        const imageURLs = await Promise.all(images.map(el => el.url))
 
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
         })
 
-        const result = await storage
-            .bucket(process.env.STORAGE_BUCKET)
-            .file(prevImageName)
-            .delete()
+        for (let i = 0; i < imageURLs.length; i++) {
+            const result = await storage
+                .bucket(process.env.STORAGE_BUCKET)
+                .file(imageURLs[i])
+                .delete()
+            return result;
+        };
 
-        const { recipesPic, ...user } = recipeId
-        const deleteUrl = { ...user, recipesPic: null }
+        const { url, ...user } = recipe_id
+        const deleteUrl = { ...user, url: null }
         await this.recipesRepository.save(deleteUrl)
 
-        return result ? true : false
+        return recipe_id ? true : false
     }
 }

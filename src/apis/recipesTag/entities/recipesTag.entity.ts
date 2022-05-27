@@ -4,7 +4,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, Primary
 
 @Entity()
 @ObjectType()
-export class RecipesIngredients {
+export class RecipesTag {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
     id: string;
@@ -13,15 +13,7 @@ export class RecipesIngredients {
     @Field(() => String, { defaultValue: " ", nullable: false })
     name: string;
 
-    // @Column()
-    // @Field(() => Int)
-    // amount: number;
-
-    // @Column()
-    // @Field(() => String)
-    // unit: string;
-
-    @ManyToMany(() => Recipes, (recipes) => recipes.ingredients)
+    @ManyToMany(() => Recipes, (recipe) => recipe.recipesTags)
     @Field(() => [Recipes])
     recipe: Recipes[];
 
