@@ -10,13 +10,13 @@ export class RecipeScrap{
     @Field(()=> String)
     scrap_id: string
 
-    @ManyToOne(() => User, (user) => user.scrapCount)
-    @Field(() => User)
-    user: User
+    // @ManyToOne(() => User, (user) => user.scrapCount)
+    // @Field(() => User)
+    // user: User
 
-    @ManyToOne(() => Recipes, (recipes) => recipes.scrapCount)
-    @Field(() => Recipes)
-    recipes: Recipes
+    // @ManyToOne(() => Recipes, (recipes) => recipes.scrapCount)
+    // @Field(() => Recipes)
+    // recipes: Recipes
 
     @Column({ default: false })
     @Field(() => Boolean)

@@ -48,14 +48,6 @@ export class Recipes {
     types: CATEGORY_TYPES;
 
     @Column()
-    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
-    url: string;
-
-    @Column()
-    @Field(() => [RecipesImage], { defaultValue: " ", nullable: false })
-    description: string;
-
-    @Column()
     @Field(() => Int)
     cookTime: number;
 
@@ -77,9 +69,9 @@ export class Recipes {
     @Field(() => [RecipesTag], { nullable: false })
     recipesTags: RecipesTag[];
 
-    @Column({ default: 0 })
-    @Field(() => Int)
-    scrapCount: number;
+    // @Column({ default: 0 })
+    // @Field(() => Int)
+    // scrapCount: number;
 
     @CreateDateColumn()
     createdAt: Date;

@@ -22,12 +22,12 @@ export class RecipeScrapResolver{
         return this.recipeScarpService.findAll({currentUser})
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(()=>RecipeScrap)
-    createScrap(
-        @Args('id') recipe_id: string,
-        @CurrentUser() currentUser: ICurrentUser,
-    ){
-        return this.recipeScarpService.scrap({recipe_id, currentUser})
-    }
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(()=>RecipeScrap)
+    // createScrap(
+    //     @Args('id') recipe_id: string,
+    //     @CurrentUser() currentUser: ICurrentUser,
+    // ){
+    //     return this.recipeScarpService.scrap({recipe_id, currentUser})
+    // }
 }

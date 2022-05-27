@@ -21,13 +21,14 @@ export class RecipesReplyService{
     ){}
 
     async findAll({recipe_id}){
-        return await getRepository(RecipesReply)
+        const result = await getRepository(RecipesReply)
         .createQueryBuilder('recipesReply')
-        .leftJoinAndSelect('recipesReply.recipe', 'recipe')
+        .leftJoinAndSelect('recipesReply.recipes', 'recipe')
         .leftJoinAndSelect('recipesReply.user', 'user')
         .where('recipe.id = :id', { id: recipe_id })
-        .orderBy('recipesReply.id', 'DESC')
+        .orderBy('recipesReply.reply_id', 'DESC')
         .getMany()
+        return result 
     }
 
     async create({currentUser, user_id, contents, recipe_id}){
@@ -49,8 +50,8 @@ export class RecipesReplyService{
             await queryRunner.manager.save(createRecipe)
             await queryRunner.manager.save(createReply)
             await queryRunner.commitTransaction()
-            
-            return createReply
+
+            return "댓글이 정상적으로 등록되었습니다."
         } catch (error) {
             await queryRunner.rollbackTransaction()
             throw error
@@ -59,68 +60,28 @@ export class RecipesReplyService{
         }
     }
 
-    async update({ currentUser, reply_id, contents }) {
-        const queryRunner = this.connection.createQueryRunner()
-        await queryRunner.connect()
-        await queryRunner.startTransaction('REPEATABLE READ')
-
-        try {
-            const user = await queryRunner.manager.findOne(User, {
-                user_id: currentUser.user_id,
-            })
-            const prevReply = await queryRunner.manager.findOne( Recipes, {
-                id: reply_id,
-            })
-            const newContent = { ...prevReply, user: user, contents }
-
-            const result = await this.recipesReplyRepository.create(newContent)
-
-            await queryRunner.manager.save(result)
-            await queryRunner.commitTransaction()
-            return result
-        } catch (error) {
-            await queryRunner.rollbackTransaction()
-            throw error
-        } finally {
-            await queryRunner.release()
-        }
+    async update({ reply_id, contents }) {
+        const reply = await this.recipesReplyRepository.findOne({reply_id})
+        await this.recipesReplyRepository.save({
+            ...reply,
+            contents,
+        })
+        return "댓글이 수정되었습니다."
     }
     
     
     async delete({ currentUser, reply_id }) {
-        const queryRunner = this.connection.createQueryRunner()
-        await queryRunner.connect()
-        await queryRunner.startTransaction('REPEATABLE READ')
+        const reply = await getRepository(RecipesReply)
+        .createQueryBuilder('recipesReply')
+        .leftJoinAndSelect('recipesReply.user', 'user')
+        .where('recipesReply.reply_id = :id', { id: reply_id })
+        .andWhere('user.user_id = :id', { id: currentUser.user_id })
+        .getMany()
 
-        try {
-            const deleteReply = await this.recipesReplyRepository
-            .createQueryBuilder('replies')
-            .innerJoinAndSelect('replies.user', 'user')
-            .innerJoinAndSelect('replies.recipes', 'recipes')
-            .where('user.id = :userId', { userId: currentUser.id })
-            .andWhere('replies.id = :Id', { Id: reply_id })
-            .getOne()
-            
-            if (deleteReply) {
-                await this.recipesReplyRepository.softDelete({ reply_id })
-            const post = await this.recipesRepository.findOne({
-                id: deleteReply.recipes.id,
-            })
-            
-            const createQtBoard = await this.recipesRepository.create({
-                ...post,
-            })
-            await queryRunner.manager.save(createQtBoard)
-            await queryRunner.commitTransaction()
-            return true;
-        } else {await queryRunner.commitTransaction()
-            return false
-        }
-        } catch (error) {
-            await queryRunner.rollbackTransaction();
-            throw error
-        } finally {
-            await queryRunner.release();
-        }
+    if (reply) {
+        const result = await this.recipesReplyRepository.softDelete({reply_id})
+        return result.affected ? "댓글이 삭제되었습니다.": "댓글 삭제에 실패했습니다."
+    }
+    return "댓글이 정상적으로 삭제되었습니다."
     }
 }
