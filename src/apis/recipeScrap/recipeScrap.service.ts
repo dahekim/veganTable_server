@@ -14,10 +14,13 @@ export class RecipeScarpService{
         @InjectRepository(Recipes)
         private readonly recipesRepository: Repository<Recipes>,
 
-        private readonly connection:Connection
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+
+        private readonly connection: Connection
     ){}
     async findAll({currentUser}){
-        const scrapedRecipe =  await getRepository(Recipes)
+        await getRepository(Recipes)
         .createQueryBuilder('recipes')
         .leftJoinAndSelect('recipes.user','recipeUser')
         .leftJoinAndSelect('recipes.isScraped','recipeScraped')
@@ -26,7 +29,6 @@ export class RecipeScarpService{
         .andWhere('recipeUser.user_id = :user_id',{ user_id : currentUser.user_id} )
         .andWhere('user.id = :id',{ user_id : currentUser.id} )
         .getMany()
-        return scrapedRecipe
     }
 
     async scrap({recipe_id, currentUser}){
@@ -35,6 +37,9 @@ export class RecipeScarpService{
         await queryRunner.connect()
         await queryRunner.startTransaction('SERIALIZABLE')
         
+        const user2 = await this.userRepository.findOne({ where: { user_id: currentUser.user_id }})
+        const recipe2 = await this.recipesRepository.findOne({where: { id: recipe_id }})
+
         try {
             const recipe = await queryRunner.manager.findOne(
                 Recipes,
@@ -44,6 +49,7 @@ export class RecipeScarpService{
                 const user = await queryRunner.manager.findOne(User, {
                     user_id : currentUser.user_id,
                 })
+
                 const scrap = await queryRunner.manager.findOne( RecipeScrap, {
                     user: currentUser.user_id,
                     recipes: recipe_id,
@@ -52,8 +58,8 @@ export class RecipeScarpService{
                 if (!scrap) {
                     const createScrap = await this.scrapRepository.create({
                         scraped: true,
-                        user: user,
-                        recipes: recipe,
+                        user: user2,
+                        recipes: recipe2,
                     })
                     
                     const updateRecipeScrap = await this.recipesRepository.create({
@@ -68,8 +74,11 @@ export class RecipeScarpService{
 
                 if (!scrap.scraped) {
                     const createScrap = await this.scrapRepository.create({
-                        ...scrap,
+                        // ...scrap,
+                        // scraped: true,
                         scraped: true,
+                        user: user2,
+                        recipes: recipe2,
                     })
                     
                     const updateRecipeScrap = await this.recipesRepository.create({
@@ -83,6 +92,7 @@ export class RecipeScarpService{
                     await queryRunner.commitTransaction();
                     return result;
                 }
+                
                 const createScrap = await this.scrapRepository.create({
                     ...scrap,
                     scraped: false,

@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { getRepository, Repository } from "typeorm";
+import { Brackets, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
@@ -16,7 +16,6 @@ import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
 interface IFile {
     files: FileUpload[]
 }
-
 
 
 @Injectable()
@@ -253,5 +252,22 @@ export class RecipesService {
         await this.recipesRepository.save(deleteUrl)
 
         return recipe_id ? true : false
+    }
+
+    async search({word}){
+        const database = await this.recipesRepository
+            .createQueryBuilder('recipes')
+            // .leftJoinAndSelect('recipes.tag', 'tag') 
+            .leftJoinAndSelect('recipes.ingredients', 'ingredient')
+            .orderBy('recipes.createdAt', 'DESC')
+
+        const results = database.where(new Brackets((qb)=> {
+                    qb.where('recipes.title LIKE :title', { title: `%${word}%`})
+                        // .orWhere('tag.name LIKE :name', { name: `%${word}%` })
+                        .orWhere('ingredient.name LIKE :name', { name: `%${word}%` })
+            })
+        ).limit(12).getMany()
+
+        return results
     }
 }

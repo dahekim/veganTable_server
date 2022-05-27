@@ -6,6 +6,7 @@ type RecipesIngredients {
   id: String!
   name: String!
   recipe: [Recipes!]!
+
 }
 
 type RecipesTag {
@@ -151,7 +152,7 @@ type Mutation {
   createReply(user_id: String!, contents: String!, id: String!): String!
   updateReply(reply_id: String!, contents: String!): String!
   deleteRely(reply_id: String!): String!
-  createScrap(id: String!): RecipeScrap!
+  clickScrap(id: String!): RecipeScrap!
 }
 
 input UpdateUserInput {

@@ -13,21 +13,21 @@ export class RecipeScrapResolver{
         private readonly recipeScarpService: RecipeScarpService
     ){}
     
-
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
-    fetchMyScraps(
+    async fetchMyScraps(
         @CurrentUser() currentUser: ICurrentUser,
     ){
-        return this.recipeScarpService.findAll({currentUser})
+        return await this.recipeScarpService.findAll({currentUser})
     }
+
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>RecipeScrap)
-    createScrap(
+    async clickScrap(
         @Args('id') recipe_id: string,
         @CurrentUser() currentUser: ICurrentUser,
     ){
-        return this.recipeScarpService.scrap({recipe_id, currentUser})
+        return await this.recipeScarpService.scrap({recipe_id, currentUser})
     }
 }

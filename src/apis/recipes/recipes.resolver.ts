@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
@@ -8,7 +8,7 @@ import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
 import { RecipesService } from "./recipes.service";
-// import GraphQLJSON from 'graphql-type-json'
+
 
 @Resolver()
 export class RecipesResolver {
@@ -16,13 +16,13 @@ export class RecipesResolver {
         private readonly recipesService: RecipesService,
     ) { }
 
-    @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
-    fetchRecipes() {
+    fetchRecipes(
+        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
+    ) {
         return this.recipesService.fetchRecipesAll();
     }
 
-    @UseGuards(GqlAuthAccessGuard)
     @Query(() => Recipes)
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
@@ -39,7 +39,6 @@ export class RecipesResolver {
         return await this.recipesService.fetchMyRecipe({ id, user_id });
     }
 
-    @UseGuards(GqlAuthAccessGuard)
     @Query(() => Recipes)
     async fetchRecipeIsPro(
         @Args('isPro') isPro: CLASS_TYPE.PRO,
