@@ -69,9 +69,9 @@ export class Recipes {
     @Field(() => [RecipesTag], { nullable: false })
     recipesTags: RecipesTag[];
 
-    // @Column({ default: 0 })
-    // @Field(() => Int)
-    // scrapCount: number;
+    @Column({ default: 0 })
+    @Field(() => Int)
+    scrapCount?: number;
 
     @CreateDateColumn()
     createdAt: Date;

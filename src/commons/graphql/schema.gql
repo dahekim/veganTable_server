@@ -2,6 +2,54 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type RecipesIngredients {
+  id: String!
+  name: String!
+  recipes: [Recipes!]!
+}
+
+type RecipesTag {
+  id: String!
+  name: String!
+  recipe: [Recipes!]!
+}
+
+type Recipes {
+  id: String!
+  title: String!
+  summary: String!
+  types: CATEGORY_TYPES!
+  cookTime: Int!
+  level: COOKING_LEVEL!
+  user: User!
+  ingredients: [RecipesIngredients!]!
+  recipesTags: [RecipesTag!]!
+  scrapCount: Int!
+}
+
+enum CATEGORY_TYPES {
+  ALL
+  VEGAN
+  LACTO
+  OVO
+  LACTO_OVO
+  PESCO
+  POLLO
+}
+
+enum COOKING_LEVEL {
+  SIMPLE
+  NORMAL
+  DIFFICULT
+}
+
+type RecipeScrap {
+  scrap_id: String!
+  user: User!
+  recipes: Recipes!
+  scraped: Boolean!
+}
+
 type User {
   user_id: String!
   email: String!
@@ -17,6 +65,7 @@ type User {
   startDate: String
   endDate: String
   profilePic: String
+  scrapCount: RecipeScrap
   deletedAt: DateTime
 }
 
@@ -57,46 +106,6 @@ type PaymentTransaction {
 enum TRANSACTION_STATUS_ENUM {
   PAYMENT
   CANCEL
-}
-
-type RecipesIngredients {
-  id: String!
-  name: String!
-  recipes: [Recipes!]!
-}
-
-type RecipesTag {
-  id: String!
-  name: String!
-  recipe: [Recipes!]!
-}
-
-type Recipes {
-  id: String!
-  title: String!
-  summary: String!
-  types: CATEGORY_TYPES!
-  cookTime: Int!
-  level: COOKING_LEVEL!
-  user: User!
-  ingredients: [RecipesIngredients!]!
-  recipesTags: [RecipesTag!]!
-}
-
-enum CATEGORY_TYPES {
-  ALL
-  VEGAN
-  LACTO
-  OVO
-  LACTO_OVO
-  PESCO
-  POLLO
-}
-
-enum COOKING_LEVEL {
-  SIMPLE
-  NORMAL
-  DIFFICULT
 }
 
 type RecipesReply {
@@ -142,6 +151,7 @@ type Mutation {
   createReply(user_id: String!, contents: String!, id: String!): String!
   updateReply(reply_id: String!, contents: String!): String!
   deleteRely(reply_id: String!): String!
+  clickScrap(id: String!): RecipeScrap!
 }
 
 input UpdateUserInput {

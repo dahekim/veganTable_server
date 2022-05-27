@@ -106,9 +106,9 @@ export class User {
     @Field(() => String, { nullable: true })
     profilePic: string;
 
-    // @Column({default: 0})
-    // @Field(()=> RecipeScrap, {nullable: true})
-    // scrapCount?: number
+    @Column({default: 0})
+    @Field(()=> RecipeScrap, {nullable: true})
+    scrapCount?: number
 
     @CreateDateColumn()
     createdAt: Date
