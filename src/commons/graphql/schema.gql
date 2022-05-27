@@ -5,7 +5,8 @@
 type RecipesIngredients {
   id: String!
   name: String!
-  recipes: [Recipes!]!
+  recipe: [Recipes!]!
+
 }
 
 type RecipesTag {
@@ -119,8 +120,8 @@ type Query {
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
-  fetchRecipes(page: Int): [Recipes!]!
-  fetchRecipeTypes(recipes_id: String!, vegan_types: String!): Recipes!
+  fetchRecipes: [Recipes!]!
+  fetchRecipeTypes(vegan_types: String!): Recipes!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
   fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
@@ -141,7 +142,7 @@ type Mutation {
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!): String!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
@@ -170,27 +171,27 @@ input UpdateUserInput {
 scalar Upload
 
 input CreateRecipesInput {
-  title: String!
+  title: String
   summary: String
   types: String
-  url: [String!]!
-  description: [String!]!
-  cookTime: Int
+  url: [String!] = " "
+  description: [String!] = " "
+  cookTime: Int = 0
   level: String
-  ingredients: [String!]!
-  recipesTags: [String!]!
-  scrapCount: Int!
+  ingredients: [String!] = " "
+  recipesTags: [String!] = " "
+  scrapCount: Int = 0
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: String
-  url: [String!]
-  description: [String!]
-  cookTime: Int
+  url: [String!] = " "
+  description: [String!] = " "
+  cookTime: Int = 0
   level: String
-  ingredients: [String!]
-  recipesTags: [String!]
-  scrapCount: Int
+  ingredients: [String!] = " "
+  recipesTags: [String!] = " "
+  scrapCount: Int = 0
 }

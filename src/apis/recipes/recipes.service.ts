@@ -40,35 +40,34 @@ export class RecipesService {
         private readonly recipesTagRepository: Repository<RecipesTag>,
 
         // private readonly createRecipesInput: CreateRecipesInput,
-    ) {}
+    ) { }
 
 
     async fetchRecipesAll() {
-        await this.recipesRepository.find();
+        return await this.recipesRepository.find();
     }
-    async fetchRecipeTypes({ id, typesCode }) {
-        const checkedType = await this.recipesRepository.findOne({
-            where: { id }
+    async fetchRecipeTypes({ types }) {
+        await this.recipesRepository.find({
+            where: { types }
         })
-        const { types, ...rest } = checkedType
-        if (checkedType.types !== 'ALL') {
+        types = types.toUpperCase();
+
+        const { ...rest } = CATEGORY_TYPES
+        if (types !== 'ALL') {
             let typesEnum: CATEGORY_TYPES;
-            if (typesCode === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
-            else if (typesCode === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
-            else if (typesCode === "OVO") typesEnum = CATEGORY_TYPES.OVO;
-            else if (typesCode === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
-            else if (typesCode === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
-            else if (typesCode === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
+            if (types === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
+            else if (types === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
+            else if (types === "OVO") typesEnum = CATEGORY_TYPES.OVO;
+            else if (types === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
+            else if (types === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
+            else if (types === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
             else {
-                console.log('정확한 채식 타입을 선택해 주세요.');
-                throw new ConflictException('적합한 채식 타입을 선택하지 않으셨습니다.');
+                throw new ConflictException('채식 타입을 정확히 선택해 주세요.');
             }
-            const collectedTypes = await this.recipesRepository.create({
+            const checkedTypes = await this.recipesRepository.save({
                 types: typesEnum,
-                ...rest
-            });
-            const result = await this.recipesRepository.save(collectedTypes);
-            return result;
+            })
+            return checkedTypes;
         }
     }
 
@@ -93,7 +92,6 @@ export class RecipesService {
     }
 
     async create({ createRecipesInput }, currentUser) {
-
         try {
             const { url, description, ingredients, recipesTags, ...recipes } =
                 createRecipesInput;
@@ -133,9 +131,9 @@ export class RecipesService {
                     const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
                     impTags2.push(newTags2);
                 }
-            }         
+            }
 
-            await this.recipesRepository.save({
+            const registRecipe = await this.recipesRepository.save({
                 ...recipes,
 
                 url: url[0],
@@ -167,7 +165,7 @@ export class RecipesService {
             //     })
             //     console.log('작성자: 전문가');
             // }
-            return `DB 등록 완료: ${recipes.title[0]}`
+            return registRecipe;
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
