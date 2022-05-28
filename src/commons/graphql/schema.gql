@@ -14,6 +14,13 @@ type RecipesTag {
   recipes: [Recipes!]!
 }
 
+type RecipesImage {
+  image_id: Int!
+  url: String!
+  description: String!
+  recipes: Recipes!
+}
+
 type Recipes {
   id: String!
   title: String!
@@ -21,6 +28,7 @@ type Recipes {
   types: CATEGORY_TYPES
   cookTime: Int!
   level: COOKING_LEVEL
+  recipesImages: [RecipesImage!]!
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
@@ -120,6 +128,7 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes(page: Int): [Recipes!]!
+  fetchRecipe(recipes_id: String!): Recipes!
   fetchRecipeTypes(vegan_types: String!): [Recipes!]!
   fetchMyRecipe(user_id: String!): [Recipes!]!
   fetchRecipeIsPro(isPro: String!): [Recipes!]!

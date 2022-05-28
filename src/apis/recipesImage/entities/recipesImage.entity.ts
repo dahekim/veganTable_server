@@ -26,7 +26,7 @@ export class RecipesImage {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(() => Recipes)
+    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages)
     @Field(() => Recipes)
     recipes: Recipes
 }

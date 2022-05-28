@@ -17,10 +17,17 @@ export class RecipesResolver {
     ) { }
 
     @Query(() => [Recipes])
-    fetchRecipes(
+    async fetchRecipes(
         @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return this.recipesService.fetchRecipesAll();
+        return await this.recipesService.fetchRecipesAll();
+    }
+
+    @Query(() => Recipes)
+    async fetchRecipe(
+        @Args('recipes_id') id: string,
+    ) {
+        return await this.recipesService.fetchRecipe({ id })
     }
 
     @Query(() => [Recipes])
@@ -44,6 +51,11 @@ export class RecipesResolver {
     ) {
         return await this.recipesService.fetchRecipeIsPro({ isPro });
     }
+
+    // @Query(() => [Recipes])
+    // async fetchScrappedRecipes() {
+    //     return await this.recipesService.fetchScrappedRecipes();
+    // }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => Recipes)

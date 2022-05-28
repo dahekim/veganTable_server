@@ -48,17 +48,35 @@ export class RecipesService {
             .select('recipes')
             .from(Recipes, 'recipes')
             .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .orderBy('recipes.createdAt', 'DESC')
             .getMany()
     }
+
+    async fetchRecipe({ id }) {
+        return await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .where({ id })
+            .getOne()
+    }
+
     async fetchRecipeTypes({ types }) {
         return await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
             .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany()
@@ -67,9 +85,10 @@ export class RecipesService {
     async fetchMyRecipe({ user_id }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect('recipes.user', 'user')
             .where('user.user_id = userUserId', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany();
@@ -79,10 +98,25 @@ export class RecipesService {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where('user.isPro = userIsPro', { isPro })
             .orderBy('recipes.createdAt', 'DESC')
             .getManyAndCount();
     }
+
+    // async fetchScrappedRecipes() {
+    //     return await getRepository(Recipes)
+    //         .createQueryBuilder('recipes')
+    //         .leftJoinAndSelect('recipes.user', 'user')
+    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
+    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+    //         .where({scrapCount})
+    //         .orderBy('recipes.scrapCount', 'DESC')
+    //         .getManyAndCount();
+    // }
 
     async create({ createRecipesInput }, currentUser) {
         try {
@@ -135,12 +169,13 @@ export class RecipesService {
                 recipesTags: impTags2,
 
             });
+            console.log(registRecipe)
 
             for (let i = 0; i < url.length; i++) {
                 await this.recipesImageRepository.save({
                     url: url[i],
                     description: description[i],
-                    recipe: recipes.id
+                    recipes: registRecipe
                 });
             }
             return await registRecipe;
