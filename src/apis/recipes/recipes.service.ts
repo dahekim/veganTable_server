@@ -43,12 +43,6 @@ export class RecipesService {
 
 
     async fetchRecipesAll() {
-      develop
-        // const a = await this.recipesRepository.findOne({
-        //     relations: ['user', 'recipesTags', 'ingredients'],
-        // });
-        // console.log(a)
-        // return a;
         const b = await getConnection()
             .createQueryBuilder()
             .select('recipes')
@@ -249,6 +243,5 @@ export class RecipesService {
     //                         )
     // return  results
     // }
-    }
-
+    
 }
