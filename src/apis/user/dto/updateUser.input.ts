@@ -2,9 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateUserInput {
-    // @Field(() => String, { nullable: true })
-    // password?: string
-    
     @Field(() => String, {nullable: true})
     name?: string
     
@@ -25,6 +22,12 @@ export class UpdateUserInput {
 
     @Field(()=> String, {nullable: true})
     isPro?: string
+    
+    @Field(()=> String, {nullable: true})
+    certImage?: string
+
+    @Field(()=> String, {nullable: true})
+    certUrl?: string
 
     @Field(()=> Boolean, {nullable: true})
     isSubs?: boolean
