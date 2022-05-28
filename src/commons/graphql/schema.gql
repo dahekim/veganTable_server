@@ -60,6 +60,8 @@ type User {
   type: VEGAN_TYPE
   nickname: String
   isPro: CLASS_TYPE
+  certImage: String
+  certUrl: String
   isSubs: SUB_TYPE
   SubsHistory: Int
   startDate: String
@@ -119,12 +121,10 @@ type Query {
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
-
-  fetchRecipes(page: Int): [Recipes!]!4
+  fetchRecipes(page: Int): [Recipes!]!
   fetchRecipeTypes(vegan_types: String!): Recipes!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
   fetchRecipeIsPro(isPro: String!): Recipes!
-  searchRecipes(input: String!): String!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!
@@ -135,12 +135,7 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(
-    email: String!
-    password: String!
-    name: String!
-    phone: String!
-  ): User!
+  createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
@@ -150,10 +145,7 @@ type Mutation {
   uploadCertificationImage(file: Upload!): String!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(
-    recipe_id: String!
-    updateRecipesInput: UpdateRecipesInput!
-  ): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
@@ -173,13 +165,13 @@ input UpdateUserInput {
   type: String
   nickname: String
   isPro: String
+  certImage: String
+  certUrl: String
   isSubs: Boolean
   profilePic: String
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input CreateRecipesInput {
