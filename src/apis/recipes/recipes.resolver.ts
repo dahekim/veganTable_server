@@ -23,6 +23,7 @@ export class RecipesResolver {
         return this.recipesService.fetchRecipesAll();
     }
 
+
     @Query(() => [Recipes])
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
@@ -94,4 +95,12 @@ export class RecipesResolver {
     ) {
         return this.recipesService.deleteImage({ recipe_id })
     }
+
+    // @Query(()=> String)
+    // searchRecipes(
+    //     @Args('input') input: string,
+    // ){
+    //     return this.recipesService.search({input})
+    // }
+
 }

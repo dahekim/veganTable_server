@@ -40,18 +40,19 @@ export class AuthService {
             )
         }
 
-    // async socialLogin({ req, res }) {
-    //     let user = await this.userService.findOne({
-    //         email: req.user.email,
-    //     })
-    //     if (!user) {
-    //         const { password, ...rest } = req.user
-    //         const newUser = {...rest, password}
-    //         user = await this.userService.createSocial({ ...newUser })
-    //         this.setRefreshToken({ user, res })
-    //         res.redirect("http://localhost:3000/myPage/edit")
-    //     }
-    //     this.setRefreshToken({ user, res })
-    //     res.redirect("http://localhost:3000")
-    // }
+    async socialLogin({ req, res }) {
+        console.log(req)
+        let user = await this.userService.findOne({
+            email: req.user.email,
+        })
+        if (!user) {
+            const { password, ...rest } = req.user
+            const newUser = { ...rest, password }
+            user = await this.userService.createSocial({ ...newUser })
+            this.setRefreshToken({ user, res })
+            res.redirect("https://naver.com")
+        }
+        this.setRefreshToken({ user, res })
+        res.redirect("https://naver.com")
+    }
 }

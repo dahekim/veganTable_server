@@ -60,11 +60,13 @@ export class RecipesReplyService{
         }
     }
 
-    async update({ reply_id, contents }) {
+    async update({ currentUser, reply_id, contents }) {
+        const user = await this.userRepository.findOne({ user_id: currentUser.user_id })
         const reply = await this.recipesReplyRepository.findOne({reply_id})
         await this.recipesReplyRepository.save({
             ...reply,
             contents,
+            user,
         })
         return "댓글이 수정되었습니다."
     }
