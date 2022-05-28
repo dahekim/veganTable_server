@@ -28,8 +28,6 @@ import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
       cors: {
         origin: 'http://localhost:3000',
         credentials: true,
-        // frontend 배포 이후
-        // origin: 'https://vegantable.shop',
       },      
       bodyParserConfig: {
         limit: "100mb"
