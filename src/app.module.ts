@@ -25,12 +25,10 @@ import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
-      // cors: {
-      //   origin: 'http://localhost:3000',
-      //   credentials: true,
-      //   // frontend 배포 이후
-      //   // origin: 'https://vegantable.shop',
-      // },      
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+      },      
       bodyParserConfig: {
         limit: "100mb"
       },
