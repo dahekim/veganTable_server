@@ -11,7 +11,6 @@ import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
 import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
 import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
-import { SearchModule } from './apis/search/search.module';
 
 @Module({
   imports: [
@@ -21,7 +20,6 @@ import { SearchModule } from './apis/search/search.module';
     PaymentTransactionModule,
     RecipesReplyModule,
     RecipeScrapModule,
-    SearchModule,
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

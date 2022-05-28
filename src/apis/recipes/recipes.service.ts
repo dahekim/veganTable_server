@@ -1,9 +1,9 @@
-import { ConflictException, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Brackets, getConnection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+import { Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
@@ -43,6 +43,7 @@ export class RecipesService {
 
 
     async fetchRecipesAll() {
+      develop
         // const a = await this.recipesRepository.findOne({
         //     relations: ['user', 'recipesTags', 'ingredients'],
         // });
@@ -61,6 +62,7 @@ export class RecipesService {
         console.log(b)
         return b;
     }
+  
     async fetchRecipeTypes({ types }) {
         return await getConnection()
             .createQueryBuilder()
@@ -150,6 +152,7 @@ export class RecipesService {
                 });
             }
             return await registRecipe;
+
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
@@ -160,6 +163,7 @@ export class RecipesService {
             }
         }
     }
+
     async update({ id, updateRecipesInput }) {
         const registedRecipe = await this.recipesRepository.findOne({
             where: { id }
@@ -238,20 +242,13 @@ export class RecipesService {
         return recipe_id ? true : false
     }
 
-    async search({ word }) {
-        const database = await this.recipesRepository
-            .createQueryBuilder('recipes')
-            // .leftJoinAndSelect('recipes.tag', 'tag') 
-            .leftJoinAndSelect('recipes.ingredients', 'ingredient')
-            .orderBy('recipes.createdAt', 'DESC')
-
-        const results = database.where(new Brackets((qb) => {
-            qb.where('recipes.title LIKE :title', { title: `%${word}%` })
-                // .orWhere('tag.name LIKE :name', { name: `%${word}%` })
-                .orWhere('ingredient.name LIKE :name', { name: `%${word}%` })
-        })
-        ).limit(12).getMany()
-
-        return results
+    // async search({input}){
+    //     let results = await getConnection()
+    //                         .getRepository(Recipes)
+    //                         .query(`select * from recipes where title like “%${input}%” order by desc limit 12;`
+    //                         )
+    // return  results
+    // }
     }
+
 }
