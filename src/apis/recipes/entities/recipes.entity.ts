@@ -65,8 +65,8 @@ export class Recipes {
     ingredients: RecipesIngredients[];
 
     @JoinTable()
-    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipe)
-    @Field(() => [RecipesTag])
+    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipes)
+    @Field(() => [RecipesTag], { nullable: false })
     recipesTags: RecipesTag[];
 
     @Column({ default: 0 })

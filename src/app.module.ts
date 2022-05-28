@@ -11,7 +11,7 @@ import { RecipesModule } from './apis/recipes/recipes.module';
 import { UserModule } from './apis/user/user.module';
 import { RecipesReplyModule } from './apis/recipiesReply/recipesReply.module';
 import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
-import { SearchModule } from './search/search.module';
+import { SearchModule } from './apis/search/search.module';
 
 @Module({
   imports: [

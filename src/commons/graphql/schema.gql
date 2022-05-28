@@ -12,7 +12,7 @@ type RecipesIngredients {
 type RecipesTag {
   id: String!
   name: String!
-  recipe: [Recipes!]!
+  recipes: [Recipes!]!
 }
 
 type Recipes {
@@ -141,6 +141,7 @@ type Mutation {
   updatePassword(user_id: String!, password: String!): User!
   uploadProfileImage(file: Upload!): String!
   deleteProfileImage(user_id: String!): String!
+  uploadCertificationImage(file: Upload!): String!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
