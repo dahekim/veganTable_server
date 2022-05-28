@@ -7,6 +7,7 @@ import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param"
 import { UseGuards } from "@nestjs/common"
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard"
 import { FileUpload, GraphQLUpload } from 'graphql-upload'
+import { getToday } from 'src/commons/libraries/utils';
 
 
 @Resolver()
@@ -86,7 +87,8 @@ export class UserResolver {
         @Args({ name: 'file', type: () => GraphQLUpload }) 
         file: FileUpload,
     ){
-        return await this.userService.uploadImage({ file });
+        const fileName = `profile/${getToday()}/${file.filename}`
+        return await this.userService.uploadImage({ file, fileName })
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -94,7 +96,19 @@ export class UserResolver {
     async deleteProfileImage(
         @Args('user_id') user_id: string, 
     ) {
+        
         return await this.userService.deleteImage({ user_id })
+    }
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(()=> String)
+    async uploadCertificationImage(
+        @Args({ name: 'file', type: () => GraphQLUpload }) 
+        file: FileUpload,
+        
+    ){
+        const fileName = `certificationImage/${getToday()}/${file.filename}`
+        return await this.userService.uploadImage({ file, fileName })
     }
 
     @UseGuards(GqlAuthAccessGuard)

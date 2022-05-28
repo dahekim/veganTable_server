@@ -34,11 +34,11 @@ export class Recipes {
     @Field(() => String)
     id: string;
 
-    @Column({ nullable: false })
+    @Column({ default: " " })
     @Field(() => String)
     title: string;
 
-    @Column()
+    @Column({ default: " " })
     @Field(() => String)
     summary: string;
 
@@ -46,7 +46,8 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES)
     types: CATEGORY_TYPES;
 
-    @Column()
+
+    @Column({ default: 0 })
     @Field(() => Int)
     cookTime: number;
 
@@ -54,7 +55,7 @@ export class Recipes {
     @Field(() => COOKING_LEVEL)
     level: COOKING_LEVEL;
 
-    @ManyToOne(() => User, { nullable: true })
+    @ManyToOne(() => User)
     @Field(() => User)
     user: User;
 

@@ -77,14 +77,12 @@ export class UserService {
         return result ? true : false
     }
 
-    async uploadImage({ file }) {
+    async uploadImage({ file, fileName }) {
         const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
         }).bucket(bucket)
-
-        const fileName = `profile/${getToday()}/${file.filename}`
 
         const url = await new Promise((resolve, reject) => {
             file
@@ -95,6 +93,7 @@ export class UserService {
         })
         return url
     }
+
 
 
     async deleteImage({user_id}){
