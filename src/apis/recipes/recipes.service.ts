@@ -1,9 +1,9 @@
-import { ConflictException, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { Brackets, getRepository, Repository } from "typeorm";
+import { Brackets, getConnection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
-import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
+import { Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
@@ -44,32 +44,32 @@ export class RecipesService {
 
 
     async fetchRecipesAll() {
-        await this.recipesRepository.find();
+        // const a = await this.recipesRepository.findOne({
+        //     relations: ['user', 'recipesTags', 'ingredients'],
+        // });
+        // console.log(a)
+        // return a;
+        const b = await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .orderBy('recipes.createdAt', 'DESC')
+            .getOne()
+
+        console.log(b)
+        return b;
     }
-    async fetchRecipeTypes({ id, typesCode }) {
-        const checkedType = await this.recipesRepository.findOne({
-            where: { id }
-        })
-        const { types, ...rest } = checkedType
-        if (checkedType.types !== 'ALL') {
-            let typesEnum: CATEGORY_TYPES;
-            if (typesCode === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
-            else if (typesCode === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
-            else if (typesCode === "OVO") typesEnum = CATEGORY_TYPES.OVO;
-            else if (typesCode === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
-            else if (typesCode === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
-            else if (typesCode === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
-            else {
-                console.log('정확한 채식 타입을 선택해 주세요.');
-                throw new ConflictException('적합한 채식 타입을 선택하지 않으셨습니다.');
-            }
-            const collectedTypes = await this.recipesRepository.create({
-                types: typesEnum,
-                ...rest
-            });
-            const result = await this.recipesRepository.save(collectedTypes);
-            return result;
-        }
+    async fetchRecipeTypes({ types }) {
+        return await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .where({ types })
+            .orderBy('recipes.createdAt', 'DESC')
+            .getMany()
     }
 
     async fetchMyRecipe({ id, user_id }) {
@@ -93,7 +93,6 @@ export class RecipesService {
     }
 
     async create({ createRecipesInput }, currentUser) {
-
         try {
             const { url, description, ingredients, recipesTags, ...recipes } =
                 createRecipesInput;
@@ -113,7 +112,6 @@ export class RecipesService {
 
                 if (prevTags1) {
                     impTags1.push(prevTags1);
-
                 } else {
                     const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
                     impTags1.push(newTags1);
@@ -133,9 +131,9 @@ export class RecipesService {
                     const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
                     impTags2.push(newTags2);
                 }
-            }         
+            }
 
-            await this.recipesRepository.save({
+            const registRecipe = await this.recipesRepository.save({
                 ...recipes,
 
                 url: url[0],
@@ -152,22 +150,7 @@ export class RecipesService {
                     recipe: recipes.id
                 });
             }
-
-            // if (registRecipe.isPro === 'COMMON') {
-            //     await this.recipesRepository.save({
-            //         user: user,
-            //         isPro: user.isPro,
-            //     })
-            //     console.log('작성자: 일반인');
-            // }
-            // if (registRecipe.isPro === 'PRO') {
-            //     await this.recipesRepository.save({
-            //         user: user,
-            //         isPro: user.isPro,
-            //     })
-            //     console.log('작성자: 전문가');
-            // }
-            return `DB 등록 완료: ${recipes.title[0]}`
+            return await registRecipe;
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
@@ -178,6 +161,7 @@ export class RecipesService {
             }
         }
     }
+
     async update({ id, updateRecipesInput }) {
         const registedRecipe = await this.recipesRepository.findOne({
             where: { id }
@@ -256,20 +240,11 @@ export class RecipesService {
         return recipe_id ? true : false
     }
 
-    async search({word}){
-        const database = await this.recipesRepository
-            .createQueryBuilder('recipes')
-            // .leftJoinAndSelect('recipes.tag', 'tag') 
-            .leftJoinAndSelect('recipes.ingredients', 'ingredient')
-            .orderBy('recipes.createdAt', 'DESC')
-
-        const results = database.where(new Brackets((qb)=> {
-                    qb.where('recipes.title LIKE :title', { title: `%${word}%`})
-                        // .orWhere('tag.name LIKE :name', { name: `%${word}%` })
-                        .orWhere('ingredient.name LIKE :name', { name: `%${word}%` })
-            })
-        ).limit(12).getMany()
-
-        return results
-    }
+    // async search({input}){
+    //     let results = await getConnection()
+    //                         .getRepository(Recipes)
+    //                         .query(`select * from recipes where title like “%${input}%” order by desc limit 12;`
+    //                         )
+    // return  results
+    // }
 }
