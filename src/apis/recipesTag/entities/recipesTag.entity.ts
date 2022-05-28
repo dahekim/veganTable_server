@@ -9,7 +9,7 @@ export class RecipesTag {
     @Field(() => String)
     id: string;
 
-    @Column({ default: " " })
+    @Column({ nullable: false })
     @Field(() => String, { defaultValue: " ", nullable: false })
     name: string;
 

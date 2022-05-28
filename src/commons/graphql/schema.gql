@@ -5,8 +5,7 @@
 type RecipesIngredients {
   id: String!
   name: String!
-  recipe: [Recipes!]!
-
+  recipes: [Recipes!]!
 }
 
 type RecipesTag {
@@ -19,9 +18,9 @@ type Recipes {
   id: String!
   title: String!
   summary: String!
-  types: CATEGORY_TYPES!
+  types: CATEGORY_TYPES
   cookTime: Int!
-  level: COOKING_LEVEL!
+  level: COOKING_LEVEL
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
@@ -29,7 +28,7 @@ type Recipes {
 }
 
 enum CATEGORY_TYPES {
-  ALL
+  NON_CHECKED
   VEGAN
   LACTO
   OVO
@@ -120,11 +119,8 @@ type Query {
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
-<<<<<<< HEAD
-  fetchRecipes(page: Int): [Recipes!]!
-=======
-  fetchRecipes: [Recipes!]!
->>>>>>> ada3952ceeefcf326cc9f80726e8303f422ee094
+
+  fetchRecipes(page: Int): [Recipes!]!4
   fetchRecipeTypes(vegan_types: String!): Recipes!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
   fetchRecipeIsPro(isPro: String!): Recipes!
@@ -139,7 +135,12 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  createUser(
+    email: String!
+    password: String!
+    name: String!
+    phone: String!
+  ): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
@@ -149,7 +150,10 @@ type Mutation {
   uploadCertificationImage(file: Upload!): String!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  updateRecipe(
+    recipe_id: String!
+    updateRecipesInput: UpdateRecipesInput!
+  ): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
@@ -173,31 +177,33 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateRecipesInput {
-  title: String
-  summary: String
-  types: String
-  url: [String!] = " "
-  description: [String!] = " "
-  cookTime: Int = 0
-  level: String
-  ingredients: [String!] = " "
-  recipesTags: [String!] = " "
-  scrapCount: Int = 0
+  title: String!
+  summary: String!
+  types: [String!]!
+  url: [String!]!
+  description: [String!]!
+  cookTime: Int!
+  level: [String!]!
+  ingredients: [String!]!
+  recipesTags: [String!]!
+  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
-  types: String
-  url: [String!] = " "
-  description: [String!] = " "
-  cookTime: Int = 0
-  level: String
-  ingredients: [String!] = " "
-  recipesTags: [String!] = " "
-  scrapCount: Int = 0
+  types: [String!]
+  url: [String!]
+  description: [String!]
+  cookTime: Int
+  level: [String!]
+  ingredients: [String!]
+  recipesTags: [String!]
+  scrapCount: Int
 }
