@@ -13,7 +13,6 @@ interface IOAuthUser {
 export class AuthController {
     constructor( 
         private readonly authService: AuthService,
-        private readonly userService: UserService,
         ) {}
 
     @Get('/google')
@@ -23,16 +22,6 @@ export class AuthController {
         @Res() res: Response,
         ) {
         await this.authService.socialLogin({ req, res })
-        // let user = await this.userService.findOne({ email: req.user.email })
-        // if (!user) {
-        //     user = await this.userService.create({
-        //         email: req.user.email,  
-        //         hashedPassword: req.user.password,
-        //         name: req.user.name,
-        //         phone: req.user.phone,
-        //     })
-        // }
-        // this.authService.setRefreshToken({ user, res });
     }
 
     @Get('/naver')
@@ -42,18 +31,6 @@ export class AuthController {
         @Res() res: Response
         ) {
         await this.authService.socialLogin({req, res})
-        // let user = await this.userService.findOne({
-        //     email : req.user.email})
-        //     if(!user){
-        //         user = await this.userService.create({
-        //             email: req.user.email,
-        //             hashedPassword: req.user.password,
-        //             name: req.user.name,
-        //             phone: req.user.phone,
-        //         }) 
-        //     }
-        // this.authService.setRefreshToken({ user, res })
-        // res.redirect("http://localhost:3000/")
     }
 
     @Get('/kakao')
@@ -63,17 +40,5 @@ export class AuthController {
         @Res() res: Response
         ) {
         await this.authService.socialLogin({req, res});
-        // let user = await this.userService.findOne({
-        //     email : req.user.email})
-        //     if(!user){
-        //         user = await this.userService.create({
-        //             email: req.user.email,
-        //             hashedPassword: req.user.password,
-        //             name: req.user.name,
-        //             phone: req.user.phone,
-        //         }) 
-        //     }
-        // this.authService.setRefreshToken({ user, res })
-        // res.redirect("http://localhost:3000/")
     }
 }

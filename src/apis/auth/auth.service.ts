@@ -46,12 +46,12 @@ export class AuthService {
         })
         if (!user) {
             const { password, ...rest } = req.user
-            const newUser = {...rest, password}
+            const newUser = { ...rest, password }
             user = await this.userService.createSocial({ ...newUser })
             this.setRefreshToken({ user, res })
-            // res.redirect("http://localhost:3000/myPage/edit")
+            res.redirect("http://itoutsider.shop/myPage/edit")
         }
         this.setRefreshToken({ user, res })
-        // res.redirect("http://localhost:3000")
+        res.redirect("http://itoutsider.shop")
     }
 }
