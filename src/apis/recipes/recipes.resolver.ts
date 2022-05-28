@@ -17,13 +17,6 @@ export class RecipesResolver {
     ) { }
 
     @Query(() => [Recipes])
-<<<<<<< HEAD
-    async fetchRecipes() {
-        return await this.recipesService.fetchRecipesAll();
-    }
-
-    @Query(() => [Recipes])
-=======
     fetchRecipes(
         @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
@@ -31,7 +24,7 @@ export class RecipesResolver {
     }
 
     @Query(() => Recipes)
->>>>>>> d5390d3e0329abcc966ea772dd7effafbc4ee8b4
+
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
     ) {
