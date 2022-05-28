@@ -60,12 +60,12 @@ export class Recipes {
     user: User;
 
     @JoinTable()
-    @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipe)
-    @Field(() => [RecipesIngredients])
+    @ManyToMany( () => RecipesIngredients, (ingredients) => ingredients.recipes )
+    @Field(() => [RecipesIngredients], { nullable: false })
     ingredients: RecipesIngredients[];
 
     @JoinTable()
-    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipes)
+    @ManyToMany( () => RecipesTag, (recipesTags) => recipesTags.recipes )
     @Field(() => [RecipesTag], { nullable: false })
     recipesTags: RecipesTag[];
 
