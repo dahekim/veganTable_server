@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { getRepository, Repository } from "typeorm";
+import { getConnection, getRepository, Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
 import { CATEGORY_TYPES, Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
@@ -16,8 +16,6 @@ import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
 interface IFile {
     files: FileUpload[]
 }
-
-
 
 @Injectable()
 export class RecipesService {
@@ -45,31 +43,32 @@ export class RecipesService {
 
 
     async fetchRecipesAll() {
-        return await this.recipesRepository.find();
+        // const a = await this.recipesRepository.findOne({
+        //     relations: ['user', 'recipesTags', 'ingredients'],
+        // });
+        // console.log(a)
+        // return a;
+        const b = await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .orderBy('recipes.createdAt', 'DESC')
+            .getOne()
+
+        console.log(b)
+        return b;
     }
     async fetchRecipeTypes({ types }) {
-        await this.recipesRepository.find({
-            where: { types }
-        })
-        types = types.toUpperCase();
-
-        const { ...rest } = CATEGORY_TYPES
-        if (types !== 'ALL') {
-            let typesEnum: CATEGORY_TYPES;
-            if (types === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
-            else if (types === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
-            else if (types === "OVO") typesEnum = CATEGORY_TYPES.OVO;
-            else if (types === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
-            else if (types === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
-            else if (types === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
-            else {
-                throw new ConflictException('채식 타입을 정확히 선택해 주세요.');
-            }
-            const checkedTypes = await this.recipesRepository.save({
-                types: typesEnum,
-            })
-            return checkedTypes;
-        }
+        return await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .where({ types })
+            .orderBy('recipes.createdAt', 'DESC')
+            .getMany()
     }
 
     async fetchMyRecipe({ id, user_id }) {
@@ -112,7 +111,6 @@ export class RecipesService {
 
                 if (prevTags1) {
                     impTags1.push(prevTags1);
-
                 } else {
                     const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
                     impTags1.push(newTags1);
@@ -151,22 +149,7 @@ export class RecipesService {
                     recipe: recipes.id
                 });
             }
-
-            // if (registRecipe.isPro === 'COMMON') {
-            //     await this.recipesRepository.save({
-            //         user: user,
-            //         isPro: user.isPro,
-            //     })
-            //     console.log('작성자: 일반인');
-            // }
-            // if (registRecipe.isPro === 'PRO') {
-            //     await this.recipesRepository.save({
-            //         user: user,
-            //         isPro: user.isPro,
-            //     })
-            //     console.log('작성자: 전문가');
-            // }
-            return registRecipe;
+            return await registRecipe;
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {

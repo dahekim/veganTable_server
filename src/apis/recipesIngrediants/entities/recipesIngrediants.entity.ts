@@ -23,7 +23,7 @@ export class RecipesIngredients {
 
     @ManyToMany(() => Recipes, (recipes) => recipes.ingredients)
     @Field(() => [Recipes])
-    recipe: Recipes[];
+    recipes: Recipes[];
 
     @CreateDateColumn()
     createdAt: Date;

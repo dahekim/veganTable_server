@@ -5,22 +5,22 @@
 type RecipesIngredients {
   id: String!
   name: String!
-  recipe: [Recipes!]!
+  recipes: [Recipes!]!
 }
 
 type RecipesTag {
   id: String!
   name: String!
-  recipe: [Recipes!]!
+  recipes: [Recipes!]!
 }
 
 type Recipes {
   id: String!
   title: String!
   summary: String!
-  types: CATEGORY_TYPES!
+  types: CATEGORY_TYPES
   cookTime: Int!
-  level: COOKING_LEVEL!
+  level: COOKING_LEVEL
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
@@ -28,7 +28,7 @@ type Recipes {
 }
 
 enum CATEGORY_TYPES {
-  ALL
+  NON_CHECKED
   VEGAN
   LACTO
   OVO
@@ -120,7 +120,7 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes: [Recipes!]!
-  fetchRecipeTypes(vegan_types: String!): Recipes!
+  fetchRecipeTypes(vegan_types: String!): [Recipes!]!
   fetchMyRecipe(id: String!, user_id: String!): Recipes!
   fetchRecipeIsPro(isPro: String!): Recipes!
   fetchTransactionAll: [PaymentTransaction!]!
@@ -170,27 +170,27 @@ input UpdateUserInput {
 scalar Upload
 
 input CreateRecipesInput {
-  title: String
-  summary: String
-  types: String
-  url: [String!] = " "
-  description: [String!] = " "
-  cookTime: Int = 0
-  level: String
-  ingredients: [String!] = " "
-  recipesTags: [String!] = " "
-  scrapCount: Int = 0
+  title: String!
+  summary: String!
+  types: [String!]!
+  url: [String!]!
+  description: [String!]!
+  cookTime: Int!
+  level: [String!]!
+  ingredients: [String!]!
+  recipesTags: [String!]!
+  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
-  types: String
-  url: [String!] = " "
-  description: [String!] = " "
-  cookTime: Int = 0
-  level: String
-  ingredients: [String!] = " "
-  recipesTags: [String!] = " "
-  scrapCount: Int = 0
+  types: [String!]
+  url: [String!]
+  description: [String!]
+  cookTime: Int
+  level: [String!]
+  ingredients: [String!]
+  recipesTags: [String!]
+  scrapCount: Int
 }
