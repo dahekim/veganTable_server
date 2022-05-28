@@ -41,7 +41,7 @@ export class AuthService {
         }
 
     async socialLogin({ req, res }) {
-        console.log(req)
+        console.log(req.user)
         let user = await this.userService.findOne({
             email: req.user.email,
         })
