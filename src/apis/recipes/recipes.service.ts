@@ -43,7 +43,7 @@ export class RecipesService {
 
 
     async fetchRecipesAll() {
-        const b = await getConnection()
+        return await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -51,10 +51,7 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .orderBy('recipes.createdAt', 'DESC')
-            .getOne()
-
-        console.log(b)
-        return b;
+            .getMany()
     }
   
     async fetchRecipeTypes({ types }) {
@@ -62,27 +59,28 @@ export class RecipesService {
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany()
     }
 
-    async fetchMyRecipe({ id, user_id }) {
+    async fetchMyRecipe({ user_id }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.id', 'id')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .leftJoinAndSelect('recipes.user', 'user')
-            .where('recipes.id = :recipesId', { id })
-            .andWhere('user.user_id = :userUserId', { user_id })
+            .where('user.user_id = userUserId', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
-            .getManyAndCount();
+            .getMany();
     }
 
     async fetchRecipeIsPro({ isPro }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
-            .where('user.isPro = :userIsPro', { isPro })
+            .where('user.isPro = userIsPro', { isPro })
             .orderBy('recipes.createdAt', 'DESC')
             .getManyAndCount();
     }
@@ -98,44 +96,45 @@ export class RecipesService {
             );
 
             const impTags1 = [];
-            for (let i = 0; i < ingredients.length; i++) {
-                const ingredientTags = ingredients[i].replace('#', '');
+            if (ingredients.length) {
+                for (let i = 0; i < ingredients.length; i++) {
+                    const ingredientTags = ingredients[i].replace('#', '');
+                    const prevTags1 = await this.recipesIngredientsRepository.findOne(
+                        { name: ingredientTags },
+                    );
 
-                const prevTags1 = await this.recipesIngredientsRepository.findOne({
-                    name: ingredientTags,
-                });
-
-                if (prevTags1) {
-                    impTags1.push(prevTags1);
-                } else {
-                    const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
-                    impTags1.push(newTags1);
+                    if (prevTags1) {
+                        impTags1.push(prevTags1);
+                    } else {
+                        const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
+                        impTags1.push(newTags1);
+                    }
                 }
             }
 
             const impTags2 = [];
-            for (let i = 0; i < recipesTags.length; i++) {
-                const recipeTags = recipesTags[i].replace('#', '');
-                const prevTags2 = await this.recipesTagRepository.findOne({
-                    name: recipeTags,
-                });
+            if (recipesTags.length) {
+                for (let i = 0; i < recipesTags.length; i++) {
+                    const recipeTags = recipesTags[i].replace('#', '');
+                    const prevTags2 = await this.recipesTagRepository.findOne(
+                        { name: recipeTags },
+                    );
 
-                if (prevTags2) {
-                    impTags2.push(prevTags2);
-                } else {
-                    const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
-                    impTags2.push(newTags2);
+                    if (prevTags2) {
+                        impTags2.push(prevTags2);
+                    } else {
+                        const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
+                        impTags2.push(newTags2);
+                    }
                 }
             }
 
             const registRecipe = await this.recipesRepository.save({
                 ...recipes,
-
-                url: url[0],
                 user: searchUser,
-                description: description[0],
-                ingredients: ingredients[0],
-                recipesTags: recipesTags[0],
+                ingredients: impTags1,
+                recipesTags: impTags2,
+
             });
 
             for (let i = 0; i < url.length; i++) {

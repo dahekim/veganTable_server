@@ -32,7 +32,7 @@ registerEnumType(COOKING_LEVEL, {
 export class Recipes {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    id!: string;
+    id: string;
 
     @Column({ nullable: false })
     @Field(() => String!)
@@ -46,7 +46,6 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES, { nullable: true })
     types?: CATEGORY_TYPES;
 
-
     @Column({ default: 0 })
     @Field(() => Int, { nullable: false })
     cookTime!: number;
@@ -57,7 +56,7 @@ export class Recipes {
 
     @ManyToOne(() => User)
     @Field(() => User)
-    user!: User;
+    user: User;
 
     @JoinTable()
     @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipes)

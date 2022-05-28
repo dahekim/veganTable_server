@@ -23,8 +23,8 @@ export class RecipesResolver {
         return this.recipesService.fetchRecipesAll();
     }
 
-    @Query(() => Recipes)
 
+    @Query(() => [Recipes])
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
     ) {
@@ -32,15 +32,14 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Query(() => Recipes)
+    @Query(() => [Recipes])
     async fetchMyRecipe(
-        @Args('id') id: string,
         @Args('user_id') user_id: string,
     ) {
-        return await this.recipesService.fetchMyRecipe({ id, user_id });
+        return await this.recipesService.fetchMyRecipe({ user_id });
     }
 
-    @Query(() => Recipes)
+    @Query(() => [Recipes])
     async fetchRecipeIsPro(
         @Args('isPro') isPro: CLASS_TYPE.PRO,
     ) {
