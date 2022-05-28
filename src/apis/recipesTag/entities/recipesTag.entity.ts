@@ -13,9 +13,9 @@ export class RecipesTag {
     @Field(() => String, { defaultValue: " ", nullable: false })
     name: string;
 
-    @ManyToMany(() => Recipes, (recipe) => recipe.recipesTags)
+    @ManyToMany(() => Recipes, (recipes) => recipes.recipesTags)
     @Field(() => [Recipes])
-    recipe: Recipes[];
+    recipes: Recipes[];
 
     @CreateDateColumn()
     createdAt: Date;

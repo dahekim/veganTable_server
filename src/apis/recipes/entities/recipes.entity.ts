@@ -2,7 +2,6 @@ import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { RecipesIngredients } from "src/apis/recipesIngrediants/entities/recipesIngrediants.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
 
 export enum CATEGORY_TYPES {
@@ -65,7 +64,7 @@ export class Recipes {
     ingredients: RecipesIngredients[];
 
     @JoinTable()
-    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipe)
+    @ManyToMany(() => RecipesTag, (recipesTags) => recipesTags.recipes)
     @Field(() => [RecipesTag], { nullable: false })
     recipesTags: RecipesTag[];
 
