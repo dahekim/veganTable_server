@@ -5,9 +5,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-
     OneToMany,
-
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -16,7 +14,6 @@ export enum CLASS_TYPE {
     PRO = 'PRO',
     COMMON = 'COMMON',
 }
-
 
 export enum VEGAN_TYPE{
     NON_Vegan='NON_Vegan',

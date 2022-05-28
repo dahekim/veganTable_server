@@ -1,5 +1,4 @@
 import * as redisStore from 'cache-manager-redis-store';
-// import GraphQLJSON from 'graphql-type-json';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CacheModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -28,21 +27,20 @@ import { SearchModule } from './search/search.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
-      // cors: {
-      //   origin: 'http://localhost:3000',
-      //   credentials: true,
-      //   // frontend 배포 이후
-      //   // origin: 'https://vegantable.shop',
-      // },      
+      cors: {
+        origin: 'http://localhost:3000',
+        credentials: true,
+        // frontend 배포 이후
+        // origin: 'https://vegantable.shop',
+      },      
       bodyParserConfig: {
         limit: "100mb"
       },
-      // resolvers: { JSON: GraphQLJSON },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'vegan-database',
-      // host: "10.31.224.4", 
+      // host: 'vegan-database',
+      host: "10.31.224.4", 
       port: 3306,
       username: 'root',
       password: 'root',

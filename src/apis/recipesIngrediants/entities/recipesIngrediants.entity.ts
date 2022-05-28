@@ -13,14 +13,6 @@ export class RecipesIngredients {
     @Field(() => String, { defaultValue: " ", nullable: false })
     name: string;
 
-    // @Column()
-    // @Field(() => Int)
-    // amount: number;
-
-    // @Column()
-    // @Field(() => String)
-    // unit: string;
-
     @ManyToMany(() => Recipes, (recipes) => recipes.ingredients)
     @Field(() => [Recipes])
     recipes: Recipes[];

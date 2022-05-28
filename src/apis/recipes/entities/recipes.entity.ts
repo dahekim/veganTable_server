@@ -46,6 +46,7 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES, { nullable: true })
     types?: CATEGORY_TYPES;
 
+
     @Column({ default: 0 })
     @Field(() => Int, { nullable: false })
     cookTime!: number;
@@ -69,8 +70,8 @@ export class Recipes {
     recipesTags: RecipesTag[];
 
     @Column({ default: 0 })
-    @Field(() => Int, { nullable: false })
-    scrapCount!: number;
+    @Field(() => Int)
+    scrapCount?: number;
 
     @CreateDateColumn()
     createdAt: Date;
