@@ -50,9 +50,9 @@ export class AuthService {
             const newUser = { ...rest, password }
             user = await this.userService.createSocial({ ...newUser })
             this.setRefreshToken({ user, res })
-            res.redirect("http://localhost:3000/")
+            res.redirect("http://localhost:3000")
         }
         this.setRefreshToken({ user, res })
-        res.redirect("http://localhost:3000/")
+        res.redirect("http://localhost:3000")
     }
 }
