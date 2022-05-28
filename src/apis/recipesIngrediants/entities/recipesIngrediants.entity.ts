@@ -13,7 +13,7 @@ export class RecipesIngredients {
     @Field(() => String, { defaultValue: " ", nullable: false })
     name: string;
 
-    @ManyToMany(() => Recipes, (recipes) => recipes.ingredients)
+    @ManyToMany( () => Recipes, (recipes) => recipes.ingredients )
     @Field(() => [Recipes])
     recipes: Recipes[];
 
