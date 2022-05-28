@@ -122,9 +122,9 @@ type Query {
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
   fetchRecipes(page: Int): [Recipes!]!
-  fetchRecipeTypes(vegan_types: String!): Recipes!
-  fetchMyRecipe(id: String!, user_id: String!): Recipes!
-  fetchRecipeIsPro(isPro: String!): Recipes!
+  fetchRecipeTypes(vegan_types: String!): [Recipes!]!
+  fetchMyRecipe(user_id: String!): [Recipes!]!
+  fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
   fetchReplies(id: String!): [RecipesReply!]!

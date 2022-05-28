@@ -2,7 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class CreateRecipesImageInput {
-    @Field(() => [String], { nullable: false })
+    @Field(() => [Text], { nullable: false })
     url: string[];
 
     @Field(() => [String], { nullable: false })
