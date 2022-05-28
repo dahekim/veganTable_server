@@ -40,10 +40,11 @@ export class RecipesService {
         private readonly recipesTagRepository: Repository<RecipesTag>,
 
         // private readonly createRecipesInput: CreateRecipesInput,
-    ) {}
+    ) { }
 
 
     async fetchRecipesAll() {
+<<<<<<< HEAD
         // const a = await this.recipesRepository.findOne({
         //     relations: ['user', 'recipesTags', 'ingredients'],
         // });
@@ -70,6 +71,33 @@ export class RecipesService {
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany()
+=======
+        return await this.recipesRepository.find();
+    }
+    async fetchRecipeTypes({ types }) {
+        await this.recipesRepository.find({
+            where: { types }
+        })
+        types = types.toUpperCase();
+
+        const { ...rest } = CATEGORY_TYPES
+        if (types !== 'ALL') {
+            let typesEnum: CATEGORY_TYPES;
+            if (types === "VEGAN") typesEnum = CATEGORY_TYPES.VEGAN;
+            else if (types === "LACTO") typesEnum = CATEGORY_TYPES.LACTO;
+            else if (types === "OVO") typesEnum = CATEGORY_TYPES.OVO;
+            else if (types === "LACTO-OVO") typesEnum = CATEGORY_TYPES.LACTO_OVO;
+            else if (types === "PESCO") typesEnum = CATEGORY_TYPES.PESCO;
+            else if (types === "POLLO") typesEnum = CATEGORY_TYPES.POLLO;
+            else {
+                throw new ConflictException('채식 타입을 정확히 선택해 주세요.');
+            }
+            const checkedTypes = await this.recipesRepository.save({
+                types: typesEnum,
+            })
+            return checkedTypes;
+        }
+>>>>>>> ada3952ceeefcf326cc9f80726e8303f422ee094
     }
 
     async fetchMyRecipe({ id, user_id }) {
@@ -150,7 +178,26 @@ export class RecipesService {
                     recipe: recipes.id
                 });
             }
+<<<<<<< HEAD
             return await registRecipe;
+=======
+
+            // if (registRecipe.isPro === 'COMMON') {
+            //     await this.recipesRepository.save({
+            //         user: user,
+            //         isPro: user.isPro,
+            //     })
+            //     console.log('작성자: 일반인');
+            // }
+            // if (registRecipe.isPro === 'PRO') {
+            //     await this.recipesRepository.save({
+            //         user: user,
+            //         isPro: user.isPro,
+            //     })
+            //     console.log('작성자: 전문가');
+            // }
+            return registRecipe;
+>>>>>>> ada3952ceeefcf326cc9f80726e8303f422ee094
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
