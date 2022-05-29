@@ -16,6 +16,7 @@ type RecipesTag {
 
 type RecipesImage {
   image_id: Int!
+  mainImage: String!
   url: String!
   description: String!
   recipes: Recipes!
@@ -35,7 +36,6 @@ type Recipes {
   recipesTags: [RecipesTag!]!
   scrapCount: Int!
   replyCount: Int!
-  page: Int
   createdAt: DateTime!
 }
 
@@ -196,6 +196,7 @@ input CreateRecipesInput {
   title: String!
   summary: String!
   types: [String!]!
+  mainImage: [String!]!
   url: [String!]!
   description: [String!]!
   cookTime: Int!
@@ -210,6 +211,7 @@ input UpdateRecipesInput {
   title: String
   summary: String
   types: [String!]
+  mainImage: [String!]
   url: [String!]
   description: [String!]
   cookTime: Int
