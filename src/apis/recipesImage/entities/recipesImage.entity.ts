@@ -26,7 +26,7 @@ export class RecipesImage {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages)
+    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages, { onDelete: "CASCADE" })
     @Field(() => Recipes)
     recipes: Recipes
 }
