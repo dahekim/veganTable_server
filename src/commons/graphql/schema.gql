@@ -16,7 +16,6 @@ type RecipesTag {
 
 type RecipesImage {
   image_id: Int!
-  mainImage: String!
   url: String!
   description: String!
   recipes: Recipes!
@@ -29,14 +28,12 @@ type Recipes {
   types: CATEGORY_TYPES
   cookTime: Int!
   level: COOKING_LEVEL
-  serve: Int!
   recipesImages: [RecipesImage!]!
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
   scrapCount: Int!
   replyCount: Int!
-  createdAt: DateTime!
 }
 
 enum CATEGORY_TYPES {
@@ -54,11 +51,6 @@ enum COOKING_LEVEL {
   NORMAL
   DIFFICULT
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type RecipeScrap {
   scrap_id: String!
@@ -109,6 +101,11 @@ enum SUB_TYPE {
   PREMIUM
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type PaymentTransaction {
   id: String!
   impUid: String
@@ -137,10 +134,10 @@ type Query {
   fetchUsersWithDel: [User!]!
   fetchRecipes(page: Int): [Recipes!]!
   fetchRecipe(recipes_id: String!): Recipes!
-  fetchRecipeTypes(vegan_types: String!, page: Int): [Recipes!]!
-  fetchMyRecipe(user_id: String!, page: Int): [Recipes!]!
-  fetchRecipeIsPro(isPro: String!, page: Int): [Recipes!]!
-  fetchScrappedRecipes: [Recipes!]!
+  fetchRecipeTypes(vegan_types: String!): [Recipes!]!
+  fetchMyRecipe(user_id: String!): [Recipes!]!
+  fetchRecipeIsPro(isPro: String!): [Recipes!]!
+  searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
   fetchReplies(id: String!, page: Int): [RecipesReply!]!
@@ -163,7 +160,6 @@ type Mutation {
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
-  uploadMainImages(files: [Upload!]!): [String!]!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
   createBasicPayment(impUid: String!, amount: Float!): PaymentTransaction!
@@ -171,7 +167,7 @@ type Mutation {
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
-  deleteRely(reply_id: String!, recipe_id: String!): String!
+  deleteReply(reply_id: String!, recipe_id: String!): String!
   clickScrap(id: String!): RecipeScrap!
 }
 
@@ -196,28 +192,22 @@ input CreateRecipesInput {
   title: String!
   summary: String!
   types: [String!]!
-  mainImage: [String!]!
   url: [String!]!
   description: [String!]!
   cookTime: Int!
   level: [String!]!
-  serve: Int!
   ingredients: [String!]!
   recipesTags: [String!]!
-  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
   title: String
   summary: String
   types: [String!]
-  mainImage: [String!]
   url: [String!]
   description: [String!]
   cookTime: Int
   level: [String!]
-  serve: Int
   ingredients: [String!]
   recipesTags: [String!]
-  scrapCount: Int
 }

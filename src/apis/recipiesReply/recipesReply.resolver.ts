@@ -43,7 +43,7 @@ export class RecipesReplyResolver{
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>String)
-    async deleteRely(
+    async deleteReply(
         @CurrentUser() currentUser: ICurrentUser,
         @Args('reply_id') reply_id: string,
         @Args('recipe_id') recipe_id: string,

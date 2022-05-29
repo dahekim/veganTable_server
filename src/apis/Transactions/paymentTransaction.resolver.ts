@@ -48,7 +48,7 @@ export class PaymentTransactionResolver {
         
         return await this.userRepository.save({
             user_id: currentUser.user_id,
-            isSubs: SUB_TYPE.PREMIUM
+            isSubs: SUB_TYPE.BASIC
         })
     }
 

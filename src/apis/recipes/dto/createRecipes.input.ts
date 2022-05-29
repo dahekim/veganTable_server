@@ -34,7 +34,4 @@ export class CreateRecipesInput {
 
     @Field(() => [String])
     recipesTags: string[];
-
-    @Field(() => Int)
-    scrapCount: number;
 }
