@@ -85,6 +85,10 @@ export class Recipes {
     @Field(() => Int)
     scrapCount?: number;
 
+    @Column({ default: 0 })
+    @Field(()=> Int)
+    replyCount?:number;
+
     @CreateDateColumn()
     createdAt: Date;
 

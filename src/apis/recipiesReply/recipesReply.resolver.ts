@@ -14,8 +14,9 @@ export class RecipesReplyResolver{
     @Query(()=>[RecipesReply])
     async fetchReplies(
         @Args('id') recipe_id: string,
+        @Args('page') page: number,
     ){
-        return await this.recipesReplyService.findAll({recipe_id})
+        return await this.recipesReplyService.findAll({recipe_id, page})
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -36,9 +37,10 @@ export class RecipesReplyResolver{
     async updateReply(
         @CurrentUser() currentUser: ICurrentUser,
         @Args('reply_id') reply_id: string,
+        @Args('recipe_id') recipe_id: string, 
         @Args('contents') contents: string,
     ){
-        return await this.recipesReplyService.update({currentUser, reply_id, contents})
+        return await this.recipesReplyService.update({currentUser, reply_id, recipe_id, contents})
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -46,7 +48,8 @@ export class RecipesReplyResolver{
     async deleteRely(
         @CurrentUser() currentUser: ICurrentUser,
         @Args('reply_id') reply_id: string,
+        @Args('recipe_id') recipe_id: string,
     ){
-        return this.recipesReplyService.delete({currentUser, reply_id})
+        return this.recipesReplyService.delete({currentUser, reply_id, recipe_id})
     }
 }

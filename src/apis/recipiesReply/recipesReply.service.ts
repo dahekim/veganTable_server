@@ -20,15 +20,26 @@ export class RecipesReplyService{
         private readonly connection: Connection,
     ){}
 
-    async findAll({recipe_id}){
-        const result = await getRepository(RecipesReply)
+    async findAll({recipe_id, page}){
+        const qb = await getRepository(RecipesReply)
         .createQueryBuilder('recipesReply')
         .leftJoinAndSelect('recipesReply.recipes', 'recipe')
         .leftJoinAndSelect('recipesReply.user', 'user')
         .where('recipe.id = :id', { id: recipe_id })
-        .orderBy('recipesReply.reply_id', 'DESC')
-        .getMany()
-        return result 
+
+        const paging = qb.orderBy('recipesReply.reply_id', 'ASC')
+
+        if(page){
+            const result = await paging.take(12).skip((page-1) * 12).getManyAndCount()
+            const [replies] = result
+            const repliesAndPage = { replies, page }
+            return repliesAndPage
+        } else {
+            const result = await paging.getManyAndCount()
+            const [replies] = result
+            const onlyReplies = { replies }
+            return onlyReplies
+        }
     }
 
     async create({currentUser, user_id, contents, recipe_id}){
@@ -46,9 +57,15 @@ export class RecipesReplyService{
                 contents: contents,
                 user: user,
             })
+
+            const updateReplyCount = await this.recipesRepository.create({
+                ...recipe,
+                replyCount: recipe.replyCount + 1
+            })
             
             await queryRunner.manager.save(createRecipe)
             await queryRunner.manager.save(createReply)
+            await queryRunner.manager.save(updateReplyCount)
             await queryRunner.commitTransaction()
 
             return "댓글이 정상적으로 등록되었습니다."
@@ -60,28 +77,31 @@ export class RecipesReplyService{
         }
     }
 
-    async update({ currentUser, reply_id, contents }) {
+    async update({ currentUser, reply_id, recipe_id, contents }) {
         const user = await this.userRepository.findOne({ user_id: currentUser.user_id })
+        const recipe = await this.recipesRepository.findOne({ id: recipe_id })
         const reply = await this.recipesReplyRepository.findOne({reply_id})
-        await this.recipesReplyRepository.save({
+        return await this.recipesReplyRepository.save({
+            ...recipe,
             ...reply,
             contents,
             user,
         })
-        return "댓글이 수정되었습니다."
     }
     
     
-    async delete({ currentUser, reply_id }) {
-        const reply = await getRepository(RecipesReply)
-        .createQueryBuilder('recipesReply')
-        .leftJoinAndSelect('recipesReply.user', 'user')
-        .where('recipesReply.reply_id = :id', { id: reply_id })
-        .andWhere('user.user_id = :id', { id: currentUser.user_id })
-        .getMany()
-
-    if (reply) {
-        const result = await this.recipesReplyRepository.softDelete({reply_id})
+    async delete({ currentUser, reply_id, recipe_id }) {
+        const user = await this.userRepository.findOne({ user_id: currentUser.user_id })
+        const recipe = await this.recipesRepository.findOne({ id: recipe_id })
+        const reply = await this.recipesReplyRepository.findOne({reply_id})
+        
+        if (reply) {
+            const result = await this.recipesReplyRepository.softDelete({reply_id})
+            const updateReplyCount = await this.recipesRepository.save({
+                ...recipe,
+                user,
+                replyCount: recipe.replyCount -1
+        })
         return result.affected ? "댓글이 삭제되었습니다.": "댓글 삭제에 실패했습니다."
     }
     return "댓글이 정상적으로 삭제되었습니다."

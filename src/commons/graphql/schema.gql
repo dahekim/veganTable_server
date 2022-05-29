@@ -33,6 +33,7 @@ type Recipes {
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
   scrapCount: Int!
+  replyCount: Int!
 }
 
 enum CATEGORY_TYPES {
@@ -123,6 +124,8 @@ type RecipesReply {
   contents: String!
   recipes: Recipes!
   user: User!
+  page: Int
+  createdAt: DateTime!
 }
 
 type Query {
@@ -136,7 +139,7 @@ type Query {
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(userid: String!): PaymentTransaction!
-  fetchReplies(id: String!): [RecipesReply!]!
+  fetchReplies(id: String!, page: Float!): [RecipesReply!]!
   fetchMyScraps: [Recipes!]!
 }
 
@@ -161,8 +164,8 @@ type Mutation {
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(user_id: String!, contents: String!, id: String!): String!
-  updateReply(reply_id: String!, contents: String!): String!
-  deleteRely(reply_id: String!): String!
+  updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
+  deleteRely(reply_id: String!, recipe_id: String!): String!
   clickScrap(id: String!): RecipeScrap!
 }
 
