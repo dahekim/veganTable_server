@@ -11,6 +11,7 @@ export class IamportService {
         private readonly paymentTransactionRepository: Repository<PaymentTransaction>,
     ) { }
     async getToken() {
+        console.log("🧀토큰을 받긴 하는거니?")
         try {
             const token = await axios.post(
                 'https://api.iamport.kr/users/getToken', {
@@ -34,6 +35,7 @@ export class IamportService {
     }
 
     async checkPaid({ impUid, amount, token }) {
+        console.log("👊오는거니?")
         try {
             const result = await axios.get(
                 `https://api.iamport.kr/payments/${impUid}`,
