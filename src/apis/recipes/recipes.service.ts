@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Brackets, getConnection, getRepository, Repository } from "typeorm";
-import { User } from "../user/entities/user.entity";
+import { CLASS_TYPE, User } from "../user/entities/user.entity";
 import { Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
@@ -11,10 +11,17 @@ import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
 import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
+import { RecipesReply } from "../recipiesReply/entities/recipes.reply.entity";
+import { isPromise } from "util/types";
 
 
 interface IFile {
     files: FileUpload[]
+}
+
+interface ICALSS_TYPE {
+    pro?: string
+    common?: string
 }
 
 @Injectable()
@@ -38,12 +45,15 @@ export class RecipesService {
         @InjectRepository(RecipesTag)
         private readonly recipesTagRepository: Repository<RecipesTag>,
 
+        @InjectRepository(RecipesReply)
+        private readonly recipesReplyRepository: Repository<RecipesReply>,
+
         // private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
 
-    async fetchRecipesAll() {
-        return await getConnection()
+    async fetchRecipesAll({ page }) {
+        const recipesAll = await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -52,7 +62,15 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .orderBy('recipes.createdAt', 'DESC')
-            .getMany()
+        const paging = recipesAll
+        if (page) {
+            const result = await paging
+                .take(12)
+                .skip((page - 1) * 12)
+                .getMany();
+            return result
+        }
+        return recipesAll
     }
 
     async fetchRecipe({ id }) {
@@ -65,11 +83,12 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where({ id })
+            .orderBy('recipes.createdAt', 'DESC')
             .getOne()
     }
 
-    async fetchRecipeTypes({ types }) {
-        return await getConnection()
+    async fetchRecipeTypes({ types, page }) {
+        const getRecipe = await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -79,48 +98,75 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
-            .getMany()
+        const paging = getRecipe
+        if (page) {
+            const result = await paging
+                .take(12)
+                .skip((page - 1) * 12)
+                .getMany();
+            return result
+        }
+        return getRecipe
     }
 
-    async fetchMyRecipe({ user_id }) {
+    async fetchMyRecipe({ user_id, page }) {
+        const getRecipe = await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .where('user.user_id = user_id', { user_id })
+            .orderBy('recipes.createdAt', 'DESC')
+        const paging = getRecipe
+        if (page) {
+            const result = await paging
+                .take(12)
+                .skip((page - 1) * 12)
+                .getMany();
+            return result
+        }
+        return getRecipe
+    }
+
+    async fetchRecipeIsPro({ isPro, page }) {
+        const getByPro = await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect(User, 'u')
+            .where('u.isPro = isPro', { isPro })
+            .orderBy('recipes.createdAt', 'DESC')
+        const paging = getByPro
+        if (page) {
+            const result = await paging
+                .take(12)
+                .skip((page - 1) * 12)
+                .getMany();
+            return result
+            // } else if (page && isPro === 'COMMON') {
+            //     return alert('전문가 인증이 되지 않은 일반 회원이 작성한 레시피는 출력되지 않습니다. `일반인 레시피` 항목을 이용해 주세요.')
+        }
+        return getByPro
+    }
+
+    async fetchScrappedRecipes() {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('user.user_id = userUserId', { user_id })
-            .orderBy('recipes.createdAt', 'DESC')
-            .getMany();
-    }
-
-    async fetchRecipeIsPro({ isPro }) {
-        return await getRepository(Recipes)
-            .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('user.isPro = userIsPro', { isPro })
-            .orderBy('recipes.createdAt', 'DESC')
+            .where('recipes.scrapCount')
+            .orderBy('recipes.scrapCount', 'DESC')
             .getManyAndCount();
     }
 
-    // async fetchScrappedRecipes() {
-    //     return await getRepository(Recipes)
-    //         .createQueryBuilder('recipes')
-    //         .leftJoinAndSelect('recipes.user', 'user')
-    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
-    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-    //         .where({scrapCount})
-    //         .orderBy('recipes.scrapCount', 'DESC')
-    //         .getManyAndCount();
-    // }
-
     async create({ createRecipesInput }, currentUser) {
         try {
-            const { url, description, ingredients, recipesTags, ...recipes } =
+            const { url, description, ingredients, recipesTags, isPro, ...recipes } =
                 createRecipesInput;
 
             const searchUser = await this.userRepository.findOne(
@@ -132,9 +178,9 @@ export class RecipesService {
             if (ingredients.length) {
                 for (let i = 0; i < ingredients.length; i++) {
                     const ingredientTags = ingredients[i].replace('#', '');
-                    const prevTags1 = await this.recipesIngredientsRepository.findOne(
-                        { name: ingredientTags },
-                    );
+                    const prevTags1 = await this.recipesIngredientsRepository.findOne({
+                        name: ingredientTags
+                    });
 
                     if (prevTags1) {
                         impTags1.push(prevTags1);
@@ -149,14 +195,16 @@ export class RecipesService {
             if (recipesTags.length) {
                 for (let i = 0; i < recipesTags.length; i++) {
                     const recipeTags = recipesTags[i].replace('#', '');
-                    const prevTags2 = await this.recipesTagRepository.findOne(
-                        { name: recipeTags },
-                    );
+                    const prevTags2 = await this.recipesTagRepository.findOne({
+                        name: recipeTags
+                    });
 
                     if (prevTags2) {
                         impTags2.push(prevTags2);
                     } else {
-                        const newTags2 = await this.recipesTagRepository.save({ name: recipeTags })
+                        const newTags2 = await this.recipesTagRepository.save({
+                            name: recipeTags,
+                        })
                         impTags2.push(newTags2);
                     }
                 }
@@ -165,11 +213,10 @@ export class RecipesService {
             const registRecipe = await this.recipesRepository.save({
                 ...recipes,
                 user: searchUser,
+                isPro: isPro,
                 ingredients: impTags1,
                 recipesTags: impTags2,
-
             });
-            console.log(registRecipe)
 
             for (let i = 0; i < url.length; i++) {
                 await this.recipesImageRepository.save({
@@ -221,7 +268,30 @@ export class RecipesService {
         }
     }
 
-    async uploadImages({ files }: IFile) {
+    async uploadMainImages({ files }: IFile) {
+        const bucket = process.env.VEGAN_STORAGE_BUCKET
+        const storage = new Storage({
+            keyFilename: process.env.STORAGE_KEY_FILENAME,
+            projectId: process.env.STORAGE_PROJECT_ID,
+        }).bucket(bucket)
+
+        const mainImages = await Promise.all(files)
+        const results = await Promise.all(mainImages.map(file => {
+            return new Promise((resolve, reject) => {
+                const fileName = `recipes/mainImages/${getToday()}/${uuidv4}/${file.filename}`
+                file
+                    .createReadStream()
+                    .pipe(storage.file(fileName).createWriteStream())
+                    .on("finish", () => resolve(`${bucket}/${fileName}`))
+                    .on("error", (error) => reject("🔔" + error))
+            })
+        })
+        )
+        return results
+    }
+
+
+    async uploadDetailImages({ files }: IFile) {
         const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
@@ -276,5 +346,4 @@ export class RecipesService {
     //                         )
     // return  results
     // }
-
 }

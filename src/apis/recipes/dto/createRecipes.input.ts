@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 
 @InputType()
 export class CreateRecipesInput {
@@ -22,6 +23,9 @@ export class CreateRecipesInput {
 
     @Field(() => [String])
     level: string;
+
+    @Field(() => Int)
+    serve: number;
 
     @Field(() => [String])
     ingredients: string[];
