@@ -22,7 +22,7 @@ export class PaymentTransactionResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => PaymentTransaction)
     async fetchimpUidwithUserid(
-        @Args('userid') user_id: string,
+        @Args('user_id') user_id: string,
     ) {
         return this.paymentTransactionService.fetchimpUidwithUserid({ user_id })
     }
