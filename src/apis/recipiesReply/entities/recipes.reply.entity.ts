@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Recipes } from "src/apis/recipes/entities/recipes.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -12,7 +12,7 @@ export class RecipesReply {
     reply_id!: string; 
 
     @Column()
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     contents!: string;
 
     @ManyToOne(()=> Recipes, {nullable: true})
@@ -23,7 +23,11 @@ export class RecipesReply {
     @Field(() => User)
     user: User
 
+    @Field(()=> Int, { nullable: true })
+    page?: number;
+
     @CreateDateColumn()
+    @Field(()=>Date)
     createdAt: Date;
 
     @DeleteDateColumn()

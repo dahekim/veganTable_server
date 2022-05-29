@@ -13,8 +13,6 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:3000',
     credentials: true,
-    // frontend 배포 되면
-    // origin: 'https://domain-url',
   })
   await app.listen(3000)
 }

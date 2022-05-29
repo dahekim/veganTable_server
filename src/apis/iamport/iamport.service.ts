@@ -1,8 +1,8 @@
 import { ConflictException, HttpException, Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import axios from "axios";
 import { Repository } from "typeorm";
 import { PaymentTransaction } from "../Transactions/entities/paymentTransaction.entity";
+import axios from "axios";
 
 @Injectable()
 export class IamportService {
@@ -12,7 +12,6 @@ export class IamportService {
     ) { }
     async getToken() {
         try {
-            // 아임포트 계정의 API Key 값과 Secret Key 값으로 토큰 정보 얻기
             const token = await axios.post(
                 'https://api.iamport.kr/users/getToken', {
                 imp_key: process.env.IAMPORT_API_KEY,
@@ -44,7 +43,7 @@ export class IamportService {
             if (doubleCheckImpUid)
                 throw new ConflictException('이미 결제한 내역입니다.');
             if (result.data.response.status !== 'paid')
-                throw new ConflictException('결제하신 내역이 없습니다.');
+                throw new ConflictException('결제내역이 없습니다.');
             if (result.data.response.amount !== amount)
                 throw new UnprocessableEntityException('결제 금액을 잘못 입력하셨습니다.')
         } catch (error) {
@@ -61,8 +60,6 @@ export class IamportService {
     }
 
     async cancel({ impUid, token }) {
-        // const impUsedinfo = await this.paymentTransactionRepository.findOne({ impUid })
-        // const { id, amount, status, createdAt, ...rest } = impUsedinfo;
         try {
             const canceledRes = await axios.post(
                 'https://api.iamport.kr/payments/cancel',

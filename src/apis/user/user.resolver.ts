@@ -45,7 +45,7 @@ export class UserResolver {
         @Args('phone') phone: string,
     ) {
         const hashedPassword = await bcrypt.hash(password, 10)
-        return this.userService.create({ email, hashedPassword, name, phone })
+        return this.userService.create({ email, password: hashedPassword, name, phone })
     }
 
     @Mutation(() => String)

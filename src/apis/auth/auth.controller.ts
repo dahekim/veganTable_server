@@ -15,7 +15,7 @@ export class AuthController {
         private readonly authService: AuthService,
         ) {}
 
-    @Get('/google')
+    @Get('google')
     @UseGuards(AuthGuard('google'))
     async loginGoogle(
         @Req() req: Request & IOAuthUser, 
@@ -24,7 +24,7 @@ export class AuthController {
         await this.authService.socialLogin({ req, res })
     }
 
-    @Get('/naver')
+    @Get('naver')
     @UseGuards(AuthGuard('naver'))
     async loginNaver(
         @Req() req: Request & IOAuthUser, 
@@ -33,7 +33,7 @@ export class AuthController {
         await this.authService.socialLogin({req, res})
     }
 
-    @Get('/kakao')
+    @Get('kakao')
     @UseGuards(AuthGuard('kakao'))
     async loginKakao(
         @Req() req: Request & IOAuthUser,
