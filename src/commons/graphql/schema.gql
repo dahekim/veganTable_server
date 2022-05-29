@@ -138,8 +138,8 @@ type Query {
   fetchMyRecipe(user_id: String!): [Recipes!]!
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
-  fetchimpUidwithUserid(userid: String!): PaymentTransaction!
-  fetchReplies(id: String!, page: Float!): [RecipesReply!]!
+  fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
+  fetchReplies(id: String!, page: Int): [RecipesReply!]!
   fetchMyScraps: [Recipes!]!
 }
 

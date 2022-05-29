@@ -23,7 +23,7 @@ export class RecipesReply {
     @Field(() => User)
     user: User
 
-    @Field(()=> Int, {nullable: true})
+    @Field(()=> Int, { nullable: true })
     page?: number;
 
     @CreateDateColumn()

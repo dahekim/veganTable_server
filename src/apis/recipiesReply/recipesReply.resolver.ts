@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Resolver, Query } from "@nestjs/graphql";
+import { Args, Mutation, Resolver, Query, Int } from "@nestjs/graphql";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
 import { RecipesReply } from "./entities/recipes.reply.entity";
@@ -14,7 +14,7 @@ export class RecipesReplyResolver{
     @Query(()=>[RecipesReply])
     async fetchReplies(
         @Args('id') recipe_id: string,
-        @Args('page') page: number,
+        @Args({ name: 'page' ,nullable: true, type: () => Int}) page?: number,
     ){
         return await this.recipesReplyService.findAll({recipe_id, page})
     }
