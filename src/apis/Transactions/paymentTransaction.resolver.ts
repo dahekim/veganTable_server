@@ -35,7 +35,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
+    @Mutation(() => String)
     async createBasicPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -46,15 +46,17 @@ export class PaymentTransactionResolver {
         await this.paymentTransactionService.checkDuplicate({ impUid });
         await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
         
-        return await this.userRepository.save({
+        await this.userRepository.save({
             user_id: currentUser.user_id,
             SubsHistory: 1,
             isSubs: SUB_TYPE.BASIC
         })
+
+        return "베이직 구독 결제가 완료되었습니다."
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
+    @Mutation(() => String)
     async createPremiumPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -65,11 +67,12 @@ export class PaymentTransactionResolver {
         await this.paymentTransactionService.checkDuplicate({ impUid });
         await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
         
-        return await this.userRepository.save({
+        await this.userRepository.save({
             user_id: currentUser.user_id,
             SubsHistory: 1,
             isSubs: SUB_TYPE.PREMIUM
         })
+        return "프리미엄 구독 결제가 완료되었습니다."
     }
 
     @UseGuards(GqlAuthAccessGuard)
