@@ -35,7 +35,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
+    @Mutation(() => PaymentTransaction)
     async createBasicPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -54,7 +54,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => User)
+    @Mutation(() => PaymentTransaction)
     async createPremiumPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
