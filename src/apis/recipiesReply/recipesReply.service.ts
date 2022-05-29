@@ -28,9 +28,6 @@ export class RecipesReplyService{
         .where('recipe.id = :id', { id: recipe_id })
         .orderBy('recipesReply.reply_id', 'ASC')
         .take(12)
-        // .skip((page-1)*12)
-        // .getMany()
-        // return qb
 
         if(page){
             const result = await replies.skip((page-1) * 12).getMany()
