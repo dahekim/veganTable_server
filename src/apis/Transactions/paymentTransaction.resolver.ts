@@ -84,6 +84,7 @@ export class PaymentTransactionResolver {
             impUid,
             amount: cancelAmount,
             currentUser,
+            status
         });
     }
 }
