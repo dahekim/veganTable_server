@@ -38,7 +38,7 @@ export class RecipesReplyService{
         }
     }
 
-    async create({currentUser, user_id, contents, recipe_id}){
+    async create({currentUser, contents, recipe_id}){
         const queryRunner = this.connection.createQueryRunner()
         await queryRunner.connect()
         await queryRunner.startTransaction('REPEATABLE READ')
@@ -73,31 +73,30 @@ export class RecipesReplyService{
         }
     }
 
-    async update({ currentUser, reply_id, recipe_id, contents }) {
-        const user = await this.userRepository.findOne({ user_id: currentUser.user_id })
+    async update({ reply_id, recipe_id, contents }) {
         const recipe = await this.recipesRepository.findOne({ id: recipe_id })
-        const reply = await this.recipesReplyRepository.findOne({reply_id})
-        return await this.recipesReplyRepository.save({
-            ...recipe,
+        const reply = await this.recipesReplyRepository.findOne({ reply_id })
+
+        const result=  await this.recipesReplyRepository.save({
             ...reply,
             contents,
-            user,
         })
+        return result ? "댓글이 수정되었습니다.": "댓글 수정에 실패했습니다."
     }
     
     
     async delete({ currentUser, reply_id, recipe_id }) {
         const user = await this.userRepository.findOne({ user_id: currentUser.user_id })
         const recipe = await this.recipesRepository.findOne({ id: recipe_id })
-        const reply = await this.recipesReplyRepository.findOne({reply_id})
+        const reply = await this.recipesReplyRepository.findOne({ reply_id })
         
         if (reply) {
             const result = await this.recipesReplyRepository.softDelete({reply_id})
-            const updateReplyCount = await this.recipesRepository.save({
+            await this.recipesRepository.save({
                 ...recipe,
                 user,
                 replyCount: recipe.replyCount -1
-        })
+            })
         return result.affected ? "댓글이 삭제되었습니다.": "댓글 삭제에 실패했습니다."
     }
     return "댓글이 정상적으로 삭제되었습니다."
