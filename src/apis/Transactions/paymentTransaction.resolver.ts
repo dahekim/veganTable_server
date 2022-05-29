@@ -44,7 +44,7 @@ export class PaymentTransactionResolver {
         const token = await this.iamportService.getToken();
         await this.iamportService.checkPaid({ impUid, amount, token });
         await this.paymentTransactionService.checkDuplicate({ impUid });
-        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser,status });
+        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
         
         return await this.userRepository.save({
             user_id: currentUser.user_id,
