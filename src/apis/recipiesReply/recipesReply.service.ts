@@ -26,7 +26,7 @@ export class RecipesReplyService{
         .leftJoinAndSelect('recipesReply.recipes', 'recipe')
         .leftJoinAndSelect('recipesReply.user', 'user')
         .where('recipe.id = :id', { id: recipe_id })
-        .orderBy('recipesReply.reply_id', 'ASC')
+        .orderBy('recipesReply.createdAt', 'ASC')
         .take(12)
 
         if(page){
