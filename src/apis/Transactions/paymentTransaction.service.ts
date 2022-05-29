@@ -34,7 +34,6 @@ export class PaymentTransactionService {
     }
 
     async createTransaction({impUid, amount, currentUser}) {
-        // console.log("😈😈😈😈😈😈😈"+ status)
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
@@ -48,7 +47,6 @@ export class PaymentTransactionService {
             });
             await queryRunner.manager.save(paymentTransaction);
             await queryRunner.commitTransaction()
-            console.log("⛱⛱⛱⛱⛱⛱⛱⛱⛱" + "된거니?")
             return paymentTransaction;
 
         } catch (error) {

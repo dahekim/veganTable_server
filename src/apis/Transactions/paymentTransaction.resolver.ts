@@ -35,7 +35,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => PaymentTransaction)
+    @Mutation(() => User)
     async createBasicPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -54,7 +54,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => PaymentTransaction)
+    @Mutation(() => User)
     async createPremiumPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -64,6 +64,7 @@ export class PaymentTransactionResolver {
         await this.iamportService.checkPaid({ impUid, amount, token });
         await this.paymentTransactionService.checkDuplicate({ impUid });
         await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
+        
         return await this.userRepository.save({
             user_id: currentUser.user_id,
             SubsHistory: 1,
