@@ -130,24 +130,24 @@ export class RecipesService {
     }
 
     async fetchRecipeIsPro({ isPro, page }) {
-        const getByPro = await getRepository(Recipes)
+
+        console.log(isPro)
+        const getByPro = getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect(User, 'u')
-            .where('u.isPro = isPro', { isPro })
             .orderBy('recipes.createdAt', 'DESC')
         const paging = getByPro
-        if (page) {
+
+        if (isPro) {
             const result = await paging
+                .where('user.isPro = :isPro', { isPro })
                 .take(12)
                 .skip((page - 1) * 12)
                 .getMany();
             return result
-            // } else if (page && isPro === 'COMMON') {
-            //     return alert('전문가 인증이 되지 않은 일반 회원이 작성한 레시피는 출력되지 않습니다. `일반인 레시피` 항목을 이용해 주세요.')
         }
         return getByPro
     }

@@ -4,7 +4,6 @@ import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
 import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
-import { RecipesReply } from "src/apis/recipiesReply/entities/recipes.reply.entity";
 
 export enum CATEGORY_TYPES {
     NON_CHECKED = 'NON_CHECKED',
