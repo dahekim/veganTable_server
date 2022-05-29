@@ -163,7 +163,7 @@ type Mutation {
   deleteRecipeImages(id: String!): [String!]!
   createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
-  createReply(user_id: String!, contents: String!, id: String!): String!
+  createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
   deleteRely(reply_id: String!, recipe_id: String!): String!
   clickScrap(id: String!): RecipeScrap!

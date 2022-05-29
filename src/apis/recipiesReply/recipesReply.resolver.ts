@@ -23,24 +23,22 @@ export class RecipesReplyResolver{
     @Mutation(()=>String)
     async createReply(
         @CurrentUser() currentUser: ICurrentUser,
-        @Args('user_id') user_id: string,
         @Args('contents') contents: string,
         @Args('id') recipe_id: string
     ){
         return await this.recipesReplyService.create({
-            currentUser, user_id, contents, recipe_id
+            currentUser, contents, recipe_id
         })
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(()=>String)
     async updateReply(
-        @CurrentUser() currentUser: ICurrentUser,
         @Args('reply_id') reply_id: string,
         @Args('recipe_id') recipe_id: string, 
         @Args('contents') contents: string,
     ){
-        return await this.recipesReplyService.update({currentUser, reply_id, recipe_id, contents})
+        return await this.recipesReplyService.update({ reply_id, recipe_id,  contents})
     }
 
     @UseGuards(GqlAuthAccessGuard)
