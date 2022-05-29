@@ -33,12 +33,7 @@ export class PaymentTransactionService {
             .getMany();
     }
 
-    async createTransaction({
-        impUid,
-        amount,
-        currentUser,
-        status = TRANSACTION_STATUS_ENUM.PAYMENT,
-    }) {
+    async createTransaction({ impUid,amount,currentUser, status }) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
@@ -47,8 +42,8 @@ export class PaymentTransactionService {
             const paymentTransaction = await this.paymentTransactionRepository.create({
                 impUid,
                 amount,
-                user: currentUser,
-                status,
+                user: currentUser.user_id,
+                status: TRANSACTION_STATUS_ENUM.PAYMENT
             });
             await queryRunner.manager.save(paymentTransaction);
 
@@ -58,16 +53,12 @@ export class PaymentTransactionService {
                 { lock: { mode: 'pessimistic_write' } },
             );
 
-            const updatedUser = this.userRepository.create({
-                ...user,
-                isSubs: user.isSubs = SUB_TYPE.BASIC || SUB_TYPE.PREMIUM,
-            });
+            const updatedUser = await this.userRepository.create({ ...user })
 
             await queryRunner.manager.save(updatedUser);
             await queryRunner.commitTransaction();
 
             return paymentTransaction;
-
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
@@ -76,47 +67,37 @@ export class PaymentTransactionService {
             } else {
                 throw error;
             }
-            // 처리 결과 되돌리기(Rollback)
             await queryRunner.rollbackTransaction();
         } finally {
-            // 연결 해제(Release)
             await queryRunner.release();
         }
     }
 
     async checkDuplicate({ impUid }) {
         const checkPaid = await this.paymentTransactionRepository.findOne({ impUid });
-        if (checkPaid) throw new ConflictException('이미 결제되었습니다.');
+        if (checkPaid) throw new ConflictException('이미 결제 완료된 아이디입니다.');
     }
 
     async checkAlreadyCanceled({ impUid }) {
-        const checkAlready = await this.paymentTransactionRepository.findOne({
-            impUid,
+        const isExist = await this.paymentTransactionRepository.findOne({
+            impUid,})
+        const isCanceled = await this.paymentTransactionRepository.findOne({
             status: TRANSACTION_STATUS_ENUM.CANCEL,
         });
-        if (checkAlready)
-            throw new UnprocessableEntityException('이미 결제 취소된 내역입니다.')
+        if (isExist && isCanceled)
+            throw new UnprocessableEntityException('이미 취소된 결제 내역입니다.')
     }
 
     async checkHasCancelableStatus({ impUid, currentUser }) {
-        const checkHasStatus = await this.paymentTransactionRepository.findOne({
-            impUid,
-            user: { user_id: currentUser.user_id },
-            status: TRANSACTION_STATUS_ENUM.PAYMENT,
-        });
-        if (!checkHasStatus)
-            throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.');
+        const isExist = await this.paymentTransactionRepository.findOne({ where: {impUid} })
+        const isPaid = await this.paymentTransactionRepository.findOne({ where: {status: TRANSACTION_STATUS_ENUM.PAYMENT} })
+        if (!isExist) throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.')
     }
 
-    async cancelTransaction({
-        impUid,
-        amount,
-        currentUser,
-        isSubs = SUB_TYPE.BASIC || SUB_TYPE.PREMIUM }) {
+    async cancelTransaction({ impUid, amount,currentUser}) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
-
         try {
             const canceledTransaction = await this.createTransaction({
                 impUid,
@@ -131,7 +112,6 @@ export class PaymentTransactionService {
 
             await queryRunner.manager.save(canceledTransaction);
             await queryRunner.manager.save(updatedUser);
-            // +@ commit(성공 확정)
             await queryRunner.commitTransaction();
             return canceledTransaction;
         } catch (error) {

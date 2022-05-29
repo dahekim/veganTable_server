@@ -41,7 +41,7 @@ export class AuthService {
         }
 
     async socialLogin({ req, res }) {
-        console.log(req)
+        console.log(req.user)
         let user = await this.userService.findOne({
             email: req.user.email,
         })
@@ -50,9 +50,9 @@ export class AuthService {
             const newUser = { ...rest, password }
             user = await this.userService.createSocial({ ...newUser })
             this.setRefreshToken({ user, res })
-            res.redirect("https://naver.com")
+            res.redirect("http://localhost:3000")
         }
         this.setRefreshToken({ user, res })
-        res.redirect("https://naver.com")
+        res.redirect("http://localhost:3000")
     }
 }
