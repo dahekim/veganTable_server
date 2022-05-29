@@ -47,10 +47,6 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES, { nullable: true })
     types?: CATEGORY_TYPES;
 
-    // @Column({ nullable: false })
-    // @Field(() => [RecipesImage])
-    // url: string;
-
     @Column({ default: 0 })
     @Field(() => Int, { nullable: false })
     cookTime!: number;
@@ -88,10 +84,6 @@ export class Recipes {
     @Column({ default: 0 })
     @Field(() => Int)
     replyCount?: number;
-
-    @Column()
-    @Field(() => Int, { nullable: true })
-    page?: number
 
     @CreateDateColumn()
     @Field(() => Date)

@@ -11,6 +11,10 @@ export class RecipesImage {
 
     @Column({ default: " " })
     @Field(() => String, { defaultValue: " ", nullable: false })
+    mainImage: string;
+
+    @Column({ default: " " })
+    @Field(() => String, { defaultValue: " ", nullable: false })
     url: string
 
     @Column({ length: 5000, default: " " })
