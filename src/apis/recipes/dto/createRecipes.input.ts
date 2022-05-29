@@ -12,6 +12,9 @@ export class CreateRecipesInput {
     types: string;
 
     @Field(() => [String])
+    mainImage: string[];
+
+    @Field(() => [String])
     url: string[];
 
     @Field(() => [String])
@@ -22,6 +25,9 @@ export class CreateRecipesInput {
 
     @Field(() => [String])
     level: string;
+
+    @Field(() => Int)
+    serve: number;
 
     @Field(() => [String])
     ingredients: string[];

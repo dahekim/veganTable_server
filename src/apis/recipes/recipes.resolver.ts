@@ -20,12 +20,13 @@ export class RecipesResolver {
     async fetchRecipes(
         @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
     ) {
-        return await this.recipesService.fetchRecipesAll();
+        return await this.recipesService.fetchRecipesAll({ page });
     }
 
     @Query(() => Recipes)
     async fetchRecipe(
         @Args('recipes_id') id: string,
+
     ) {
         return await this.recipesService.fetchRecipe({ id })
     }
@@ -34,29 +35,32 @@ export class RecipesResolver {
     @Query(() => [Recipes])
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
+        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeTypes({ types });
+        return await this.recipesService.fetchRecipeTypes({ types, page });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
     async fetchMyRecipe(
         @Args('user_id') user_id: string,
+        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchMyRecipe({ user_id });
+        return await this.recipesService.fetchMyRecipe({ user_id, page });
     }
 
     @Query(() => [Recipes])
     async fetchRecipeIsPro(
-        @Args('isPro') isPro: CLASS_TYPE.PRO,
+        @Args('isPro') isPro: string,
+        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeIsPro({ isPro });
+        return await this.recipesService.fetchRecipeIsPro({ isPro, page });
     }
 
-    // @Query(() => [Recipes])
-    // async fetchScrappedRecipes() {
-    //     return await this.recipesService.fetchScrappedRecipes();
-    // }
+    @Query(() => [Recipes])
+    async fetchScrappedRecipes() {
+        return await this.recipesService.fetchScrappedRecipes();
+    }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => Recipes)
@@ -94,10 +98,19 @@ export class RecipesResolver {
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
+    uploadMainImages(
+        @Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[]
+    ) {
+        return this.recipesService.uploadMainImages({ files })
+    }
+
+
+    @UseGuards(GqlAuthAccessGuard)
+    @Mutation(() => [String])
     uploadRecipeImages(
         @Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[]
     ) {
-        return this.recipesService.uploadImages({ files })
+        return this.recipesService.uploadDetailImages({ files })
     }
 
     @UseGuards(GqlAuthAccessGuard)

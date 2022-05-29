@@ -11,6 +11,10 @@ export class RecipesImage {
 
     @Column({ default: " " })
     @Field(() => String, { defaultValue: " ", nullable: false })
+    mainImage: string;
+
+    @Column({ default: " " })
+    @Field(() => String, { defaultValue: " ", nullable: false })
     url: string
 
     @Column({ length: 5000, default: " " })
@@ -26,7 +30,7 @@ export class RecipesImage {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages)
+    @ManyToOne(() => Recipes, (recipes) => recipes.recipesImages, { onDelete: "CASCADE" })
     @Field(() => Recipes)
     recipes: Recipes
 }
