@@ -12,7 +12,7 @@ export class RecipesReply {
     reply_id!: string; 
 
     @Column()
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     contents!: string;
 
     @ManyToOne(()=> Recipes, {nullable: true})

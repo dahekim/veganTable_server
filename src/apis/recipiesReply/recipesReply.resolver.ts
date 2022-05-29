@@ -14,7 +14,7 @@ export class RecipesReplyResolver{
     @Query(()=>[RecipesReply])
     async fetchReplies(
         @Args('id') recipe_id: string,
-        @Args({ name: 'page' ,nullable: true, type: () => Int}) page?: number,
+        @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
     ){
         return await this.recipesReplyService.findAll({recipe_id, page})
     }
