@@ -37,7 +37,7 @@ export class IamportService {
         try {
             const result = await axios.get(
                 `https://api.iamport.kr/payments/${impUid}`,
-                { headers: { Authorization: token } },
+                { headers: { Authorization: `Bearer ${token}` } },
             );
             console.log("🧶🧶🧶🧶🧶"+ result)
             const doubleCheckImpUid = await this.paymentTransactionRepository.findOne({
