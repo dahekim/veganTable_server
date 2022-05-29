@@ -65,40 +65,41 @@ export class PaymentTransactionService {
         }
     }
 
-    // async cancelTransaction({ impUid, amount, currentUser, status }) {
-    //     const queryRunner = await this.connection.createQueryRunner();
-    //     await queryRunner.connect();
-    //     await queryRunner.startTransaction('SERIALIZABLE');
+    async cancelTransaction({ impUid, amount, currentUser }) {
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('SERIALIZABLE');
+        try {
+            const canceledTransaction = await this.paymentTransactionRepository.create({
+                impUid,
+                amount: -amount,
+                user: currentUser,
+                status: TRANSACTION_STATUS_ENUM.CANCEL,
+            });
 
-    //     try {
-    //         const canceledTransaction = await this.createTransaction({
-    //             impUid,
-    //             amount: -amount,
-    //             currentUser,
-    //             status: TRANSACTION_STATUS_ENUM.CANCEL,
-    //         });
-    //         const updatedUser = this.userRepository.create({
-    //             ...currentUser,
-    //             isSubs: SUB_TYPE.NON_SUB,
-    //         });
+            await queryRunner.manager.save(canceledTransaction);
 
-    //         await queryRunner.manager.save(canceledTransaction);
-    //         await queryRunner.manager.save(updatedUser);
-    //         await queryRunner.commitTransaction();
-    //         return canceledTransaction;
-    //     } catch (error) {
-    //         console.log(error)
-    //         if (error?.response?.data?.message || error?.response?.status) {
-    //             console.log(error.response.data.message);
-    //             console.log(error.response.status);
-    //         } else {
-    //             throw error;
-    //         }
-    //         await queryRunner.rollbackTransaction();
-    //     } finally {
-    //         await queryRunner.release();
-    //     }
-    // }
+            const updatedUser = this.userRepository.create({
+                ...currentUser,
+                isSubs: SUB_TYPE.NON_SUB,
+            });
+            await queryRunner.manager.save(updatedUser);
+
+            await queryRunner.commitTransaction();
+            return canceledTransaction;
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
+            await queryRunner.rollbackTransaction();
+        } finally {
+            await queryRunner.release();
+        }
+    }
 
     async checkDuplicate({ impUid }) {
         const checkPaid = await this.paymentTransactionRepository.findOne({ impUid });
@@ -123,6 +124,4 @@ export class PaymentTransactionService {
         if (!checkHasStatus)
             throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.');
     }
-
-    
 }
