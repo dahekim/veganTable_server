@@ -13,20 +13,20 @@ registerEnumType(TRANSACTION_STATUS_ENUM, {
 
 @Entity()
 @ObjectType()
-export class PaymentTransaction { // Payment is Insert ONLY, not for Update and not for Delete
+export class PaymentTransaction {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
     id: string;
 
     @Column()
-    @Field(() => String)
+    @Field(() => String, {nullable: true})
     impUid: string;
 
     @Column()
-    @Field(() => Int, { defaultValue: 0 })
+    @Field(() => Int, { defaultValue: 0 , nullable: true})
     amount: number;
 
-    @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM }) // paid, canceled... 
+    @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM })  
     @Field(() => TRANSACTION_STATUS_ENUM)
     status: string;
 
@@ -36,5 +36,4 @@ export class PaymentTransaction { // Payment is Insert ONLY, not for Update and 
 
     @CreateDateColumn()
     createdAt: Date;
-
 }
