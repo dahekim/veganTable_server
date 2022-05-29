@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Brackets, getConnection, getRepository, Repository } from "typeorm";
@@ -11,6 +11,7 @@ import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
 import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
+import { title } from "process";
 
 
 interface IFile {
@@ -269,12 +270,35 @@ export class RecipesService {
         return recipe_id ? true : false
     }
 
-    // async search({input}){
-    //     let results = await getConnection()
-    //                         .getRepository(Recipes)
-    //                         .query(`select * from recipes where title like “%${input}%” order by desc limit 12;`
-    //                         )
-    // return  results
-    // }
+    async search({ input, page }) {
+        const results = getRepository(Recipes)
+        .createQueryBuilder('recipes')
+        .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+        .leftJoinAndSelect('recipes.recipesTags', 'tags')
 
+        if(input === null || input === ""){
+            throw new BadRequestException("검색어를 입력해주세요.")
+        }
+
+        if(input){
+            results.where(
+                new Brackets( (qb) => {
+                    qb.where('recipes.title LIKE :title', { title: `%${input}%` })
+                    .orWhere('ingredients.name LIKE :name', { name: `%${input}%` } )
+                    .orWhere('tags.name LIKE :name', { name: `%${input}%`})
+                })
+            )
+        }
+
+        
+        if(page){
+            const result = await results.orderBy('recipes.createdAt', 'DESC')
+            .getMany()
+        return result
+        } else {
+            const result = await results.orderBy('recipes.createdAt', 'DESC')
+            .getMany()
+            return result
+        }
+    }
 }

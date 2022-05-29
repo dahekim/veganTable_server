@@ -137,6 +137,7 @@ type Query {
   fetchRecipeTypes(vegan_types: String!): [Recipes!]!
   fetchMyRecipe(user_id: String!): [Recipes!]!
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
+  searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
   fetchReplies(id: String!, page: Int): [RecipesReply!]!
@@ -166,7 +167,7 @@ type Mutation {
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
-  deleteRely(reply_id: String!, recipe_id: String!): String!
+  deleteReply(reply_id: String!, recipe_id: String!): String!
   clickScrap(id: String!): RecipeScrap!
 }
 
@@ -197,7 +198,6 @@ input CreateRecipesInput {
   level: [String!]!
   ingredients: [String!]!
   recipesTags: [String!]!
-  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
@@ -210,5 +210,4 @@ input UpdateRecipesInput {
   level: [String!]
   ingredients: [String!]
   recipesTags: [String!]
-  scrapCount: Int
 }
