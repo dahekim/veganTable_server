@@ -21,24 +21,23 @@ export class RecipesReplyService{
     ){}
 
     async findAll({recipe_id, page}){
-        const qb = await getRepository(RecipesReply)
+        const replies = await getRepository(RecipesReply)
         .createQueryBuilder('recipesReply')
         .leftJoinAndSelect('recipesReply.recipes', 'recipe')
         .leftJoinAndSelect('recipesReply.user', 'user')
         .where('recipe.id = :id', { id: recipe_id })
-
-        const paging = qb.orderBy('recipesReply.reply_id', 'ASC')
+        .orderBy('recipesReply.reply_id', 'ASC')
+        .take(12)
+        // .skip((page-1)*12)
+        // .getMany()
+        // return qb
 
         if(page){
-            const result = await paging.take(12).skip((page-1) * 12).getManyAndCount()
-            const [replies] = result
-            const repliesAndPage = { replies, page }
-            return repliesAndPage
+            const result = await replies.skip((page-1) * 12).getMany()
+        return result
         } else {
-            const result = await paging.getManyAndCount()
-            const [replies] = result
-            const onlyReplies = { replies }
-            return onlyReplies
+            const result = await replies.getMany()
+            return result
         }
     }
 

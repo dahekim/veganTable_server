@@ -121,7 +121,7 @@ enum TRANSACTION_STATUS_ENUM {
 
 type RecipesReply {
   reply_id: String!
-  contents: String!
+  contents: String
   recipes: Recipes!
   user: User!
   page: Int
