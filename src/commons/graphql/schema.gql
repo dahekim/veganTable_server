@@ -108,8 +108,8 @@ scalar DateTime
 
 type PaymentTransaction {
   id: String!
-  impUid: String!
-  amount: Int!
+  impUid: String
+  amount: Int
   status: TRANSACTION_STATUS_ENUM!
   user: User!
 }
@@ -161,7 +161,8 @@ type Mutation {
   deleteRecipe(recipe_id: String!): Boolean!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
-  createPaymentTransaction(impUid: String!, amount: Float!): PaymentTransaction!
+  createBasicPayment(impUid: String!, amount: Float!): PaymentTransaction!
+  createPremiumPayment(impUid: String!, amount: Float!): PaymentTransaction!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!

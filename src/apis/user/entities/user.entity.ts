@@ -5,7 +5,6 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -72,7 +71,6 @@ export class User {
     @Column({ default: null })
     @Field(() => String, { nullable: true })
     addressDetail?: string
-
 
     @Column({type: "enum", enum: VEGAN_TYPE, default: VEGAN_TYPE.NON_Vegan })
     @Field(()=>VEGAN_TYPE, {nullable: true})
