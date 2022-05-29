@@ -1,8 +1,9 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { RecipesIngredients } from "src/apis/recipesIngrediants/entities/recipesIngrediants.entity";
 import { User } from "src/apis/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
+import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
 
 export enum CATEGORY_TYPES {
     NON_CHECKED = 'NON_CHECKED',
@@ -32,7 +33,7 @@ registerEnumType(COOKING_LEVEL, {
 export class Recipes {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
-    id!: string;
+    id: string;
 
     @Column({ nullable: false })
     @Field(() => String!)
@@ -46,6 +47,13 @@ export class Recipes {
     @Field(() => CATEGORY_TYPES, { nullable: true })
     types?: CATEGORY_TYPES;
 
+    // @Column({ nullable: false })
+    // @Field(() => String)
+    // url: string;
+
+    // @Column({ nullable: false })
+    // @Field(() => String)
+    // description: string;
 
     @Column({ default: 0 })
     @Field(() => Int, { nullable: false })
@@ -55,9 +63,13 @@ export class Recipes {
     @Field(() => COOKING_LEVEL, { nullable: true })
     level?: COOKING_LEVEL;
 
+    @OneToMany(() => RecipesImage, (recipesimages) => recipesimages.recipes)
+    @Field(() => [RecipesImage])
+    recipesImages: RecipesImage[]
+
     @ManyToOne(() => User)
     @Field(() => User)
-    user!: User;
+    user: User;
 
     @JoinTable()
     @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipes)
