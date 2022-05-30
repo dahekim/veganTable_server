@@ -79,6 +79,23 @@ export class RecipesService {
             .getMany();
     }
 
+    async fetchRecipeTypesPopular({ types }) {
+        return await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .where({ types })
+            .orderBy('recipes.createdAt', 'DESC')
+            .addOrderBy('recipes.scrapCount','DESC' )
+            .getMany();
+    }
+
     async fetchMyRecipe({ user_id }) {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
