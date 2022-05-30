@@ -41,7 +41,8 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect('recipes.recipesScraps', 'scraps')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
             .getMany();
     }
@@ -55,6 +56,8 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
             .where({ id })
             .orderBy('recipes.createdAt', 'DESC')
             .getOne()
@@ -69,6 +72,8 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany();
@@ -81,7 +86,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('user.user_id = user_id', { user_id })
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .where('user.user_id = :user_id', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
             .getMany();
     }
@@ -93,6 +100,8 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
             .where('user.isPro = :isPro', { isPro })
             .getMany();
