@@ -15,7 +15,7 @@ services:
   vegan-database:
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: 'vegan-docker02'   
+      MYSQL_DATABASE: 'vegan-docker02'
       MYSQL_ROOT_PASSWORD: 'root'
     command:
       - --character-set-server=utf8mb4
@@ -25,19 +25,19 @@ services:
       - SYS_NICE
     ports:
       - 3306:3306
-    
+
   vegan-redis:
     image: redis:latest
     ports:
-      - 6379:6379 
-    
+      - 6379:6379
+
     # elasticsearch:
-    #     image: elasticsearch:7.17.0
-    #     environment:
-    #         discovery.type: single-node
-    #     ports:
-    #         - 9200:9200
-    
+    #   image: elasticsearch:7.17.0
+    #   environment:
+    #     discovery.type: single-node
+    #   ports:
+    #     - 9200:9200
+
     # logstash:
     #     image: logstash:7.17.0
     #     volumes:

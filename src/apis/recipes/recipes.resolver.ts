@@ -3,7 +3,6 @@ import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
-import { CLASS_TYPE } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
@@ -18,9 +17,8 @@ export class RecipesResolver {
 
     @Query(() => [Recipes])
     async fetchRecipes(
-        @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
     ) {
-        return await this.recipesService.fetchRecipesAll({ page });
+        return await this.recipesService.fetchRecipesAll();
     }
 
     @Query(() => Recipes)
@@ -31,30 +29,26 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipe({ id })
     }
 
-
     @Query(() => [Recipes])
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeTypes({ types, page });
+        return await this.recipesService.fetchRecipeTypes({ types });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
     async fetchMyRecipe(
         @Args('user_id') user_id: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchMyRecipe({ user_id, page });
+        return await this.recipesService.fetchMyRecipe({ user_id });
     }
 
     @Query(() => [Recipes])
     async fetchRecipeIsPro(
         @Args('isPro') isPro: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeIsPro({ isPro, page });
+        return await this.recipesService.fetchRecipeIsPro({ isPro });
     }
 
     @Query(() => [Recipes])
@@ -104,7 +98,6 @@ export class RecipesResolver {
         return this.recipesService.uploadMainImages({ files })
     }
 
-
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
     uploadRecipeImages(
@@ -125,8 +118,8 @@ export class RecipesResolver {
     @Query(() => [Recipes])
     searchRecipes(
         @Args('input') input: string,
-        @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
-    ){
-        return this.recipesService.search({input, page})
+        @Args({ name: 'page', nullable: true, type: () => Int, }) page?: number,
+    ) {
+        return this.recipesService.search({ input, page })
     }
 }

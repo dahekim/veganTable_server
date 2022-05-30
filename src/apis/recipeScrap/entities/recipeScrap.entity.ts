@@ -5,16 +5,16 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, Up
 
 @Entity()
 @ObjectType()
-export class RecipeScrap{
+export class RecipeScrap {
     @PrimaryGeneratedColumn('uuid')
-    @Field(()=> String)
+    @Field(() => String)
     scrap_id: string
 
     @ManyToOne(() => User)
     @Field(() => User)
     user: User
 
-    @ManyToOne(() => Recipes)
+    @ManyToOne(() => Recipes, (recipes) => recipes.recipesScraps)
     @Field(() => Recipes)
     recipes: Recipes
 

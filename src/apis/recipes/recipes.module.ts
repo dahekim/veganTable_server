@@ -32,4 +32,4 @@ import { RecipesService } from "./recipes.service";
         JwtAccessStrategy
     ]
 })
-export class RecipesModule {}
+export class RecipesModule { }

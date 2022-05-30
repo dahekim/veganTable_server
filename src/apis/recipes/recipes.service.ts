@@ -2,26 +2,17 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { Brackets, getConnection, getRepository, Repository } from "typeorm";
-import { CLASS_TYPE, User } from "../user/entities/user.entity";
+import { User } from "../user/entities/user.entity";
 import { Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
-import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
-import { RecipesReply } from "../recipiesReply/entities/recipes.reply.entity";
-import { isPromise } from "util/types";
-
 
 interface IFile {
     files: FileUpload[]
-}
-
-interface ICALSS_TYPE {
-    pro?: string
-    common?: string
 }
 
 @Injectable()
@@ -39,38 +30,20 @@ export class RecipesService {
         @InjectRepository(RecipesIngredients)
         private readonly recipesIngredientsRepository: Repository<RecipesIngredients>,
 
-        @InjectRepository(RecipeScrap)
-        private readonly recipeScrapRepository: Repository<RecipeScrap>,
-
         @InjectRepository(RecipesTag)
         private readonly recipesTagRepository: Repository<RecipesTag>,
-
-        @InjectRepository(RecipesReply)
-        private readonly recipesReplyRepository: Repository<RecipesReply>,
-
-        // private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
-
-    async fetchRecipesAll({ page }) {
-        const recipesAll = await getConnection()
-            .createQueryBuilder()
-            .select('recipes')
-            .from(Recipes, 'recipes')
+    async fetchRecipesAll() {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'scraps')
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = recipesAll
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return recipesAll
+            .getMany();
     }
 
     async fetchRecipe({ id }) {
@@ -87,8 +60,8 @@ export class RecipesService {
             .getOne()
     }
 
-    async fetchRecipeTypes({ types, page }) {
-        const getRecipe = await getConnection()
+    async fetchRecipeTypes({ types }) {
+        return await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -98,19 +71,11 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getRecipe
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getRecipe
+            .getMany();
     }
 
-    async fetchMyRecipe({ user_id, page }) {
-        const getRecipe = await getRepository(Recipes)
+    async fetchMyRecipe({ user_id }) {
+        return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -118,38 +83,19 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where('user.user_id = user_id', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getRecipe
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getRecipe
+            .getMany();
     }
 
-    async fetchRecipeIsPro({ isPro, page }) {
-
-        console.log(isPro)
-        const getByPro = getRepository(Recipes)
+    async fetchRecipeIsPro({ isPro }) {
+        return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getByPro
-
-        if (isPro) {
-            const result = await paging
-                .where('user.isPro = :isPro', { isPro })
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getByPro
+            .where('user.isPro = :isPro', { isPro })
+            .getMany();
     }
 
     async fetchScrappedRecipes() {
@@ -159,9 +105,10 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('recipes.scrapCount')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.scrapCount', 'DESC')
-            .getManyAndCount();
+            .getMany();
     }
 
     async create({ createRecipesInput }, currentUser) {
@@ -279,7 +226,7 @@ export class RecipesService {
         const mainImages = await Promise.all(files)
         const results = await Promise.all(mainImages.map(file => {
             return new Promise((resolve, reject) => {
-                const fileName = `recipes/mainImages/${getToday()}/${uuidv4}/${file.filename}`
+                const fileName = `recipes/mainImages/${getToday()}/${uuidv4()}/${file.filename}`
                 file
                     .createReadStream()
                     .pipe(storage.file(fileName).createWriteStream())
@@ -342,32 +289,32 @@ export class RecipesService {
 
     async search({ input, page }) {
         const results = getRepository(Recipes)
-        .createQueryBuilder('recipes')
-        .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-        .leftJoinAndSelect('recipes.recipesTags', 'tags')
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'tags')
 
-        if(input === null || input === ""){
+        if (input === null || input === "") {
             throw new BadRequestException("검색어를 입력해주세요.")
         }
 
-        if(input){
+        if (input) {
             results.where(
-                new Brackets( (qb) => {
+                new Brackets((qb) => {
                     qb.where('recipes.title LIKE :title', { title: `%${input}%` })
-                    .orWhere('ingredients.name LIKE :name', { name: `%${input}%` } )
-                    .orWhere('tags.name LIKE :name', { name: `%${input}%`})
+                        .orWhere('ingredients.name LIKE :name', { name: `%${input}%` })
+                        .orWhere('tags.name LIKE :name', { name: `%${input}%` })
                 })
             )
         }
 
-        
-        if(page){
+
+        if (page) {
             const result = await results.orderBy('recipes.createdAt', 'DESC')
-            .getMany()
-        return result
+                .getMany()
+            return result
         } else {
             const result = await results.orderBy('recipes.createdAt', 'DESC')
-            .getMany()
+                .getMany()
             return result
         }
     }

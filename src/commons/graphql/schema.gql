@@ -31,6 +31,7 @@ type Recipes {
   level: COOKING_LEVEL
   serve: Int!
   recipesImages: [RecipesImage!]!
+  recipesScraps: [RecipeScrap!]!
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
@@ -135,11 +136,11 @@ type Query {
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
-  fetchRecipes(page: Int): [Recipes!]!
+  fetchRecipes: [Recipes!]!
   fetchRecipe(recipes_id: String!): Recipes!
-  fetchRecipeTypes(vegan_types: String!, page: Int): [Recipes!]!
-  fetchMyRecipe(user_id: String!, page: Int): [Recipes!]!
-  fetchRecipeIsPro(isPro: String!, page: Int): [Recipes!]!
+  fetchRecipeTypes(vegan_types: String!): [Recipes!]!
+  fetchMyRecipe(user_id: String!): [Recipes!]!
+  fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchScrappedRecipes: [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
@@ -167,8 +168,8 @@ type Mutation {
   uploadMainImages(files: [Upload!]!): [String!]!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
-  createBasicPayment(impUid: String!, amount: Float!): PaymentTransaction!
-  createPremiumPayment(impUid: String!, amount: Float!): PaymentTransaction!
+  createBasicPayment(impUid: String!, amount: Float!): String!
+  createPremiumPayment(impUid: String!, amount: Float!): String!
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
