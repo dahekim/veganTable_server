@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { RecipeScrap } from "src/apis/recipeScrap/entities/recipeScrap.entity";
+import { RecipeScrapHistory } from "src/apis/recipeScrap/entities/recipeScrap.entity";
 import {
     Column,
     CreateDateColumn,
@@ -113,7 +113,7 @@ export class User {
     profilePic: string;
 
     @Column({default: 0})
-    @Field(()=> RecipeScrap, {nullable: true})
+    @Field(()=> RecipeScrapHistory, { nullable: true })
     scrapCount?: number
 
     @CreateDateColumn()

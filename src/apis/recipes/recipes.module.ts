@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtAccessStrategy } from "src/commons/auth/jwt-access.strategy";
-import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
+import { RecipeScrapHistory } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipeScarpService } from "../recipeScrap/recipeScrap.service";
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
@@ -19,7 +19,7 @@ import { RecipesService } from "./recipes.service";
             User,
             Recipes,
             RecipesTag,
-            RecipeScrap,
+            RecipeScrapHistory,
             RecipesReply,
             RecipesImage,
             RecipesIngredients,
