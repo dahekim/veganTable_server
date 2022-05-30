@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { Brackets, getConnection, getRepository, Repository } from "typeorm";
-import { CLASS_TYPE, User } from "../user/entities/user.entity";
+import { getConnection, getRepository, Repository } from "typeorm";
+import { User } from "../user/entities/user.entity";
 import { Recipes } from "./entities/recipes.entity";
 import { getToday } from 'src/commons/libraries/utils'
 import { Storage } from '@google-cloud/storage'
@@ -12,16 +12,10 @@ import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngred
 import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
 import { RecipesReply } from "../recipiesReply/entities/recipes.reply.entity";
-import { isPromise } from "util/types";
-
+import { count } from "console";
 
 interface IFile {
     files: FileUpload[]
-}
-
-interface ICALSS_TYPE {
-    pro?: string
-    common?: string
 }
 
 @Injectable()
@@ -39,18 +33,26 @@ export class RecipesService {
         @InjectRepository(RecipesIngredients)
         private readonly recipesIngredientsRepository: Repository<RecipesIngredients>,
 
-        @InjectRepository(RecipeScrap)
-        private readonly recipeScrapRepository: Repository<RecipeScrap>,
-
         @InjectRepository(RecipesTag)
         private readonly recipesTagRepository: Repository<RecipesTag>,
-
-        @InjectRepository(RecipesReply)
-        private readonly recipesReplyRepository: Repository<RecipesReply>,
-
-        // private readonly createRecipesInput: CreateRecipesInput,
     ) { }
 
+
+    async fetchImpAll() {
+        const allData = await getConnection()
+            .createQueryBuilder()
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .where('recipes.createdAt = createdAt')
+            .orderBy('recipes.creratedAt', 'DESC')
+            .getCount()
+
+        console.log(allData);
+        return allData
+    }
 
     async fetchRecipesAll({ page }) {
         const recipesAll = await getConnection()
@@ -152,17 +154,21 @@ export class RecipesService {
         return getByPro
     }
 
-    async fetchScrappedRecipes() {
-        return await getRepository(Recipes)
-            .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('recipes.scrapCount')
-            .orderBy('recipes.scrapCount', 'DESC')
-            .getManyAndCount();
-    }
+    // async fetchScrappedRecipes() {
+    //     const scrapped = await getRepository(Recipes)
+    //         .createQueryBuilder('recipes')
+    //         .leftJoinAndSelect('recipes.user', 'user')
+    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
+    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+    //         .groupBy('recipes.scrapCount')
+    //         .having
+    //         .orderBy('recipes.scrapCount', 'DESC')
+    //         .getManyAndCount();
+    //     console.log(scrapped)
+
+    //     return scrapped;
+    // }
 
     async create({ createRecipesInput }, currentUser) {
         try {
@@ -279,7 +285,7 @@ export class RecipesService {
         const mainImages = await Promise.all(files)
         const results = await Promise.all(mainImages.map(file => {
             return new Promise((resolve, reject) => {
-                const fileName = `recipes/mainImages/${getToday()}/${uuidv4}/${file.filename}`
+                const fileName = `recipes/mainImages/${getToday()}/${uuidv4()}/${file.filename}`
                 file
                     .createReadStream()
                     .pipe(storage.file(fileName).createWriteStream())

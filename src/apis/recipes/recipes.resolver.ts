@@ -3,7 +3,6 @@ import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { GqlAuthAccessGuard } from "src/commons/auth/gql-auth.guard";
 import { CurrentUser, ICurrentUser } from "src/commons/auth/gql-user.param";
-import { CLASS_TYPE } from "../user/entities/user.entity";
 import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
@@ -15,6 +14,11 @@ export class RecipesResolver {
     constructor(
         private readonly recipesService: RecipesService,
     ) { }
+
+    @Query(() => [Recipes])
+    async fetchImpAll() {
+        return await this.recipesService.fetchImpAll();
+    }
 
     @Query(() => [Recipes])
     async fetchRecipes(
@@ -30,7 +34,6 @@ export class RecipesResolver {
     ) {
         return await this.recipesService.fetchRecipe({ id })
     }
-
 
     @Query(() => [Recipes])
     async fetchRecipeTypes(
@@ -57,10 +60,10 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipeIsPro({ isPro, page });
     }
 
-    @Query(() => [Recipes])
-    async fetchScrappedRecipes() {
-        return await this.recipesService.fetchScrappedRecipes();
-    }
+    // @Query(() => [Recipes])
+    // async fetchScrappedRecipes() {
+    //     return await this.recipesService.fetchScrappedRecipes();
+    // }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => Recipes)
@@ -104,7 +107,6 @@ export class RecipesResolver {
         return this.recipesService.uploadMainImages({ files })
     }
 
-
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
     uploadRecipeImages(
@@ -120,12 +122,4 @@ export class RecipesResolver {
     ) {
         return this.recipesService.deleteImage({ recipe_id })
     }
-
-    // @Query(()=> String)
-    // searchRecipes(
-    //     @Args('input') input: string,
-    // ){
-    //     return this.recipesService.search({input})
-    // }
-
 }
