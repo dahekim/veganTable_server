@@ -143,7 +143,7 @@ type Query {
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchPopularRecipes: [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
-  fetchMyScraps: [Recipes!]!
+  fetchMyScraps(user_id: String!): [Recipes!]!
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!

@@ -19,16 +19,19 @@ export class RecipeScarpService{
 
         private readonly connection: Connection
     ){}
-    async findAll({currentUser}){
-        await getRepository(Recipes)
+    async findAll({ user_id }){
+        return await getRepository(Recipes)
         .createQueryBuilder('recipes')
-        .leftJoinAndSelect('recipes.user','recipeUser')
-        .leftJoinAndSelect('recipes.isScraped','recipeScraped')
-        .leftJoinAndSelect('scraped.user','user')
-        .where('recipeScrap.isScraped',{ scraped: true })
-        .andWhere('recipeUser.user_id = :user_id',{ user_id : currentUser.user_id} )
-        .andWhere('user.id = :id',{ user_id : currentUser.id} )
-        .getMany()
+        .leftJoinAndSelect('recipes.user', 'user')
+        .leftJoinAndSelect('recipes.recipesScraps','recipeScraped')
+        .leftJoinAndSelect('recipes.recipesImages', 'image')
+        .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+        .leftJoinAndSelect('recipes.recipesTags', 'tags')
+        .leftJoinAndSelect('recipeScraped.user','scrappedUser')        
+        .where('recipeScraped.scraped',{ scraped: true })
+        .andWhere('scrappedUser.user_id = :user_id',{ user_id } )
+        .orderBy('recipes.createdAt', 'DESC')
+        .getMany();
     }
 
     async scrap({recipe_id, currentUser}){
