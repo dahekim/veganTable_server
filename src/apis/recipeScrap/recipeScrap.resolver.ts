@@ -16,9 +16,9 @@ export class RecipeScrapResolver{
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
     async fetchMyScraps(
-        @CurrentUser() currentUser: ICurrentUser,
+        @Args('user_id') user_id: string,
     ){
-        return await this.recipeScarpService.findAll({currentUser})
+        return await this.recipeScarpService.findAll({user_id})
     }
 
 

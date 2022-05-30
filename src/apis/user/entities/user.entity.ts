@@ -61,7 +61,7 @@ export class User {
     name!: string
 
     @Column({ nullable: false })
-    @Field(() => String!)
+    @Field(() => String!, )
     phone: string
 
     @Column({ default: null })
