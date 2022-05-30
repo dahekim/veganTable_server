@@ -80,25 +80,27 @@ export class RecipesService {
     }
 
     async fetchRecipeTypesPopular({ types }) {
-        return await this.recipesRepository.find({
-            where: { types: CATEGORY_TYPES  }, 
-            relations: ['user', 'recipesImages', 'ingredients', 'recipesTags', 'recipesScraps' ],
-            order: {createdAt: 'DESC', scrapCount: 'DESC'} 
-        })
-        // return await getConnection()
-        //     .createQueryBuilder()
-        //     .select('recipes')
-        //     .from(Recipes, 'recipes')
-        //     .leftJoinAndSelect('recipes.user', 'user')
-        //     .leftJoinAndSelect('recipes.recipesImages', 'image')
-        //     .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-        //     .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-        //     .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
-        //     .leftJoinAndSelect('recipesScraps.user', 'users')
-        //     .where({ types })
-        //     .orderBy('recipes.createdAt', 'DESC')
-        //     .addOrderBy('recipes.scrapCount','DESC' )
-        //     .getMany();
+        // return await this.recipesRepository.find({
+        //     relations: ['user', 'recipesImages', 'ingredients', 'recipesTags', 'recipesScraps' ],
+        //     where: { types: `'${types}'` }, 
+        //     order: {createdAt: 'DESC', scrapCount: 'DESC'} 
+        // })
+        return await getConnection()
+            .createQueryBuilder()
+            .select('recipes')
+            .from(Recipes, 'recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .where({ types })
+            .orderBy('recipes.scrapCount','DESC' )
+            .addOrderBy('recipes.createdAt', 'DESC')
+            // .orderBy('recipes.createdAt', 'DESC')
+            // .addOrderBy('recipes.scrapCount','DESC' )
+            .getMany();
     }
 
     async fetchMyRecipe({ user_id }) {
@@ -115,19 +117,19 @@ export class RecipesService {
             .getMany();
     }
 
-    async fetchRecipeIsPro({ isPro }) {
-        return await getRepository(Recipes)
-            .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
-            .leftJoinAndSelect('recipesScraps.user', 'users')
-            .orderBy('recipes.createdAt', 'DESC')
-            .where('user.isPro = :isPro', { isPro })
-            .getMany();
-    }
+    // async fetchRecipeIsPro({ isPro }) {
+    //     return await getRepository(Recipes)
+    //         .createQueryBuilder('recipes')
+    //         .leftJoinAndSelect('recipes.user', 'user')
+    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
+    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+    //         .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+    //         .leftJoinAndSelect('recipesScraps.user', 'users')
+    //         .orderBy('recipes.createdAt', 'DESC')
+    //         .where('user.isPro = :isPro', { isPro })
+    //         .getMany();
+    // }
 
     async fetchPopularRecipes() {
         return await getRepository(Recipes)

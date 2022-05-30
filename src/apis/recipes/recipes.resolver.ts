@@ -53,12 +53,12 @@ export class RecipesResolver {
         return await this.recipesService.fetchMyRecipe({ user_id });
     }
 
-    @Query(() => [Recipes])
-    async fetchRecipeIsPro(
-        @Args('isPro') isPro: string,
-    ) {
-        return await this.recipesService.fetchRecipeIsPro({ isPro });
-    }
+    // @Query(() => [Recipes])
+    // async fetchRecipeIsPro(
+    //     @Args('isPro') isPro: string,
+    // ) {
+    //     return await this.recipesService.fetchRecipeIsPro({ isPro });
+    // }
 
     @Query(() => [Recipes])
     async fetchPopularRecipes() {
