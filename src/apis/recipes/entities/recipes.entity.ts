@@ -11,7 +11,7 @@ export enum CATEGORY_TYPES {
     VEGAN = 'VEGAN',
     LACTO = 'LACTO',
     OVO = 'OVO',
-    LACTO_OVO = 'LACTO-OVO',
+    LACTO_OVO = 'LACTO_OVO',
     PESCO = 'PESCO',
     POLLO = 'POLLO',
 };
