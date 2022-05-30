@@ -141,7 +141,7 @@ type Query {
   fetchRecipeTypes(vegan_types: String!): [Recipes!]!
   fetchMyRecipe(user_id: String!): [Recipes!]!
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
-  fetchScrappedRecipes: [Recipes!]!
+  fetchPopularRecipes: [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(user_id: String!): PaymentTransaction!

@@ -20,7 +20,6 @@ import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
     PaymentTransactionModule,
     RecipesReplyModule,
     RecipeScrapModule,
-
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',

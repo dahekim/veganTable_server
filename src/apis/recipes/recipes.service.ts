@@ -98,7 +98,7 @@ export class RecipesService {
             .getMany();
     }
 
-    async fetchScrappedRecipes() {
+    async fetchPopularRecipes() {
         return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
@@ -319,4 +319,3 @@ export class RecipesService {
         }
     }
 }
-
