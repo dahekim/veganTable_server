@@ -52,8 +52,6 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipeTypesPopular({ types, page });
     }
 
-    
-
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
     async fetchMyRecipe(
