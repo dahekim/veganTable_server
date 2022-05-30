@@ -44,15 +44,15 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
-            .take(12);
+
 
         if (page) {
-            const result = temp.skip((page-1) * 12).getMany()
+            const result = temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = temp.getMany()
             return result
-        }    
+        }
     }
 
     async fetchRecipesCount(page) {
@@ -65,10 +65,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getCount()
+            const result = await temp.take(12).skip((page-1) * 12).getCount()
             return result
         } else {
             const result = await temp.getCount()
@@ -105,10 +104,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getMany()
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = await temp.getMany()
@@ -130,10 +128,9 @@ export class RecipesService {
             .where({ types })
             .orderBy('recipes.scrapCount','DESC' )
             .addOrderBy('recipes.createdAt', 'DESC')
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getMany()
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = await temp.getMany()
@@ -152,10 +149,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .where('user.user_id = :user_id', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getMany()
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = await temp.getMany()
@@ -174,10 +170,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
             .where('user.isPro = :isPro', { isPro })
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getMany()
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = await temp.getMany()
@@ -195,10 +190,9 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .orderBy('recipes.createdAt', 'DESC')
-            .take(12);
 
         if (page) {
-            const result = await temp.skip((page-1) * 12).getMany()
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
             return result
         } else {
             const result = await temp.getMany()
