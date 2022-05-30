@@ -35,7 +35,7 @@ export class RecipesService {
     ) { }
 
     async fetchRecipesAll(page) {
-        const result = await getRepository(Recipes)
+        const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -47,10 +47,31 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = temp.getMany()
+            return result
+        }    
+    }
+
+    async fetchRecipesCount(page) {
+        const temp = await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .orderBy('recipes.createdAt', 'DESC')
+            .take(12);
+
+        if (page) {
+            const result = await temp.skip((page-1) * 12).getCount()
+            return result
+        } else {
+            const result = await temp.getCount()
             return result
         }    
     }
@@ -72,7 +93,7 @@ export class RecipesService {
     }
 
     async fetchRecipeTypes({ types, page }) {
-        const result =  await getConnection()
+        const temp =  await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -87,16 +108,16 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = await temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = await temp.getMany()
             return result
         }
     }
 
     async fetchRecipeTypesPopular({ types, page }) {
-        const result = await getConnection()
+        const temp = await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -112,16 +133,16 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = await temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = await temp.getMany()
             return result
-        }    
+        }   
     }
 
     async fetchMyRecipe({ user_id, page }) {
-        const result = await getRepository(Recipes)
+        const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -134,16 +155,16 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = await temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = await temp.getMany()
             return result
         }
     }
 
     async fetchRecipeIsPro({ isPro, page }) {
-        const result = await getRepository(Recipes)
+        const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -156,16 +177,16 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = await temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = await temp.getMany()
             return result
         }
     }
 
     async fetchPopularRecipes(page) {
-        const result = await getRepository(Recipes)
+        const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -177,10 +198,10 @@ export class RecipesService {
             .take(12);
 
         if (page) {
-            await result.skip((page-1) * 12).getMany()
+            const result = await temp.skip((page-1) * 12).getMany()
             return result
         } else {
-            await result.getMany()
+            const result = await temp.getMany()
             return result
         }
     }

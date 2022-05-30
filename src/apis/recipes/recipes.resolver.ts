@@ -22,6 +22,13 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipesAll(page);
     }
 
+    @Query(() => Int)
+    async fetchRecipesCount(
+        @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
+    ) {
+        return await this.recipesService.fetchRecipesCount(page);
+    }
+
     @Query(() => Recipes)
     async fetchRecipe(
         @Args('recipes_id') id: string,

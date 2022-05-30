@@ -128,7 +128,6 @@ type RecipesReply {
   contents: String
   recipes: Recipes!
   user: User!
-  page: Int
   createdAt: DateTime!
 }
 
@@ -136,12 +135,14 @@ type Query {
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
   fetchReplies(id: String!, page: Int): [RecipesReply!]!
-  fetchRecipes: [Recipes!]!
+  fetchRecipes(page: Int): [Recipes!]!
+  fetchRecipesCount(page: Int): Int!
   fetchRecipe(recipes_id: String!): Recipes!
-  fetchRecipeTypes(vegan_types: String!): [Recipes!]!
-  fetchRecipeTypesPopular(vegan_types: String!): [Recipes!]!
-  fetchMyRecipe(user_id: String!): [Recipes!]!
-  fetchPopularRecipes: [Recipes!]!
+  fetchRecipeTypes(vegan_types: String!, page: Int): [Recipes!]!
+  fetchRecipeTypesPopular(vegan_types: String!, page: Int): [Recipes!]!
+  fetchMyRecipe(user_id: String!, page: Int): [Recipes!]!
+  fetchRecipeIsPro(isPro: String!, page: Int): [Recipes!]!
+  fetchPopularRecipes(page: Int): [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchMyScrapHistory(user_id: String!): [Recipes!]!
   fetchUser: User!
