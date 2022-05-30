@@ -52,8 +52,8 @@ export class RecipesResolver {
     }
 
     @Query(() => [Recipes])
-    async fetchScrappedRecipes() {
-        return await this.recipesService.fetchScrappedRecipes();
+    async fetchPopularRecipes() {
+        return await this.recipesService.fetchPopularRecipes();
     }
 
     @UseGuards(GqlAuthAccessGuard)
