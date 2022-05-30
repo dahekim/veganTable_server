@@ -33,32 +33,58 @@ export class PaymentTransactionService {
             .getMany();
     }
 
-    async createTransaction({ impUid,amount,currentUser, status }) {
+    async createTransaction({impUid, amount, currentUser}) {
         const queryRunner = await this.connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction('SERIALIZABLE');
-
+        console.log("🐞🐞🐞🐞🐞🐞🐞" + "어떻게된거야")
         try {
             const paymentTransaction = await this.paymentTransactionRepository.create({
                 impUid,
                 amount,
-                user: currentUser.user_id,
-                status: TRANSACTION_STATUS_ENUM.PAYMENT
+                user: currentUser,
+                status: TRANSACTION_STATUS_ENUM.PAYMENT,
             });
             await queryRunner.manager.save(paymentTransaction);
-
-            const user = await queryRunner.manager.findOne(
-                User,
-                { user_id: currentUser.user_id },
-                { lock: { mode: 'pessimistic_write' } },
-            );
-
-            const updatedUser = await this.userRepository.create({ ...user })
-
-            await queryRunner.manager.save(updatedUser);
-            await queryRunner.commitTransaction();
-
+            await queryRunner.commitTransaction()
             return paymentTransaction;
+
+        } catch (error) {
+            console.log(error)
+            if (error?.response?.data?.message || error?.response?.status) {
+                console.log(error.response.data.message);
+                console.log(error.response.status);
+            } else {
+                throw error;
+            }
+            await queryRunner.rollbackTransaction();
+        } finally {
+            await queryRunner.release();
+        }
+    }
+
+    async cancelTransaction({ impUid, amount, currentUser }) {
+        const queryRunner = await this.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('SERIALIZABLE');
+        try {
+            const canceledTransaction = await this.paymentTransactionRepository.create({
+                impUid,
+                amount: -amount,
+                user: currentUser,
+                status: TRANSACTION_STATUS_ENUM.CANCEL,
+            });
+
+            await queryRunner.manager.save(canceledTransaction);
+
+            const updatedUser = this.userRepository.create({
+                ...currentUser,
+                isSubs: SUB_TYPE.NON_SUB,
+            });
+            await queryRunner.manager.save(updatedUser);
+
+            await queryRunner.commitTransaction();
+            return canceledTransaction;
         } catch (error) {
             console.log(error)
             if (error?.response?.data?.message || error?.response?.status) {
@@ -75,56 +101,25 @@ export class PaymentTransactionService {
 
     async checkDuplicate({ impUid }) {
         const checkPaid = await this.paymentTransactionRepository.findOne({ impUid });
-        if (checkPaid) throw new ConflictException('이미 결제 완료된 아이디입니다.');
+        if (checkPaid) throw new ConflictException('이미 결제되었습니다.');
     }
 
     async checkAlreadyCanceled({ impUid }) {
-        const isExist = await this.paymentTransactionRepository.findOne({
-            impUid,})
-        const isCanceled = await this.paymentTransactionRepository.findOne({
+        const checkAlready = await this.paymentTransactionRepository.findOne({
+            impUid,
             status: TRANSACTION_STATUS_ENUM.CANCEL,
         });
-        if (isExist && isCanceled)
-            throw new UnprocessableEntityException('이미 취소된 결제 내역입니다.')
+        if (checkAlready)
+            throw new UnprocessableEntityException('이미 결제 취소된 내역입니다.')
     }
 
     async checkHasCancelableStatus({ impUid, currentUser }) {
-        const isExist = await this.paymentTransactionRepository.findOne({ where: {impUid} })
-        const isPaid = await this.paymentTransactionRepository.findOne({ where: {status: TRANSACTION_STATUS_ENUM.PAYMENT} })
-        if (!isExist) throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.')
-    }
-
-    async cancelTransaction({ impUid, amount,currentUser}) {
-        const queryRunner = await this.connection.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction('SERIALIZABLE');
-        try {
-            const canceledTransaction = await this.createTransaction({
-                impUid,
-                amount: -amount,
-                currentUser,
-                status: TRANSACTION_STATUS_ENUM.CANCEL,
-            });
-            const updatedUser = this.userRepository.create({
-                ...currentUser,
-                isSubs: SUB_TYPE.NON_SUB,
-            });
-
-            await queryRunner.manager.save(canceledTransaction);
-            await queryRunner.manager.save(updatedUser);
-            await queryRunner.commitTransaction();
-            return canceledTransaction;
-        } catch (error) {
-            console.log(error)
-            if (error?.response?.data?.message || error?.response?.status) {
-                console.log(error.response.data.message);
-                console.log(error.response.status);
-            } else {
-                throw error;
-            }
-            await queryRunner.rollbackTransaction();
-        } finally {
-            await queryRunner.release();
-        }
+        const checkHasStatus = await this.paymentTransactionRepository.findOne({
+            impUid,
+            user: { user_id: currentUser.user_id },
+            status: TRANSACTION_STATUS_ENUM.PAYMENT,
+        });
+        if (!checkHasStatus)
+            throw new UnprocessableEntityException('결제 내역이 존재하지 않습니다.');
     }
 }

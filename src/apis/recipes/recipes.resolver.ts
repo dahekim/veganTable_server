@@ -22,7 +22,7 @@ export class RecipesResolver {
 
     @Query(() => [Recipes])
     async fetchRecipes(
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
+        @Args({ name: 'page', nullable: true, type: () => Int, }) page?: number,
     ) {
         return await this.recipesService.fetchRecipesAll({ page });
     }
@@ -121,5 +121,14 @@ export class RecipesResolver {
         @Args('id') recipe_id: string,
     ) {
         return this.recipesService.deleteImage({ recipe_id })
+    }
+
+
+    @Query(() => [Recipes])
+    searchRecipes(
+        @Args('input') input: string,
+        @Args({ name: 'page', nullable: true, type: () => Int, }) page?: number,
+    ) {
+        return this.recipesService.search({ input, page })
     }
 }

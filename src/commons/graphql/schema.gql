@@ -141,6 +141,8 @@ type Query {
   fetchRecipeTypes(vegan_types: String!, page: Int): [Recipes!]!
   fetchMyRecipe(user_id: String!, page: Int): [Recipes!]!
   fetchRecipeIsPro(isPro: String!, page: Int): [Recipes!]!
+  fetchScrappedRecipes: [Recipes!]!
+  searchRecipes(input: String!, page: Int): [Recipes!]!
   fetchTransactionAll: [PaymentTransaction!]!
   fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
   fetchReplies(id: String!, page: Int): [RecipesReply!]!
@@ -151,7 +153,12 @@ type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
-  createUser(email: String!, password: String!, name: String!, phone: String!): User!
+  createUser(
+    email: String!
+    password: String!
+    name: String!
+    phone: String!
+  ): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
   updateUser(user_id: String!, updateUserInput: UpdateUserInput!): User!
@@ -161,7 +168,10 @@ type Mutation {
   uploadCertificationImage(file: Upload!): String!
   deleteUser(user_id: String!): User!
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  updateRecipe(
+    recipe_id: String!
+    updateRecipesInput: UpdateRecipesInput!
+  ): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
   uploadMainImages(files: [Upload!]!): [String!]!
   uploadRecipeImages(files: [Upload!]!): [String!]!
@@ -171,7 +181,7 @@ type Mutation {
   cancelPaymentTransaction(impUid: String!): PaymentTransaction!
   createReply(contents: String!, id: String!): String!
   updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
-  deleteRely(reply_id: String!, recipe_id: String!): String!
+  deleteReply(reply_id: String!, recipe_id: String!): String!
   clickScrap(id: String!): RecipeScrap!
 }
 
@@ -189,7 +199,9 @@ input UpdateUserInput {
   profilePic: String
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateRecipesInput {
@@ -204,7 +216,6 @@ input CreateRecipesInput {
   serve: Int!
   ingredients: [String!]!
   recipesTags: [String!]!
-  scrapCount: Int!
 }
 
 input UpdateRecipesInput {
@@ -219,5 +230,4 @@ input UpdateRecipesInput {
   serve: Int
   ingredients: [String!]
   recipesTags: [String!]
-  scrapCount: Int
 }

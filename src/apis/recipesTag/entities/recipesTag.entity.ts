@@ -20,7 +20,7 @@ export class RecipesTag {
     @CreateDateColumn()
     createdAt: Date;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({default: null, nullable: true})
     deletedAt: Date;
 
     @UpdateDateColumn()

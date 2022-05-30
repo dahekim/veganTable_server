@@ -35,7 +35,7 @@ export class PaymentTransactionResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => PaymentTransaction)
+    @Mutation(() => String)
     async createBasicPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -44,16 +44,19 @@ export class PaymentTransactionResolver {
         const token = await this.iamportService.getToken();
         await this.iamportService.checkPaid({ impUid, amount, token });
         await this.paymentTransactionService.checkDuplicate({ impUid });
-        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser,status });
+        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
         
-        return await this.userRepository.save({
+        await this.userRepository.save({
             user_id: currentUser.user_id,
-            isSubs: SUB_TYPE.PREMIUM
+            SubsHistory: 1,
+            isSubs: SUB_TYPE.BASIC
         })
+
+        return "베이직 구독 결제가 완료되었습니다."
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => PaymentTransaction)
+    @Mutation(() => String)
     async createPremiumPayment(
         @Args('impUid') impUid: string,
         @Args('amount') amount: number,
@@ -62,12 +65,14 @@ export class PaymentTransactionResolver {
         const token = await this.iamportService.getToken();
         await this.iamportService.checkPaid({ impUid, amount, token });
         await this.paymentTransactionService.checkDuplicate({ impUid });
-        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser, status });
-
-        return await this.userRepository.save({
+        await this.paymentTransactionService.createTransaction({ impUid, amount, currentUser });
+        
+        await this.userRepository.save({
             user_id: currentUser.user_id,
+            SubsHistory: 1,
             isSubs: SUB_TYPE.PREMIUM
         })
+        return "프리미엄 구독 결제가 완료되었습니다."
     }
 
     @UseGuards(GqlAuthAccessGuard)
@@ -80,6 +85,7 @@ export class PaymentTransactionResolver {
         await this.paymentTransactionService.checkHasCancelableStatus({ impUid, currentUser });
         const token = await this.iamportService.getToken();
         const cancelAmount = await this.iamportService.cancel({ impUid,token });
+        
         return await this.paymentTransactionService.cancelTransaction({
             impUid,
             amount: cancelAmount,
