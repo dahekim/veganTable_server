@@ -31,7 +31,7 @@ type Recipes {
   level: COOKING_LEVEL
   serve: Int!
   recipesImages: [RecipesImage!]!
-  recipesScraps: [RecipeScrap!]!
+  recipesScraps: [RecipeScrapHistory!]!
   user: User!
   ingredients: [RecipesIngredients!]!
   recipesTags: [RecipesTag!]!
@@ -61,7 +61,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type RecipeScrap {
+type RecipeScrapHistory {
   scrap_id: String!
   user: User!
   recipes: Recipes!
@@ -85,7 +85,7 @@ type User {
   startDate: String
   endDate: String
   profilePic: String
-  scrapCount: RecipeScrap
+  scrapCount: RecipeScrapHistory
   deletedAt: DateTime
 }
 
@@ -143,7 +143,7 @@ type Query {
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchPopularRecipes: [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
-  fetchMyScraps(user_id: String!): [Recipes!]!
+  fetchMyScrapHistory(user_id: String!): [Recipes!]!
   fetchUser: User!
   fetchUsers: [User!]!
   fetchUsersWithDel: [User!]!
@@ -165,7 +165,7 @@ type Mutation {
   uploadMainImages(files: [Upload!]!): [String!]!
   uploadRecipeImages(files: [Upload!]!): [String!]!
   deleteRecipeImages(id: String!): [String!]!
-  clickScrap(id: String!): RecipeScrap!
+  clickScrap(id: String!): RecipeScrapHistory!
   createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!

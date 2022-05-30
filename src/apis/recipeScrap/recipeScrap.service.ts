@@ -3,13 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Connection, getRepository, Repository } from "typeorm";
 import { Recipes } from "../recipes/entities/recipes.entity";
 import { User } from "../user/entities/user.entity";
-import { RecipeScrap } from "./entities/recipeScrap.entity";
+import { RecipeScrapHistory } from "./entities/recipeScrap.entity";
 
 @Injectable()
 export class RecipeScarpService{
     constructor(
-        @InjectRepository(RecipeScrap)
-        private readonly scrapRepository: Repository<RecipeScrap>,
+        @InjectRepository(RecipeScrapHistory)
+        private readonly scrapHistoryRepository: Repository<RecipeScrapHistory>,
 
         @InjectRepository(Recipes)
         private readonly recipesRepository: Repository<Recipes>,
@@ -44,62 +44,67 @@ export class RecipeScarpService{
         const recipe = await this.recipesRepository.findOne({where: { id: recipe_id }})
 
         try {
-            const scrap = await queryRunner.manager.findOne( RecipeScrap, {
+            const scrap = await queryRunner.manager.findOne( RecipeScrapHistory, {
                 user: currentUser.user_id,
                 recipes: recipe_id,
             })
+            
 
             if (!scrap) {
-                const createScrap = await this.scrapRepository.create({
+                const createScrapHistory = await this.scrapHistoryRepository.create({
                     scraped: true,
                     user: user,
                     recipes: recipe,
                 })
                     
-                const updateRecipeScrap = await this.recipesRepository.create({
+                const updateRecipeScrapCount = await this.recipesRepository.create({
                     ...recipe,
                     scrapCount: recipe.scrapCount + 1,
                 })
-                await queryRunner.manager.save(updateRecipeScrap)
-                const result = await queryRunner.manager.save(createScrap);
+                await queryRunner.manager.save(updateRecipeScrapCount)
+                const result = await queryRunner.manager.save(createScrapHistory);
                 await queryRunner.commitTransaction()
                 return result
             }
 
             if (!scrap.scraped) {
-                const createScrap = await this.scrapRepository.create({
+                const createScrapHistory = await this.scrapHistoryRepository.create({
+                    ...scrap,
                     scraped: true,
                     user: user,
                     recipes: recipe,
                 })
-                const updateRecipeScrap = await this.recipesRepository.create({
+                const updateRecipeScrapCount = await this.recipesRepository.create({
                     ...recipe,
                     scrapCount: recipe.scrapCount + 1,
                 })
                 
-                await queryRunner.manager.save(updateRecipeScrap);
+                await queryRunner.manager.save(updateRecipeScrapCount);
 
-                const result = await queryRunner.manager.save(createScrap);
+                const result = await queryRunner.manager.save(createScrapHistory);
                 await queryRunner.commitTransaction();
                 return result;
             }
-                
-            const createScrap = await this.scrapRepository.create({
-                ...scrap,
-                scraped: false,
-            })
 
-            const updateRecipeScrap = await this.recipesRepository.create({
-                ...recipe,
-                scrapCount: recipe.scrapCount - 1 
-            })
-                    
-                await queryRunner.manager.save(updateRecipeScrap)
-                const result = await queryRunner.manager.save(createScrap)
-                    
-                await queryRunner.commitTransaction()
-                return result
-                
+            if (scrap.scraped){
+                const createScrapHistory = await this.scrapHistoryRepository.create({
+                    ...scrap,
+                    scraped: false,
+                    user: user,
+                    recipes: recipe,
+                })
+
+                const updateRecipeScrap = await this.recipesRepository.create({
+                    ...recipe,
+                    scrapCount: recipe.scrapCount - 1 
+                })
+                    await queryRunner.manager.save(updateRecipeScrap)
+                    const result = await queryRunner.manager.save(createScrapHistory)
+                        
+                    await queryRunner.commitTransaction()
+                    return result
+            }
+            
         } catch (error) {
             await queryRunner.rollbackTransaction()
 

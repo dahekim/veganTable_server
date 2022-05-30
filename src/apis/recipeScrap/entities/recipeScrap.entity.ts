@@ -5,7 +5,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, Up
 
 @Entity()
 @ObjectType()
-export class RecipeScrap {
+export class RecipeScrapHistory {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => String)
     scrap_id: string
