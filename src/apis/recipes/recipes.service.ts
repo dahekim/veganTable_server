@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
-
+import { CATEGORY_TYPES } from './entities/recipes.entity'
 interface IFile {
     files: FileUpload[]
 }
@@ -91,8 +91,10 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
             .leftJoinAndSelect('recipesScraps.user', 'users')
             .where({ types })
-            .orderBy('recipes.createdAt', 'DESC')
-            .addOrderBy('recipes.scrapCount','DESC' )
+            .orderBy('recipes.scrapCount','DESC' )
+            .addOrderBy('recipes.createdAt', 'DESC')
+            // .orderBy('recipes.createdAt', 'DESC')
+            // .addOrderBy('recipes.scrapCount','DESC' )
             .getMany();
     }
 
