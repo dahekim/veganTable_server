@@ -1,9 +1,10 @@
-import { Field, Float, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { RecipesIngredients } from "src/apis/recipesIngrediants/entities/recipesIngrediants.entity";
 import { User } from "src/apis/user/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { RecipesTag } from "src/apis/recipesTag/entities/recipesTag.entity";
 import { RecipesImage } from "src/apis/recipesImage/entities/recipesImage.entity";
+import { RecipeScrap } from "src/apis/recipeScrap/entities/recipeScrap.entity";
 
 export enum CATEGORY_TYPES {
     NON_CHECKED = 'NON_CHECKED',
@@ -62,6 +63,10 @@ export class Recipes {
     @OneToMany(() => RecipesImage, (recipesImages) => recipesImages.recipes, { cascade: true })
     @Field(() => [RecipesImage])
     recipesImages: RecipesImage[];
+
+    @OneToMany(() => RecipeScrap, (recipeScraps) => recipeScraps.recipes)
+    @Field(() => [RecipeScrap])
+    recipesScraps: RecipeScrap[];
 
     @ManyToOne(() => User)
     @Field(() => User)

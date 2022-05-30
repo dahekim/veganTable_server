@@ -9,10 +9,7 @@ import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
 import { RecipesImage } from "../recipesImage/entities/recipesImage.entity";
 import { RecipesIngredients } from "../recipesIngrediants/entities/recipesIngrediants.entity";
-import { RecipeScrap } from "../recipeScrap/entities/recipeScrap.entity";
 import { RecipesTag } from "../recipesTag/entities/recipesTag.entity";
-import { RecipesReply } from "../recipiesReply/entities/recipes.reply.entity";
-import { count } from "console";
 
 interface IFile {
     files: FileUpload[]
@@ -37,42 +34,16 @@ export class RecipesService {
         private readonly recipesTagRepository: Repository<RecipesTag>,
     ) { }
 
-
-    async fetchImpAll() {
-        const allData = await getConnection()
-            .createQueryBuilder()
-            .from(Recipes, 'recipes')
+    async fetchRecipesAll() {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .where('recipes.createdAt = createdAt')
-            .orderBy('recipes.creratedAt', 'DESC')
-            .getCount()
-
-        console.log(allData);
-        return allData
-    }
-
-    async fetchRecipesAll({ page }) {
-        const recipesAll = await getConnection()
-            .createQueryBuilder()
-            .select('recipes')
-            .from(Recipes, 'recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'scraps')
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = recipesAll
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return recipesAll
+            .getMany();
     }
 
     async fetchRecipe({ id }) {
@@ -89,8 +60,8 @@ export class RecipesService {
             .getOne()
     }
 
-    async fetchRecipeTypes({ types, page }) {
-        const getRecipe = await getConnection()
+    async fetchRecipeTypes({ types }) {
+        return await getConnection()
             .createQueryBuilder()
             .select('recipes')
             .from(Recipes, 'recipes')
@@ -100,19 +71,11 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where({ types })
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getRecipe
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getRecipe
+            .getMany();
     }
 
-    async fetchMyRecipe({ user_id, page }) {
-        const getRecipe = await getRepository(Recipes)
+    async fetchMyRecipe({ user_id }) {
+        return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
@@ -120,55 +83,33 @@ export class RecipesService {
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .where('user.user_id = user_id', { user_id })
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getRecipe
-        if (page) {
-            const result = await paging
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getRecipe
+            .getMany();
     }
 
-    async fetchRecipeIsPro({ isPro, page }) {
-
-        console.log(isPro)
-        const getByPro = getRepository(Recipes)
+    async fetchRecipeIsPro({ isPro }) {
+        return await getRepository(Recipes)
             .createQueryBuilder('recipes')
             .leftJoinAndSelect('recipes.user', 'user')
             .leftJoinAndSelect('recipes.recipesImages', 'image')
             .leftJoinAndSelect('recipes.ingredients', 'ingredients')
             .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
             .orderBy('recipes.createdAt', 'DESC')
-        const paging = getByPro
-
-        if (isPro) {
-            const result = await paging
-                .where('user.isPro = :isPro', { isPro })
-                .take(12)
-                .skip((page - 1) * 12)
-                .getMany();
-            return result
-        }
-        return getByPro
+            .where('user.isPro = :isPro', { isPro })
+            .getMany();
     }
 
-    // async fetchScrappedRecipes() {
-    //     const scrapped = await getRepository(Recipes)
-    //         .createQueryBuilder('recipes')
-    //         .leftJoinAndSelect('recipes.user', 'user')
-    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
-    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-    //         .groupBy('recipes.scrapCount')
-    //         .having
-    //         .orderBy('recipes.scrapCount', 'DESC')
-    //         .getManyAndCount();
-    //     console.log(scrapped)
-
-    //     return scrapped;
-    // }
+    async fetchScrappedRecipes() {
+        return await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .orderBy('recipes.scrapCount', 'DESC')
+            .getMany();
+    }
 
     async create({ createRecipesInput }, currentUser) {
         try {

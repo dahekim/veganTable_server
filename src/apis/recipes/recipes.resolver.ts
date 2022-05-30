@@ -16,15 +16,9 @@ export class RecipesResolver {
     ) { }
 
     @Query(() => [Recipes])
-    async fetchImpAll() {
-        return await this.recipesService.fetchImpAll();
-    }
-
-    @Query(() => [Recipes])
     async fetchRecipes(
-        @Args({ name: 'page', nullable: true, type: () => Int, }) page?: number,
     ) {
-        return await this.recipesService.fetchRecipesAll({ page });
+        return await this.recipesService.fetchRecipesAll();
     }
 
     @Query(() => Recipes)
@@ -38,32 +32,29 @@ export class RecipesResolver {
     @Query(() => [Recipes])
     async fetchRecipeTypes(
         @Args('vegan_types') types: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeTypes({ types, page });
+        return await this.recipesService.fetchRecipeTypes({ types });
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Query(() => [Recipes])
     async fetchMyRecipe(
         @Args('user_id') user_id: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchMyRecipe({ user_id, page });
+        return await this.recipesService.fetchMyRecipe({ user_id });
     }
 
     @Query(() => [Recipes])
     async fetchRecipeIsPro(
         @Args('isPro') isPro: string,
-        @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     ) {
-        return await this.recipesService.fetchRecipeIsPro({ isPro, page });
+        return await this.recipesService.fetchRecipeIsPro({ isPro });
     }
 
-    // @Query(() => [Recipes])
-    // async fetchScrappedRecipes() {
-    //     return await this.recipesService.fetchScrappedRecipes();
-    // }
+    @Query(() => [Recipes])
+    async fetchScrappedRecipes() {
+        return await this.recipesService.fetchScrappedRecipes();
+    }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => Recipes)
