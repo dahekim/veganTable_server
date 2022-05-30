@@ -41,21 +41,21 @@ export class AuthResolver {
         const accessToken = await context.req.headers.authorization.split(" ")[1]
         const refreshToken = await context.req.headers.cookie.replace("refreshToken=", "")
         try {
-            const myAccess = jwt.verify( accessToken, process.env.ACCESS_TOKEN )
-            const myRefresh = jwt.verify( refreshToken, process.env.REFRESH_TOKEN )
+            const myAccess = jwt.verify(accessToken, process.env.ACCESS_TOKEN)
+            const myRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
             await this.cacheManager.set(
-                `accessToken : ${accessToken}`, 
-                'accessToken', 
-                { ttl: myAccess['exp'] - myAccess['iat'] } 
-                )
-        
+                `accessToken : ${accessToken}`,
+                'accessToken',
+                { ttl: myAccess['exp'] - myAccess['iat'] }
+            )
+
             await this.cacheManager.set(
                 `refreshToken : ${refreshToken}`,
                 'refreshToken',
                 { ttl: myRefresh['exp'] - myRefresh['iat'] }
-                )
+            )
 
-        } catch(error){
+        } catch (error) {
             if (error?.response?.data?.message) throw new UnauthorizedException("❌ 토큰값이 일치하지 않습니다.")
             else throw new UnauthorizedException(error)
         }

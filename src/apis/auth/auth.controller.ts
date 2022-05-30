@@ -5,31 +5,31 @@ import { User } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
 
 interface IOAuthUser {
-    user: Pick< User, 'email' | 'password' | 'name' | 'phone' >
+    user: Pick<User, 'email' | 'password' | 'name' | 'phone'>
 }
 
 @Controller("/")
 export class AuthController {
-    constructor( 
+    constructor(
         private readonly authService: AuthService,
-        ) {}
+    ) { }
 
     @Get('google')
     @UseGuards(AuthGuard('google'))
     async loginGoogle(
-        @Req() req: Request & IOAuthUser, 
+        @Req() req: Request & IOAuthUser,
         @Res() res: Response,
-        ) {
+    ) {
         await this.authService.socialLogin({ req, res })
     }
 
     @Get('naver')
     @UseGuards(AuthGuard('naver'))
     async loginNaver(
-        @Req() req: Request & IOAuthUser, 
+        @Req() req: Request & IOAuthUser,
         @Res() res: Response
-        ) {
-        await this.authService.socialLogin({req, res})
+    ) {
+        await this.authService.socialLogin({ req, res })
     }
 
     @Get('kakao')
@@ -37,7 +37,7 @@ export class AuthController {
     async loginKakao(
         @Req() req: Request & IOAuthUser,
         @Res() res: Response
-        ) {
-        await this.authService.socialLogin({req, res});
+    ) {
+        await this.authService.socialLogin({ req, res });
     }
 }

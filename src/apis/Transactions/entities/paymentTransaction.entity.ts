@@ -18,14 +18,14 @@ export class PaymentTransaction {
     id: string;
 
     @Column()
-    @Field(() => String, {nullable: true})
+    @Field(() => String, { nullable: true })
     impUid: string;
 
     @Column()
-    @Field(() => Int, { defaultValue: 0 , nullable: true})
+    @Field(() => Int, { defaultValue: 0, nullable: true })
     amount: number;
 
-    @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM })  
+    @Column({ type: 'enum', enum: TRANSACTION_STATUS_ENUM })
     @Field(() => TRANSACTION_STATUS_ENUM)
     status: string;
 
