@@ -133,9 +133,9 @@ type RecipesReply {
 }
 
 type Query {
-  fetchUser: User!
-  fetchUsers: [User!]!
-  fetchUsersWithDel: [User!]!
+  fetchTransactionAll: [PaymentTransaction!]!
+  fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
+  fetchReplies(id: String!, page: Int): [RecipesReply!]!
   fetchRecipes: [Recipes!]!
   fetchRecipe(recipes_id: String!): Recipes!
   fetchRecipeTypes(vegan_types: String!): [Recipes!]!
@@ -143,16 +143,29 @@ type Query {
   fetchRecipeIsPro(isPro: String!): [Recipes!]!
   fetchPopularRecipes: [Recipes!]!
   searchRecipes(input: String!, page: Int): [Recipes!]!
-  fetchTransactionAll: [PaymentTransaction!]!
-  fetchimpUidwithUserid(user_id: String!): PaymentTransaction!
-  fetchReplies(id: String!, page: Int): [RecipesReply!]!
   fetchMyScraps: [Recipes!]!
+  fetchUser: User!
+  fetchUsers: [User!]!
+  fetchUsersWithDel: [User!]!
 }
 
 type Mutation {
   login(email: String!, password: String!): String!
   logout: String!
   restoreAccessToken: String!
+  createBasicPayment(impUid: String!, amount: Float!): String!
+  createPremiumPayment(impUid: String!, amount: Float!): String!
+  cancelPaymentTransaction(impUid: String!): PaymentTransaction!
+  createReply(contents: String!, id: String!): String!
+  updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
+  deleteReply(reply_id: String!, recipe_id: String!): String!
+  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
+  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
+  deleteRecipe(recipe_id: String!): Boolean!
+  uploadMainImages(files: [Upload!]!): [String!]!
+  uploadRecipeImages(files: [Upload!]!): [String!]!
+  deleteRecipeImages(id: String!): [String!]!
+  clickScrap(id: String!): RecipeScrap!
   createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
   checkValidToken(phone: String!, token: String!): String!
@@ -162,37 +175,7 @@ type Mutation {
   deleteProfileImage(user_id: String!): String!
   uploadCertificationImage(file: Upload!): String!
   deleteUser(user_id: String!): User!
-  createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
-  updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
-  deleteRecipe(recipe_id: String!): Boolean!
-  uploadMainImages(files: [Upload!]!): [String!]!
-  uploadRecipeImages(files: [Upload!]!): [String!]!
-  deleteRecipeImages(id: String!): [String!]!
-  createBasicPayment(impUid: String!, amount: Float!): String!
-  createPremiumPayment(impUid: String!, amount: Float!): String!
-  cancelPaymentTransaction(impUid: String!): PaymentTransaction!
-  createReply(contents: String!, id: String!): String!
-  updateReply(reply_id: String!, recipe_id: String!, contents: String!): String!
-  deleteReply(reply_id: String!, recipe_id: String!): String!
-  clickScrap(id: String!): RecipeScrap!
 }
-
-input UpdateUserInput {
-  name: String
-  phone: String
-  address: String
-  addressDetail: String
-  type: String
-  nickname: String
-  isPro: String
-  certImage: String
-  certUrl: String
-  isSubs: Boolean
-  profilePic: String
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateRecipesInput {
   title: String!
@@ -220,4 +203,21 @@ input UpdateRecipesInput {
   serve: Int
   ingredients: [String!]
   recipesTags: [String!]
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UpdateUserInput {
+  name: String
+  phone: String
+  address: String
+  addressDetail: String
+  type: String
+  nickname: String
+  isPro: String
+  certImage: String
+  certUrl: String
+  isSubs: Boolean
+  profilePic: String
 }
