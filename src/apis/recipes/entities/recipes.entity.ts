@@ -44,7 +44,7 @@ export class Recipes {
     @Field(() => String!)
     summary!: string;
 
-    @Column({ type: 'enum', enum: CATEGORY_TYPES, default: CATEGORY_TYPES.NON_CHECKED })
+    @Column({ type: 'enum', enum: CATEGORY_TYPES, default: CATEGORY_TYPES.VEGAN })
     @Field(() => CATEGORY_TYPES, { nullable: true })
     types?: CATEGORY_TYPES;
 
