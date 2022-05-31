@@ -69,6 +69,14 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipeIsPro({ isPro, page});
     }
 
+    // @Query(() => [Recipes])
+    // async fetchRecipeIsProPoPular(
+    //     @Args('isPro') isPro: string,
+    //     @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
+    // ) {
+    //     return await this.recipesService.fetchRecipeIsProPoPular({ isPro, page});
+    // }
+
     @Query(() => [Recipes])
     async fetchPopularRecipes(
         @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,

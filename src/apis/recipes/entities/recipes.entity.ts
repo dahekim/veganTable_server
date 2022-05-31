@@ -70,7 +70,7 @@ export class Recipes {
 
     @ManyToOne(() => User)
     @Field(() => User)
-    user: User;
+    user?: User;
 
     @JoinTable()
     @ManyToMany(() => RecipesIngredients, (ingredients) => ingredients.recipes)

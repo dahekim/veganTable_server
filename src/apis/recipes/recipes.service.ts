@@ -179,6 +179,29 @@ export class RecipesService {
         }
     }
 
+    // async fetchRecipeIsProPoPular({ isPro, page }) {
+    //     const temp = await getRepository(Recipes)
+    //         .createQueryBuilder('recipes')
+    //         .leftJoinAndSelect('recipes.user', 'user')
+    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
+    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+    //         .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+    //         .leftJoinAndSelect('recipesScraps.user', 'users')
+    //         .where({ isPro })
+    //         .orderBy('recipes.scrapCount','DESC')
+    //         .addOrderBy('recipes.createdAt', 'DESC')
+
+    //     if (page) {
+    //         const result = await temp.take(12).skip((page-1) * 12).getMany()
+    //         return result
+    //     } else {
+    //         const result = await temp.getMany()
+    //         return result
+    //     }
+    // }
+    
+
     async fetchPopularRecipes(page) {
         const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
