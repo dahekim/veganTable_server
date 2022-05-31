@@ -69,14 +69,6 @@ export class RecipesResolver {
         return await this.recipesService.fetchRecipeIsPro({ isPro, page});
     }
 
-    // @Query(() => [Recipes])
-    // async fetchRecipeIsProPoPular(
-    //     @Args('isPro') isPro: string,
-    //     @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
-    // ) {
-    //     return await this.recipesService.fetchRecipeIsProPoPular({ isPro, page});
-    // }
-
     @Query(() => [Recipes])
     async fetchPopularRecipes(
         @Args({ name: 'page', nullable: true, type: () => Int,}) page?: number,
@@ -90,7 +82,6 @@ export class RecipesResolver {
         @Args('createRecipesInput') createRecipesInput: CreateRecipesInput,
         @CurrentUser() currentUser: ICurrentUser
     ) {
-        console.log(createRecipesInput);
         return await this.recipesService.create(
             { createRecipesInput },
             currentUser

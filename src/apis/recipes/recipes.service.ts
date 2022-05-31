@@ -179,29 +179,6 @@ export class RecipesService {
         }
     }
 
-    // async fetchRecipeIsProPoPular({ isPro, page }) {
-    //     const temp = await getRepository(Recipes)
-    //         .createQueryBuilder('recipes')
-    //         .leftJoinAndSelect('recipes.user', 'user')
-    //         .leftJoinAndSelect('recipes.recipesImages', 'image')
-    //         .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-    //         .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-    //         .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
-    //         .leftJoinAndSelect('recipesScraps.user', 'users')
-    //         .where({ isPro })
-    //         .orderBy('recipes.scrapCount','DESC')
-    //         .addOrderBy('recipes.createdAt', 'DESC')
-
-    //     if (page) {
-    //         const result = await temp.take(12).skip((page-1) * 12).getMany()
-    //         return result
-    //     } else {
-    //         const result = await temp.getMany()
-    //         return result
-    //     }
-    // }
-    
-
     async fetchPopularRecipes(page) {
         const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
@@ -233,38 +210,38 @@ export class RecipesService {
                 { where: { user_id: currentUser.user_id } }
             );
 
-            const impTags1 = [];
+            const ingredientTags = [];
             if (ingredients.length) {
                 for (let i = 0; i < ingredients.length; i++) {
-                    const ingredientTags = ingredients[i].replace('#', '');
-                    const prevTags1 = await this.recipesIngredientsRepository.findOne({
-                        name: ingredientTags
+                    const ingredientTag = ingredients[i].replace('#', '');
+                    const prevTag = await this.recipesIngredientsRepository.findOne({
+                        name: ingredientTag
                     });
 
-                    if (prevTags1) {
-                        impTags1.push(prevTags1);
+                    if (prevTag) {
+                        ingredientTags.push(prevTag);
                     } else {
-                        const newTags1 = await this.recipesIngredientsRepository.save({ name: ingredientTags });
-                        impTags1.push(newTags1);
+                        const newTag = await this.recipesIngredientsRepository.save({ name: ingredientTag });
+                        ingredientTags.push(newTag);
                     }
                 }
             }
 
-            const impTags2 = [];
+            const recipeTags = [];
             if (recipesTags.length) {
                 for (let i = 0; i < recipesTags.length; i++) {
-                    const recipeTags = recipesTags[i].replace('#', '');
-                    const prevTags2 = await this.recipesTagRepository.findOne({
-                        name: recipeTags
+                    const recipeTag = recipesTags[i].replace('#', '');
+                    const prevTags = await this.recipesTagRepository.findOne({
+                        name: recipeTag
                     });
 
-                    if (prevTags2) {
-                        impTags2.push(prevTags2);
+                    if (prevTags) {
+                        recipeTags.push(prevTags);
                     } else {
-                        const newTags2 = await this.recipesTagRepository.save({
-                            name: recipeTags,
+                        const newTags = await this.recipesTagRepository.save({
+                            name: recipeTag,
                         })
-                        impTags2.push(newTags2);
+                        recipeTags.push(newTags);
                     }
                 }
             }
@@ -273,8 +250,8 @@ export class RecipesService {
                 ...recipes,
                 user: searchUser,
                 isPro: isPro,
-                ingredients: impTags1,
-                recipesTags: impTags2,
+                ingredients: ingredientTags,
+                recipesTags: recipeTags,
             });
 
             for (let i = 0; i < url.length; i++) {
