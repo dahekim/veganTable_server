@@ -68,7 +68,7 @@ export class Recipes {
     @Field(() => [RecipeScrapHistory])
     recipesScraps: RecipeScrapHistory[];
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {nullable: false})
     @Field(() => User)
     user?: User;
 
