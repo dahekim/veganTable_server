@@ -23,7 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     async validate(req, payload) {
         const refreshToken = req.headers.cookie.replace('refreshToken=','')
         let isExist = await this.cacheManager.get(
-            `refreshToken:${refreshToken}`
+            `refreshToken : ${refreshToken}`
             )
         if(isExist){
             throw new UnauthorizedException("이미 로그아웃한 사용자입니다.")
