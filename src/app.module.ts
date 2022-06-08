@@ -40,7 +40,7 @@ import { RecipeScrapModule } from './apis/recipeScrap/recipeScrap.module';
       username: 'root',
       password: 'root',
       // database: 'vegan-docker02',
-      database: 'vegan-database',
+      database: 'veganTable',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
