@@ -163,10 +163,8 @@ type Mutation {
   createRecipe(createRecipesInput: CreateRecipesInput!): Recipes!
   updateRecipe(recipe_id: String!, updateRecipesInput: UpdateRecipesInput!): Recipes!
   deleteRecipe(recipe_id: String!): Boolean!
-  uploadMainImages(file: Upload!): [String!]!
-  uploadRecipeImages(file: Upload!): [String!]!
-  deleteMainImage(id: String!): String!
-  deleteRecipeImage(id: String!): String!
+  uploadMainImages(file: Upload!): String!
+  uploadRecipeImages(file: Upload!): String!
   clickScrap(id: String!): RecipeScrapHistory!
   createUser(email: String!, password: String!, name: String!, phone: String!): User!
   getToken(phone: String!): String!
