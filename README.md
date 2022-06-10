@@ -20,15 +20,15 @@
 <br>
 
 # 🛠 ERD & Data Schema
-![title](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F2f7ecef5-eb63-4201-91bf-8c046de7ae40%2FUntitled.png?table=block&id=f56f8ea1-c11b-42f5-8f1b-7499f67268d3&spaceId=9c9b02bc-6cb6-4924-bf38-dad25e0fe77b&width=2000&userId=3179b1f9-9ce5-48b3-bc94-f198bb86779c&cache=v2)   
-![title](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F997af402-2417-4151-bec9-cda59fa655cc%2FUntitled.png?table=block&id=c8a9f928-e6d2-4dff-a486-95816b65c05e&spaceId=9c9b02bc-6cb6-4924-bf38-dad25e0fe77b&width=2000&userId=3179b1f9-9ce5-48b3-bc94-f198bb86779c&cache=v2)   
+![title](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3f2931e7-f36c-4ffa-9360-b7936b4d610e/vegan-table-ERD.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220610%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220610T053320Z&X-Amz-Expires=86400&X-Amz-Signature=818a71f125568ce24223ad1811879e6b5c1430187a6ed84e06366022e5a14361&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22vegan-table-ERD.png%22&x-id=GetObject)   
+![title](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/81df1025-8e78-48b2-b816-3619dfaeb5e2/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220610%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220610T052910Z&X-Amz-Expires=86400&X-Amz-Signature=bae6df8b87c2a7e909b6c51f8b1e366fa175275a0bb93ec2d4201fe879ce143a&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)   
 
 <br>
 
 
 
 # 🛠 파이프라인
-![title](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F21d50924-8de2-40d6-8872-e76c1b7af037%2FUntitled.png?table=block&id=ffbdad91-4c69-4094-a3b0-f46283aff87b&spaceId=9c9b02bc-6cb6-4924-bf38-dad25e0fe77b&width=2000&userId=3179b1f9-9ce5-48b3-bc94-f198bb86779c&cache=v2)   
+![title](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d46831ef-138d-41e0-beb7-c7c20ffd4178/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220610%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220610T052846Z&X-Amz-Expires=86400&X-Amz-Signature=06b0db5fe7ab8e0af7e80a8c44ec49df8b5fa87fc80376baf0ffd2de47f52570&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)   
 
 <br>
 
