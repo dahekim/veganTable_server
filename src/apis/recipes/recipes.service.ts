@@ -34,6 +34,7 @@ export class RecipesService {
         private readonly recipesTagRepository: Repository<RecipesTag>,
     ) { }
 
+    // 전체 레시피 조회
     async fetchRecipesAll(page) {
         const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
@@ -54,6 +55,7 @@ export class RecipesService {
         }
     }
 
+    // 레시피 전체 갯수 카운트
     async fetchRecipesCount(page) {
         const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
@@ -74,6 +76,51 @@ export class RecipesService {
         }    
     }
 
+    // 인기 레시피 조회
+    async fetchPopularRecipes(page) {
+        const temp = await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .orderBy('recipes.scrapCount','DESC' )
+            .addOrderBy('recipes.createdAt', 'DESC')
+
+        if (page) {
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
+            return result
+        } else {
+            const result = await temp.getMany()
+            return result
+        }
+    }
+
+    // 전문가 레시피 조회
+    async fetchRecipeIsPro({ isPro, page }) {
+        const temp = await getRepository(Recipes)
+            .createQueryBuilder('recipes')
+            .leftJoinAndSelect('recipes.user', 'user')
+            .leftJoinAndSelect('recipes.recipesImages', 'image')
+            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
+            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
+            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
+            .leftJoinAndSelect('recipesScraps.user', 'users')
+            .where('user.isPro = :isPro', { isPro: "PRO" })
+            .orderBy('recipes.createdAt', 'DESC')
+
+        if (page) {
+            const result = await temp.take(12).skip((page-1) * 12).getMany()
+            return result
+        } else {
+            const result = await temp.getMany()
+            return result
+        }
+    }
+
+    // 레시피 조회
     async fetchRecipe({ id }) {
         return await getConnection()
             .createQueryBuilder()
@@ -90,6 +137,7 @@ export class RecipesService {
             .getOne()
     }
 
+    // 타입별 레시피 조회
     async fetchRecipeTypes({ types, page }) {
         const temp =  await getConnection()
             .createQueryBuilder()
@@ -113,6 +161,7 @@ export class RecipesService {
         }
     }
 
+    // 타입별 인기 레시피 조회
     async fetchRecipeTypesPopular({ types, page }) {
         const temp = await getConnection()
             .createQueryBuilder()
@@ -137,6 +186,7 @@ export class RecipesService {
         }   
     }
 
+    // 내가 쓴 레시피 조회
     async fetchMyRecipe({ user_id, page }) {
         const temp = await getRepository(Recipes)
             .createQueryBuilder('recipes')
@@ -158,47 +208,7 @@ export class RecipesService {
         }
     }
 
-    async fetchRecipeIsPro({ isPro, page }) {
-        const temp = await getRepository(Recipes)
-            .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
-            .leftJoinAndSelect('recipesScraps.user', 'users')
-            .where('user.isPro = :isPro', { isPro })
-            .orderBy('recipes.createdAt', 'DESC')
-
-        if (page) {
-            const result = await temp.take(12).skip((page-1) * 12).getMany()
-            return result
-        } else {
-            const result = await temp.getMany()
-            return result
-        }
-    }
-
-    async fetchPopularRecipes(page) {
-        const temp = await getRepository(Recipes)
-            .createQueryBuilder('recipes')
-            .leftJoinAndSelect('recipes.user', 'user')
-            .leftJoinAndSelect('recipes.recipesImages', 'image')
-            .leftJoinAndSelect('recipes.ingredients', 'ingredients')
-            .leftJoinAndSelect('recipes.recipesTags', 'recipesTags')
-            .leftJoinAndSelect('recipes.recipesScraps', 'recipesScraps')
-            .leftJoinAndSelect('recipesScraps.user', 'users')
-            .orderBy('recipes.scrapCount','DESC' )
-            .addOrderBy('recipes.createdAt', 'DESC')
-
-        if (page) {
-            const result = await temp.take(12).skip((page-1) * 12).getMany()
-            return result
-        } else {
-            const result = await temp.getMany()
-            return result
-        }
-    }
+    
 
     async create({ createRecipesInput }, currentUser) {
         try {
