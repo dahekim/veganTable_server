@@ -33,7 +33,7 @@
 <br>
 
 # 🛠 API
-![title](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F7c9b3ac4-d1c9-4fc4-9c69-142178418a60%2FUntitled.png?table=block&id=63ef3d91-6e91-418d-8aa7-584025826743&spaceId=9c9b02bc-6cb6-4924-bf38-dad25e0fe77b&width=2000&userId=3179b1f9-9ce5-48b3-bc94-f198bb86779c&cache=v2)   
+![title](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/7ac88ac3-090e-4581-9bd4-0c6654dbfd69/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220610%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220610T053629Z&X-Amz-Expires=86400&X-Amz-Signature=628cfa58168be193762a91a3b607b0ed89ed4202e913caa7505129adfbf371ba&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject)   
 
 <br>
 
