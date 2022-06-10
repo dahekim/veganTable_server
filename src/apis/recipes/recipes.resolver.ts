@@ -111,7 +111,7 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => [String])
+    @Mutation(() => String)
     uploadMainImages(
         @Args({ name: 'file', type: () => GraphQLUpload }) 
         file: FileUpload
@@ -121,7 +121,7 @@ export class RecipesResolver {
     }
 
     @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => [String])
+    @Mutation(() => String)
     uploadRecipeImages(
         @Args({ name: 'file', type: () => GraphQLUpload }) 
         file: FileUpload
@@ -129,23 +129,6 @@ export class RecipesResolver {
         const fileName = `recipe/contents/${getToday()}/${file.filename}`
         return this.recipesService.uploadImage({ file, fileName })
     }
-
-    // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(() => String)
-    // deleteMainImage(
-    //     @Args('id') recipe_id: string,
-    // ) {
-    //     return this.recipesService.deleteImage({ recipe_id })
-    // }
-
-    // @UseGuards(GqlAuthAccessGuard)
-    // @Mutation(() => String)
-    // deleteRecipeImage(
-    //     @Args('id') recipe_id: string,
-    // ) {
-    //     return this.recipesService.deleteImage({ recipe_id })
-    // }
-
 
     @Query(() => [Recipes])
     searchRecipes(

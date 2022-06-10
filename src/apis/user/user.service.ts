@@ -95,7 +95,6 @@ export class UserService {
     }
 
 
-
     async deleteImage({ user_id }) {
         const bucket = process.env.VEGAN_STORAGE_BUCKET
         const userId = await this.userRepository.findOne({ user_id: user_id })
