@@ -96,7 +96,6 @@ export class UserResolver {
     async deleteProfileImage(
         @Args('user_id') user_id: string, 
     ) {
-        
         return await this.userService.deleteImage({ user_id })
     }
 

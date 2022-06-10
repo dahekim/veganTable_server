@@ -305,76 +305,108 @@ export class RecipesService {
         }
     }
 
-    async uploadMainImages({ files }: IFile) {
+    // async uploadMainImages({ files }: IFile) {
+    //     const bucket = process.env.VEGAN_STORAGE_BUCKET
+    //     const storage = new Storage({
+    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //         projectId: process.env.STORAGE_PROJECT_ID,
+    //     }).bucket(bucket)
+
+    //     const mainImages = await Promise.all(files)
+    //     const results = await Promise.all(mainImages.map(file => {
+    //         return new Promise((resolve, reject) => {
+    //             const fileName = `recipes/mainImages/${getToday()}/${uuidv4()}/${file.filename}`
+    //             file
+    //                 .createReadStream()
+    //                 .pipe(storage.file(fileName).createWriteStream())
+    //                 .on("finish", () => resolve(`${bucket}/${fileName}`))
+    //                 .on("error", (error) => reject("🔔" + error))
+    //         })
+    //     })
+    //     )
+    //     return results
+    // }
+
+
+    // async uploadDetailImages({ files }: IFile) {
+    //     const bucket = process.env.VEGAN_STORAGE_BUCKET
+    //     const storage = new Storage({
+    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //         projectId: process.env.STORAGE_PROJECT_ID,
+    //     }).bucket(bucket)
+
+    //     const waitedFiles = await Promise.all(files)
+    //     const results = await Promise.all(waitedFiles.map(file => {
+    //         return new Promise((resolve, reject) => {
+    //             const fileName = `recipes/${getToday()}/${uuidv4()}/${file.filename}`
+    //             file
+    //                 .createReadStream()
+    //                 .pipe(storage.file(fileName).createWriteStream())
+    //                 .on("finish", () => resolve(`${bucket}/${fileName}`))
+    //                 .on("error", (error) => reject("🔔" + error))
+    //         })
+    //     })
+    //     )
+    //     return results
+    // }
+
+    async uploadImage({ file, fileName }) {
         const bucket = process.env.VEGAN_STORAGE_BUCKET
         const storage = new Storage({
             keyFilename: process.env.STORAGE_KEY_FILENAME,
             projectId: process.env.STORAGE_PROJECT_ID,
         }).bucket(bucket)
 
-        const mainImages = await Promise.all(files)
-        const results = await Promise.all(mainImages.map(file => {
-            return new Promise((resolve, reject) => {
-                const fileName = `recipes/mainImages/${getToday()}/${uuidv4()}/${file.filename}`
-                file
-                    .createReadStream()
-                    .pipe(storage.file(fileName).createWriteStream())
-                    .on("finish", () => resolve(`${bucket}/${fileName}`))
-                    .on("error", (error) => reject("🔔" + error))
-            })
+        const url = await new Promise((resolve, reject) => {
+            file
+                .createReadStream()
+                .pipe(storage.file(fileName).createWriteStream())
+                .on("finish", () => resolve(`${bucket}/${fileName}`))
+                .on("error", (error) => reject("🔔" + error));
         })
-        )
-        return results
+        return url
     }
 
+    // async deleteImage({ recipe_id }) {
+    //     const bucket = process.env.VEGAN_STORAGE_BUCKET
+    //     // const recipeId = await this.recipesRepository.findOne({ id: recipe_id })
+    //     const images = await this.recipesImageRepository.find({ recipes: recipe_id })
+    //     const imageURLs = await Promise.all(images.map(el => el.url))
 
-    async uploadDetailImages({ files }: IFile) {
-        const bucket = process.env.VEGAN_STORAGE_BUCKET
-        const storage = new Storage({
-            keyFilename: process.env.STORAGE_KEY_FILENAME,
-            projectId: process.env.STORAGE_PROJECT_ID,
-        }).bucket(bucket)
+    //     // const prevImage = recipeId.recipesImages.split(`${bucket}/profile/${getToday()}/`)
+    //     // const prevImageName = prevImage[prevImage.length - 1]
 
-        const waitedFiles = await Promise.all(files)
-        const results = await Promise.all(waitedFiles.map(file => {
-            return new Promise((resolve, reject) => {
-                const fileName = `recipes/${getToday()}/${uuidv4()}/${file.filename}`
-                file
-                    .createReadStream()
-                    .pipe(storage.file(fileName).createWriteStream())
-                    .on("finish", () => resolve(`${bucket}/${fileName}`))
-                    .on("error", (error) => reject("🔔" + error))
-            })
-        })
-        )
-        return results
-    }
+    //     const storage = new Storage({
+    //         keyFilename: process.env.STORAGE_KEY_FILENAME,
+    //         projectId: process.env.STORAGE_PROJECT_ID,
+    //     })
 
+    //     // const result = await storage
+    //     //     .bucket(bucket)
+    //     //     .file(prevImageName)
+    //     //     .delete()
 
-    async deleteImage({ recipe_id }) {
-        const images = await this.recipesImageRepository.find({ recipes: recipe_id })
-        const imageURLs = await Promise.all(images.map(el => el.url))
+    //     // const { recipesImages, ...recipe } = recipeId
+    //     // const deleteUrl = { ...recipe, recipesImages: null }
+    //     // await this.recipesRepository.save(deleteUrl)
 
-        const storage = new Storage({
-            keyFilename: process.env.STORAGE_KEY_FILENAME,
-            projectId: process.env.STORAGE_PROJECT_ID,
-        })
+    //     // return result ? true : false
 
-        for (let i = 0; i < imageURLs.length; i++) {
-            const result = await storage
-                .bucket(process.env.STORAGE_BUCKET)
-                .file(imageURLs[i])
-                .delete()
-            return result;
-        };
+    //     for (let i = 0; i < imageURLs.length; i++) {
+    //         const result = await storage
+    //             .bucket(bucket)
+    //             .file(imageURLs[i])
+    //             .delete()
+    //         return result;
+    //     };
 
-        const { url, ...user } = recipe_id
-        const deleteUrl = { ...user, url: null }
+    //     const { url, ...user } = recipe_id
+    //     const deleteUrl = { ...user, url: null }
 
-        await this.recipesRepository.save(deleteUrl)
+    //     await this.recipesRepository.save(deleteUrl)
 
-        return recipe_id ? true : false
-    }
+    //     return recipe_id ? true : false
+    // }
 
     async search({ input, page }) {
         const results = getRepository(Recipes)
@@ -395,7 +427,6 @@ export class RecipesService {
                 })
             )
         }
-
 
         if (page) {
             const result = await results.orderBy('recipes.createdAt', 'DESC')
