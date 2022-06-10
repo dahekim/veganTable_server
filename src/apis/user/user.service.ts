@@ -109,7 +109,7 @@ export class UserService {
         })
 
         const result = await storage
-            .bucket(process.env.STORAGE_BUCKET)
+            .bucket(bucket)
             .file(prevImageName)
             .delete()
 

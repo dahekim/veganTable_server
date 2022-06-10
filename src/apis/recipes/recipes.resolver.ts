@@ -7,6 +7,7 @@ import { CreateRecipesInput } from "./dto/createRecipes.input";
 import { UpdateRecipesInput } from "./dto/updateRecipes.input";
 import { Recipes } from "./entities/recipes.entity";
 import { RecipesService } from "./recipes.service";
+import { getToday } from 'src/commons/libraries/utils';
 
 
 @Resolver()
@@ -112,26 +113,38 @@ export class RecipesResolver {
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
     uploadMainImages(
-        @Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[]
+        @Args({ name: 'file', type: () => GraphQLUpload }) 
+        file: FileUpload
     ) {
-        return this.recipesService.uploadMainImages({ files })
+        const fileName = `recipe/main/${getToday()}/${file.filename}`
+        return this.recipesService.uploadImage({ file, fileName })
     }
 
     @UseGuards(GqlAuthAccessGuard)
     @Mutation(() => [String])
     uploadRecipeImages(
-        @Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[]
+        @Args({ name: 'file', type: () => GraphQLUpload }) 
+        file: FileUpload
     ) {
-        return this.recipesService.uploadDetailImages({ files })
+        const fileName = `recipe/contents/${getToday()}/${file.filename}`
+        return this.recipesService.uploadImage({ file, fileName })
     }
 
-    @UseGuards(GqlAuthAccessGuard)
-    @Mutation(() => [String])
-    deleteRecipeImages(
-        @Args('id') recipe_id: string,
-    ) {
-        return this.recipesService.deleteImage({ recipe_id })
-    }
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(() => String)
+    // deleteMainImage(
+    //     @Args('id') recipe_id: string,
+    // ) {
+    //     return this.recipesService.deleteImage({ recipe_id })
+    // }
+
+    // @UseGuards(GqlAuthAccessGuard)
+    // @Mutation(() => String)
+    // deleteRecipeImage(
+    //     @Args('id') recipe_id: string,
+    // ) {
+    //     return this.recipesService.deleteImage({ recipe_id })
+    // }
 
 
     @Query(() => [Recipes])
